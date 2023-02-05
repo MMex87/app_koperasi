@@ -6,7 +6,7 @@ const Header = () => {
         <header id="header" className="header fixed-top d-flex align-items-center">
             <div className="d-flex align-items-center justify-content-between">
                 <Link to="/" className="logo d-flex align-items-center">
-                    <img src="http://localhost:3000/assets/img/logo.png" />
+                    <img src={ "http://localhost:7700/assets/img/logo.png" } />
                     <span className="d-none d-lg-block">Koperasi</span>
                 </Link>
                 <i className="bi bi-list toggle-sidebar-btn" />

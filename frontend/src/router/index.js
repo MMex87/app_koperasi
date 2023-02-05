@@ -10,6 +10,7 @@ import Barang from '../containers/pages/barang'
 import Dashboard from '../containers/pages/dashboard'
 import Supplier from '../containers/pages/supplier'
 import TambahSupplier from '../containers/pages/supplier/TambahSupplier'
+import TransPembelian from '../containers/pages/transaksi/pembelian'
 import TransPenjualan from '../containers/pages/transaksi/penjualan'
 import Template from '../containers/templates/Template'
 
@@ -29,6 +30,7 @@ const router = createBrowserRouter(
                 <Route path={ '/supplier/tambah' } element={ <TambahSupplier /> } />
             </Route>
             <Route path={ '/transPenjualan' } element={ <TransPenjualan /> } />
+            <Route path={ '/transPembelian' } element={ <TransPembelian /> } />
         </Route>
     )
 )
