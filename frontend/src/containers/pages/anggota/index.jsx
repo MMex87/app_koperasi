@@ -60,7 +60,7 @@ export class Anggota extends Component {
                     ) {
                         Toast.fire(
                             'Dibatalkan',
-                            'Data Siswa tetap aman :)',
+                            'Data Anggota tetap aman :)',
                             'error'
                         )
                     }

@@ -15,6 +15,22 @@ const getSupplier = async (req, res) => {
         res.status(400).json({ msg: "Gagal Mengambil Data: " + error })
     }
 }
+const getSupplierId = async (req, res) => {
+    try {
+        const supplier = await supplierModel.findOne({
+            order: [
+                ['nama', 'ASC']
+            ],
+            where: {
+                id: req.params.id
+            }
+        })
+        res.status(200).json(supplier)
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ msg: "Gagal Mengambil Data: " + error })
+    }
+}
 
 const tambahSupplier = async (req, res) => {
     try {
@@ -62,6 +78,7 @@ const hapusSupplier = async (req, res) => {
 
 module.exports = {
     getSupplier,
+    getSupplierId,
     tambahSupplier,
     editSupplier,
     hapusSupplier

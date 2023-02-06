@@ -19,6 +19,9 @@ const barangModel = db.define('barang', {
     satuan: {
         type: DataTypes.STRING
     },
+    jumlah: {
+        type: DataTypes.INTEGER
+    },
     hargaBeli: {
         type: DataTypes.INTEGER
     },

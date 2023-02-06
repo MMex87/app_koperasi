@@ -14,13 +14,29 @@ const getBarang = async (req, res) => {
         res.status(400).json({ msg: "Gagal Mengambil Data! " + error })
     }
 }
+const getBarangId = async (req, res) => {
+    try {
+        const barang = await barangModel.findOne({
+            order: [
+                ['nama', 'ASC']
+            ],
+            where: {
+                id: req.params.id
+            }
+        })
+        res.status(200).json(barang)
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ msg: "Gagal Mengambil Data! " + error })
+    }
+}
 
 const tambahBarang = async (req, res) => {
     try {
-        const { nama, kodeBarang, jenisBarang, satuan, hargaBeli, hargaJual, idSupplier } = req.body
+        const { nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, idSupplier } = req.body
 
         await barangModel.create({
-            nama, kodeBarang, jenisBarang, satuan, hargaBeli, hargaJual, idSupplier
+            nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, idSupplier
         })
 
         res.status(200).json({ msg: 'Data Berhasil Ditambahakan' })
@@ -32,10 +48,10 @@ const tambahBarang = async (req, res) => {
 
 const editBarang = async (req, res) => {
     try {
-        const { nama, kodeBarang, jenisBarang, satuan, hargaBeli, hargaJual, idSupplier } = req.body
+        const { nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, idSupplier } = req.body
 
         await barangModel.update({
-            nama, kodeBarang, jenisBarang, satuan, hargaBeli, hargaJual, idSupplier
+            nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, idSupplier
         }, {
             where: {
                 id: req.params.id
@@ -67,6 +83,7 @@ const hapusBarang = async (req, res) => {
 
 module.exports = {
     getBarang,
+    getBarangId,
     tambahBarang,
     editBarang,
     hapusBarang

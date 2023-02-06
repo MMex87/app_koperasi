@@ -1,6 +1,24 @@
 import React, { Component } from 'react'
+import axios from '../../../api/axios.jsx'
 
 export default class Barang extends Component {
+    state = {
+        barang: []
+    }
+
+    componentDidMount() {
+        this.getBarang()
+    }
+
+    getBarang = async () => {
+        try {
+            const response = await axios.get('/barang')
+            this.setState({ barang: response.data })
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     render() {
         return (
             <main id="main" className="main">
@@ -28,17 +46,21 @@ export default class Barang extends Component {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <th scope="row">1</th>
-                                                <td>Bodrex</td>
-                                                <td>00001</td>
-                                                <td>Mayora</td>
-                                                <td>Box</td>
-                                                <td>Obat</td>
-                                                <td>2000</td>
-                                                <td>2500</td>
-                                                <td>20</td>
-                                            </tr>
+                                            {
+                                                this.state.barang.map((val, index) => (
+                                                    <tr key={ index }>
+                                                        <th scope="row">{ index + 1 }</th>
+                                                        <td>{ val.nama }</td>
+                                                        <td>{ val.kodeBarang }</td>
+                                                        <td>paidi</td>
+                                                        <td>{ val.satuan }</td>
+                                                        <td>{ val.jenisBarang }</td>
+                                                        <td>{ val.hargaBeli }</td>
+                                                        <td>{ val.hargaJual }</td>
+                                                        <td>{ val.jumlah }</td>
+                                                    </tr>
+                                                ))
+                                            }
                                         </tbody>
                                     </table>
                                     <nav aria-label="...">

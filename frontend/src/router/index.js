@@ -29,7 +29,8 @@ const router = createBrowserRouter(
             <Route path={ '/barang' } element={ <Barang /> } />
             <Route path={ '/supplier' }>
                 <Route index element={ <Supplier /> } />
-                <Route path={ '/supplier/tambah' } element={ <TambahSupplier /> } />
+                <Route path={ '/supplier/:jenis' } element={ <TambahSupplier /> } />
+                <Route path={ '/supplier/:jenis/:id' } element={ <TambahSupplier /> } />
             </Route>
             <Route path={ '/transPenjualan' } element={ <TransPenjualan /> } />
             <Route path={ '/transPembelian' } element={ <TransPembelian /> } />

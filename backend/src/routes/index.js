@@ -20,6 +20,7 @@ router.delete('/barang/:id', barang.hapusBarang)
 
 // supplier
 router.get('/supplier', supplier.getSupplier)
+router.get('/supplier/:id', supplier.getSupplierId)
 router.post('/supplier', supplier.tambahSupplier)
 router.put('/supplier/:id', supplier.editSupplier)
 router.delete('/supplier/:id', supplier.hapusSupplier)
