@@ -14,13 +14,29 @@ const getAnggota = async (req, res) => {
         res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
     }
 }
+const getAnggotaId = async (req, res) => {
+    try {
+        const anggota = await anggotaModel.findOne({
+            order: [
+                ['nama', 'ASC']
+            ],
+            where: {
+                id: req.params.id
+            }
+        })
+        res.status(200).json(anggota)
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    }
+}
 
 const tambahAnggota = async (req, res) => {
     try {
-        const { nama, nik, noHp } = req.body
+        const { nama, nik, noHP } = req.body
 
         await anggotaModel.create({
-            nama, nik, noHp
+            nama, nik, noHP
         })
         res.status(200).json({ msg: 'Data Berhasil diTambahkan' })
     } catch (error) {
@@ -31,8 +47,10 @@ const tambahAnggota = async (req, res) => {
 
 const editAnggota = async (req, res) => {
     try {
+        const { nama, nik, noHP } = req.body
+
         await anggotaModel.update({
-            nama, nik, noHp
+            nama, nik, noHP
         }, {
             where: {
                 id: req.params.id
@@ -61,6 +79,7 @@ const hapusAnggota = async (req, res) => {
 
 module.exports = {
     getAnggota,
+    getAnggotaId,
     tambahAnggota,
     editAnggota,
     hapusAnggota

@@ -1,25 +1,93 @@
-import React, { Component } from 'react'
+import React, { Component, useEffect } from 'react'
+import axios from '../../../api/axios.jsx'
+import Swal from 'sweetalert2'
+import { Link } from 'react-router-dom'
 
 export class Anggota extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            anggota: []
+        }
+    }
+
+    componentDidMount() {
+        this.getAnggota()
+    }
+
+
+    getAnggota = async () => {
+        try {
+            const response = await axios.get('/anggota')
+            this.setState({ anggota: response.data })
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     render() {
+        const Toast = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-danger'
+            },
+            buttonsStyling: false
+        })
+
+
+        const handleDelete = (val) => {
+            try {
+                Toast.fire({
+                    title: 'Apa Kamu Yakin?',
+                    text: "Kamu akan Menghapus Data Anggota!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ok, Hapus!',
+                    cancelButtonText: 'Tidak, Batal!',
+                    reverseButtons: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        axios.delete(`/anggota/${val}`)
+                        Toast.fire(
+                            'Terhapus!',
+                            'Data Anggota Sudah Terhapus.',
+                            'success'
+                        )
+                        this.getAnggota()
+                    } else if (
+                        /* Read more about handling dismissals below */
+                        result.dismiss === Swal.DismissReason.cancel
+                    ) {
+                        Toast.fire(
+                            'Dibatalkan',
+                            'Data Siswa tetap aman :)',
+                            'error'
+                        )
+                    }
+                })
+            } catch (error) {
+                console.error(error)
+            }
+        }
+
         return (
-            <main id="main" class="main">
-                <div class="pagetitle">
+            <main id="main" className="main">
+                <div className="pagetitle">
                     <h1>Data Anggota</h1>
                     <nav>
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"> <a href="anggota.html">Input Anggota</a> </li>
+                        <ol className="breadcrumb">
+                            <li className="breadcrumb-item"> Data Anggota</li>
+                            <li className="breadcrumb-item"> <Link to="/anggota/tambah">Input Anggota</Link> </li>
                         </ol>
                     </nav>
                 </div>
-                <section class="section">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title text-center "> Data Anggota</h5>
-
-                                    <table class="table">
+                <section className="section">
+                    <div className="row">
+                        <div className="col-lg-12">
+                            <div className="card">
+                                <div className="card-body">
+                                    <h5 className="card-title text-center "> Data Anggota</h5>
+                                    <table className="table">
                                         <thead>
                                             <tr>
                                                 <th scope="col">#</th>
@@ -30,32 +98,35 @@ export class Anggota extends Component {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <th scope="row">1</th>
-                                                <td>Muhammad</td>
-                                                <td>00001</td>
-                                                <td>08171167618</td>
-                                                <td>
-                                                    <button class="btn btn-warning bx bx-edit-alt text-black-50"></button>
-                                                    <button class="bx bx-trash btn btn-danger "></button>
-                                                </td>
-                                            </tr>
+                                            {
+                                                this.state.anggota.map((val, index) => (
+                                                    <tr key={ index }>
+                                                        <th>{ index + 1 }</th>
+                                                        <td>{ val.nama }</td>
+                                                        <td>{ val.nik }</td>
+                                                        <td>{ val.noHP }</td>
+                                                        <td>
+                                                            <Link className="btn btn-warning bx bx-edit-alt text-black-50" to={ `edit/${val.id}` } />
+                                                            <button className="bx bx-trash btn btn-danger " onClick={ () => handleDelete(val.id) } />
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            }
                                         </tbody>
                                     </table>
-
                                     <nav aria-label="...">
-                                        <ul class="pagination justify-content-center">
-                                            <li class="page-item disabled">
-                                                <a class="page-link" href="#" aria-label="Previous">
-                                                    <span aria-hidden="true">&laquo;</span>
+                                        <ul className="pagination justify-content-center">
+                                            <li className="page-item disabled">
+                                                <a className="page-link" href="#" aria-label="Previous">
+                                                    <span aria-hidden="true">«</span>
                                                 </a>
                                             </li>
-                                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                            <li class="page-item active"><a class="page-link" href="#">2</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="#" aria-label="Next">
-                                                    <span aria-hidden="true">&raquo;</span>
+                                            <li className="page-item"><a className="page-link" href="#">1</a></li>
+                                            <li className="page-item active"><a className="page-link" href="#">2</a></li>
+                                            <li className="page-item"><a className="page-link" href="#">3</a></li>
+                                            <li className="page-item">
+                                                <a className="page-link" href="#" aria-label="Next">
+                                                    <span aria-hidden="true">»</span>
                                                 </a>
                                             </li>
                                         </ul>
@@ -66,6 +137,7 @@ export class Anggota extends Component {
                     </div>
                 </section>
             </main>
+
         )
     }
 }

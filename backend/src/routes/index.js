@@ -26,6 +26,7 @@ router.delete('/supplier/:id', supplier.hapusSupplier)
 
 // anggota
 router.get('/anggota', anggota.getAnggota)
+router.get('/anggota/:id', anggota.getAnggotaId)
 router.post('/anggota', anggota.tambahAnggota)
 router.put('/anggota/:id', anggota.editAnggota)
 router.delete('/anggota/:id', anggota.hapusAnggota)

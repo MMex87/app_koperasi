@@ -12,13 +12,13 @@ const anggotaModel = db.define('anggota', {
         type: DataTypes.STRING
     },
     nik: {
-        type: DataTypes.INTEGER
+        type: DataTypes.STRING
     },
     noHP: {
-        type: DataTypes.INTEGER(15)
+        type: DataTypes.STRING
     }
 }, {
-
+    timestamps: false,
     freezeTableName: true
 })
 

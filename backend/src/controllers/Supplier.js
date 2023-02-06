@@ -18,9 +18,9 @@ const getSupplier = async (req, res) => {
 
 const tambahSupplier = async (req, res) => {
     try {
-        const { nama, noHp, alamat } = req.body
+        const { nama, noHP, alamat } = req.body
         await supplierModel.create({
-            nama, noHp, alamat
+            nama, noHP, alamat
         })
         res.status(200).json('Data Berhasil diTambahkan!')
     } catch (error) {
@@ -31,8 +31,9 @@ const tambahSupplier = async (req, res) => {
 
 const editSupplier = async (req, res) => {
     try {
+        const { nama, noHP, alamat } = req.body
         await supplierModel.update({
-            nama, noHp, alamat
+            nama, noHP, alamat
         }, {
             where: {
                 id: req.params.id

@@ -10,13 +10,14 @@ const supplierModel = db.define('supplier', {
     nama: {
         type: DataTypes.STRING
     },
-    noHp: {
-        type: DataTypes.INTEGER(15),
+    noHP: {
+        type: DataTypes.STRING,
     },
     alamat: {
         type: DataTypes.TEXT,
     }
 }, {
+    timestamps: false,
     freezeTableName: true
 })
 

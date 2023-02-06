@@ -16,13 +16,15 @@ import Template from '../containers/templates/Template'
 
 
 
+
 const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path={ '/' } element={ <Template /> }>
             <Route index element={ <Dashboard /> } />
             <Route path={ '/anggota' } >
                 <Route index element={ <Anggota /> } />
-                <Route path={ '/anggota/tambah' } element={ <TambahAnggota /> } />
+                <Route path={ '/anggota/:jenis' } element={ <TambahAnggota /> } />
+                <Route path={ '/anggota/:jenis/:id' } element={ <TambahAnggota /> } />
             </Route>
             <Route path={ '/barang' } element={ <Barang /> } />
             <Route path={ '/supplier' }>

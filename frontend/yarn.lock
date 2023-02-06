@@ -6489,6 +6489,7 @@ __metadata:
     react-dom: ^18.2.0
     react-paginate: ^8.1.4
     react-redux: ^8.0.5
+    react-router: ^6.8.0
     react-router-dom: ^6.8.0
     react-scripts: 5.0.1
     redux: ^4.2.1
@@ -10956,7 +10957,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router@npm:6.8.0":
+"react-router@npm:6.8.0, react-router@npm:^6.8.0":
   version: 6.8.0
   resolution: "react-router@npm:6.8.0"
   dependencies:
