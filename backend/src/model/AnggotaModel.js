@@ -11,9 +11,6 @@ const anggotaModel = db.define('anggota', {
     nama: {
         type: DataTypes.STRING
     },
-    nik: {
-        type: DataTypes.STRING
-    },
     noHP: {
         type: DataTypes.STRING
     }

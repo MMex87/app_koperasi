@@ -8,6 +8,8 @@ const corsOption = require('./src/config/cors.js')
 const anggotaModel = require('./src/model/AnggotaModel.js')
 const supplierModel = require('./src/model/SupplierModel.js')
 const barangModel = require('./src/model/BarangModel.js')
+const PenjualanBonModel = require('./src/model/PenjualanBonModel.js')
+const PembayaranCicilanModel = require('./src/model/PembayaranCicilanModel.js')
 
 
 const app = express()
@@ -19,7 +21,9 @@ const port = config.baseUrl().port
 // Dotenv Load
 dotenv.config()
 
-barangModel.sync({ force: true })
+// anggotaModel.sync({ force: true })
+// PenjualanBonModel.sync()
+// PembayaranCicilanModel.sync()
 
 // Body Parser
 app.use(bodyParser.json())

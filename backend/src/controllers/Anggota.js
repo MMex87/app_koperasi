@@ -33,10 +33,10 @@ const getAnggotaId = async (req, res) => {
 
 const tambahAnggota = async (req, res) => {
     try {
-        const { nama, nik, noHP } = req.body
+        const { nama, noHP } = req.body
 
         await anggotaModel.create({
-            nama, nik, noHP
+            nama, noHP
         })
         res.status(200).json({ msg: 'Data Berhasil diTambahkan' })
     } catch (error) {
@@ -47,10 +47,10 @@ const tambahAnggota = async (req, res) => {
 
 const editAnggota = async (req, res) => {
     try {
-        const { nama, nik, noHP } = req.body
+        const { nama, noHP } = req.body
 
         await anggotaModel.update({
-            nama, nik, noHP
+            nama, noHP
         }, {
             where: {
                 id: req.params.id

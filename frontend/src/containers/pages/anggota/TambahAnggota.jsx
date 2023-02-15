@@ -9,7 +9,6 @@ class TambahAnggota extends Component {
         super(props)
         this.state = {
             nama: '',
-            nik: '',
             noHP: ''
         }
     }
@@ -69,7 +68,6 @@ class TambahAnggota extends Component {
                 try {
                     await axios.post('/anggota', {
                         nama: this.state.nama,
-                        nik: this.state.nik,
                         noHP: this.state.noHP
                     })
                     Toast.fire({
@@ -85,7 +83,6 @@ class TambahAnggota extends Component {
                 try {
                     await axios.put(`/anggota/${id}`, {
                         nama: this.state.nama,
-                        nik: this.state.nik,
                         noHP: this.state.noHP
                     })
                     Toast.fire({
@@ -95,9 +92,9 @@ class TambahAnggota extends Component {
                     })
                     this.setState({
                         nama: '',
-                        nik: '',
                         noHP: ''
                     })
+                    navigate('/anggota')
                 } catch (error) {
                     console.error(error)
                 }
@@ -120,7 +117,6 @@ class TambahAnggota extends Component {
                                     :
                                     <li className="breadcrumb-item"> <Link to="/anggota/tambah" onClick={ () => this.setState({
                                         nama: '',
-                                        nik: '',
                                         noHP: ''
                                     }) }>Input Anggota</Link> </li>
                             }
@@ -143,12 +139,6 @@ class TambahAnggota extends Component {
                                             <label htmlFor="nama" className="col-sm-2 col-form-label">Nama Anggota</label>
                                             <div className="col-sm-10">
                                                 <input type="text" value={ this.state.nama } className="form-control" id="nama" onChange={ (e) => this.setState({ nama: e.target.value }) } />
-                                            </div>
-                                        </div>
-                                        <div className="row mb-3">
-                                            <label htmlFor="nik" className="col-sm-2 col-form-label">NIK</label>
-                                            <div className="col-sm-10">
-                                                <input type="number" value={ this.state.nik } className="form-control" id="nik" onChange={ (e) => this.setState({ nik: e.target.value }) } />
                                             </div>
                                         </div>
                                         <div className="row mb-3">

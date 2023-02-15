@@ -8,6 +8,8 @@ const transPembelian = require('../controllers/TransPembelian.js')
 const transPenjualan = require('../controllers/TransPenjualan.js')
 const returnTransPembelian = require('../controllers/ReturnPembelian.js')
 const returnTransPenjualan = require('../controllers/RetrunPenjualan.js')
+const penjualanBon = require('../controllers/PenjualanBon.js')
+const pembayaranCicilan = require('../controllers/PembayaranCicilan.js')
 
 
 const router = express.Router()
@@ -55,5 +57,17 @@ router.get('/returnPenjualan', returnTransPenjualan.getReturnPenjualan)
 router.post('/returnPenjualan', returnTransPenjualan.tambahReturnPenjualan)
 router.put('/returnPenjualan/:id', returnTransPenjualan.editReturnPenjualan)
 router.delete('/returnPenjualan/:id', returnTransPenjualan.hapusReturnPenjualan)
+
+// PenjualanBon
+router.get('/penjualanBon', penjualanBon.getPenBon)
+router.post('/penjualanBon', penjualanBon.tambahPenBon)
+router.put('/penjualanBon/:id', penjualanBon.editPenBon)
+router.delete('/penjualanBon/:id', penjualanBon.hapusPenBon)
+
+// Pembayaran Cicilan
+router.get('/pembayaran', pembayaranCicilan.getCicilan)
+router.post('/pembayaran', pembayaranCicilan.tambahCicilan)
+router.put('/pembayaran/:id', pembayaranCicilan.editCicilan)
+router.delete('/pembayaran/:id', pembayaranCicilan.hapusCicilan)
 
 module.exports = router

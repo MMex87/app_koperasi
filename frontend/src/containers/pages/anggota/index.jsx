@@ -92,7 +92,6 @@ export class Anggota extends Component {
                                             <tr>
                                                 <th scope="col">#</th>
                                                 <th scope="col">Nama Anggota</th>
-                                                <th scope="col">NIK</th>
                                                 <th scope="col">Nomor Handphone</th>
                                                 <th scope="col">Aksi</th>
                                             </tr>
@@ -103,7 +102,6 @@ export class Anggota extends Component {
                                                     <tr key={ index }>
                                                         <th>{ index + 1 }</th>
                                                         <td>{ val.nama }</td>
-                                                        <td>{ val.nik }</td>
                                                         <td>{ val.noHP }</td>
                                                         <td>
                                                             <Link className="btn btn-warning bx bx-edit-alt text-black-50" to={ `edit/${val.id}` } />
