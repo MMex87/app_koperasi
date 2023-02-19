@@ -3,11 +3,6 @@ const db = require('../config/database.js')
 
 
 const anggotaModel = db.define('anggota', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
     nama: {
         type: DataTypes.STRING
     },

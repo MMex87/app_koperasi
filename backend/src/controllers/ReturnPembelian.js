@@ -17,9 +17,9 @@ const getReturnPembelian = async (req, res) => {
 
 const tambahReturnPembelian = async (req, res) => {
     try {
-        const [jumlah, faktur, idTransPembelian, idSupplier, idBarang] = req.body
+        const [jumlah, faktur, transPembelianId, supplierId, barangId] = req.body
         await returnPembelianModel.create({
-            jumlah, faktur, idTransPembelian, typePembayaran, idSupplier, idBarang
+            jumlah, faktur, transPembelianId, typePembayaran, supplierId, barangId
         })
         res.status(200).json({ msg: 'Data Berhasil diTambahkan!' })
     } catch (error) {
@@ -30,9 +30,9 @@ const tambahReturnPembelian = async (req, res) => {
 
 const editReturnPembelian = async (req, res) => {
     try {
-        const [jumlah, faktur, idTransPembelian, idSupplier, idBarang] = req.body
+        const [jumlah, faktur, transPembelianId, supplierId, barangId] = req.body
         await returnPembelianModel.update({
-            jumlah, faktur, idTransPembelian, typePembayaran, idSupplier, idBarang
+            jumlah, faktur, transPembelianId, typePembayaran, supplierId, barangId
         }, {
             where: {
                 id: req.params.id

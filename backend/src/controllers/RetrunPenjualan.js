@@ -17,9 +17,9 @@ const getReturnPenjualan = async (req, res) => {
 
 const tambahReturnPenjualan = async (req, res) => {
     try {
-        const [jumlah, faktur, idTransPenjualan, idAnggota, idBarang] = req.body
+        const [jumlah, faktur, transPenjualanId, anggotaId, barangId] = req.body
         await returnPenjualanModel.create({
-            jumlah, faktur, idTransPenjualan, typePembayaran, idAnggota, idBarang
+            jumlah, faktur, transPenjualanId, typePembayaran, anggotaId, barangId
         })
         res.status(200).json({ msg: 'Data Berhasil diTambahkan!' })
     } catch (error) {
@@ -30,9 +30,9 @@ const tambahReturnPenjualan = async (req, res) => {
 
 const editReturnPenjualan = async (req, res) => {
     try {
-        const [jumlah, faktur, idTransPenjualan, idAnggota, idBarang] = req.body
+        const [jumlah, faktur, transPenjualanId, anggotaId, barangId] = req.body
         await returnPenjualanModel.update({
-            jumlah, faktur, idTransPenjualan, typePembayaran, idAnggota, idBarang
+            jumlah, faktur, transPenjualanId, typePembayaran, anggotaId, barangId
         }, {
             where: {
                 id: req.params.id

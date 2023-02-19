@@ -17,9 +17,9 @@ const getPembelian = async (req, res) => {
 
 const tambahPembelian = async (req, res) => {
     try {
-        const [jumlah, faktur, harga, typePembayaran, idSupplier, idBarang] = req.body
+        const [jumlah, faktur, harga, typePembayaran, supplierId, barangId] = req.body
         await transPembelianModel.create({
-            jumlah, faktur, harga, typePembayaran, idSupplier, idBarang
+            jumlah, faktur, harga, typePembayaran, supplierId, barangId
         })
         res.status(200).json({ msg: 'Data Berhasil diTambahkan!' })
     } catch (error) {
@@ -30,9 +30,9 @@ const tambahPembelian = async (req, res) => {
 
 const editPembelian = async (req, res) => {
     try {
-        const [jumlah, faktur, harga, typePembayaran, idSupplier, idBarang] = req.body
+        const [jumlah, faktur, harga, typePembayaran, supplierId, barangId] = req.body
         await transPembelianModel.update({
-            jumlah, faktur, harga, typePembayaran, idSupplier, idBarang
+            jumlah, faktur, harga, typePembayaran, supplierId, barangId
         }, {
             where: {
                 id: req.params.id

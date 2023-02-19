@@ -42,6 +42,7 @@ router.delete('/transPembelian/:id', transPembelian.hapusPembelian)
 
 // Transakasi Penjualan
 router.get('/transPenjualan', transPenjualan.getPenjualan)
+router.get('/transPenjualanJoin', transPenjualan.getJoinPenAnBarang)
 router.post('/transPenjualan', transPenjualan.tambahPenjualan)
 router.put('/transPenjualan/:id', transPenjualan.editPenjualan)
 router.delete('/transPenjualan/:id', transPenjualan.hapusPenjualan)

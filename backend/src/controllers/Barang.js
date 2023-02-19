@@ -33,10 +33,10 @@ const getBarangId = async (req, res) => {
 
 const tambahBarang = async (req, res) => {
     try {
-        const { nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, idSupplier } = req.body
+        const { nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, supplierId } = req.body
 
         await barangModel.create({
-            nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, idSupplier
+            nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, supplierId
         })
 
         res.status(200).json({ msg: 'Data Berhasil Ditambahakan' })
@@ -48,10 +48,10 @@ const tambahBarang = async (req, res) => {
 
 const editBarang = async (req, res) => {
     try {
-        const { nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, idSupplier } = req.body
+        const { nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, supplierId } = req.body
 
         await barangModel.update({
-            nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, idSupplier
+            nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, supplierId
         }, {
             where: {
                 id: req.params.id

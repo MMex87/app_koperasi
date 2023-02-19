@@ -1,40 +1,27 @@
 const { DataTypes } = require('sequelize')
 const db = require('../config/database.js')
+const barangModel = require('./BarangModel.js')
+const supplierModel = require('./SupplierModel.js')
+const transPembelianModel = require('./TransPembelianModel.js')
 
 const returnPembelianModel = db.define('returnPembelian', {
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
-    },
     jumlah: {
         type: DataTypes.INTEGER
     },
     faktur: {
         type: DataTypes.STRING
-    },
-    idTransPembelian: {
-        type: DataTypes.INTEGER
-    },
-    idSupplier: {
-        type: DataTypes.INTEGER
-    },
-    idBarang: {
-        type: DataTypes.INTEGER
     }
 }, {
     freezeTableName: true,
-    indexes: [
-        {
-            fields: ['idTransPembelian']
-        },
-        {
-            fields: ['idSupplier']
-        },
-        {
-            fields: ['idBarang']
-        }
-    ]
 })
+
+barangModel.hasMany(returnPembelianModel)
+returnPembelianModel.belongsTo(barangModel)
+
+supplierModel.hasMany(returnPembelianModel)
+returnPembelianModel.belongsTo(supplierModel)
+
+transPembelianModel.hasMany(returnPembelianModel)
+returnPembelianModel.belongsTo(transPembelianModel)
 
 module.exports = returnPembelianModel

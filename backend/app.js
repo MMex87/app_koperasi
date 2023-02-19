@@ -10,6 +10,10 @@ const supplierModel = require('./src/model/SupplierModel.js')
 const barangModel = require('./src/model/BarangModel.js')
 const PenjualanBonModel = require('./src/model/PenjualanBonModel.js')
 const PembayaranCicilanModel = require('./src/model/PembayaranCicilanModel.js')
+const transPenjualanModel = require('./src/model/TransPenjualanModel.js')
+const transPembelianModel = require('./src/model/TransPembelianModel.js')
+const returnPembelianModel = require('./src/model/ReturnPembelianModel.js')
+const returnPenjualanModel = require('./src/model/ReturnPenjualanModel.js')
 
 
 const app = express()
@@ -21,9 +25,19 @@ const port = config.baseUrl().port
 // Dotenv Load
 dotenv.config()
 
+
 // anggotaModel.sync({ force: true })
 // PenjualanBonModel.sync()
 // PembayaranCicilanModel.sync()
+// barangModel.sync()
+// barangModel.drop()
+// transPembelianModel.sync()
+// transPenjualanModel.sync({ alter: true })
+// returnPembelianModel.sync()
+// returnPenjualanModel.sync({ force: true })
+// PenjualanBonModel.sync({ force: true })
+// PembayaranCicilanModel.sync({ force: true })
+
 
 // Body Parser
 app.use(bodyParser.json())

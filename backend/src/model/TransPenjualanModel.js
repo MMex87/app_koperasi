@@ -1,12 +1,9 @@
 const { DataTypes } = require('sequelize')
 const db = require('../config/database.js')
+const barang = require('../model/BarangModel.js')
+const anggota = require('../model/AnggotaModel.js')
 
 const transPenjualanModel = db.define('transPenjualan', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
     jumlah: {
         type: DataTypes.INTEGER
     },
@@ -18,23 +15,26 @@ const transPenjualanModel = db.define('transPenjualan', {
     },
     typePembayaran: {
         type: DataTypes.STRING
-    },
-    idAnggota: {
-        type: DataTypes.INTEGER
-    },
-    idBarang: {
-        type: DataTypes.INTEGER
     }
 }, {
-    indexes: [
-        {
-            fields: ['idAnggota']
-        },
-        {
-            fields: ['idBarang']
-        }
-    ],
-    freezeTableName: true
+    freezeTableName: true,
+
+})
+
+barang.hasMany(transPenjualanModel, {
+    foreignKey: 'barangId'
+});
+transPenjualanModel.belongsTo(barang, {
+    foreignKey: 'barangId'
+});
+
+anggota.hasMany(transPenjualanModel, {
+    foreignKey: 'anggotaId',
+    as: "anggota"
+})
+transPenjualanModel.belongsTo(anggota, {
+    foreignKey: 'anggotaId',
+    as: "anggota"
 })
 
 module.exports = transPenjualanModel

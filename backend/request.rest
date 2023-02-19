@@ -1,5 +1,8 @@
-GET http://localhost:8800/barang
+GET http://localhost:8800/transPenjualanJoin
 
+
+###
+GET http://localhost:8800/barang
 
 ###
 POST http://localhost:8800/barang
@@ -12,7 +15,7 @@ Content-Type: application/json
 "satuan" : "pcs",
 "hargaBeli" : 9000,
 "hargaJual" : 10000,
-"idSupplier" : 1
+"supplierId" : 1
 }
 
 ###
@@ -20,7 +23,7 @@ PUT http://localhost:8800/barang/1
 Content-Type: application/json
 
 {
-"nama" : "Sponge"
+"jumlah" : "10"
 }
 
 

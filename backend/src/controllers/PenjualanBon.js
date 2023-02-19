@@ -16,10 +16,10 @@ const getPenBon = async (req, res) => {
 }
 
 const tambahPenBon = async (req, res) => {
-    const { totalBayar, idBarang, idAnggota, idPenjualan } = req.body
+    const { totalBayar, barangId, anggotaId, transPenjulanId } = req.body
     try {
         await PenjualanBonModel.create({
-            totalBayar, idAnggota, idPenjualan, idBarang
+            totalBayar, anggotaId, transPenjulanId, barangId
         })
         res.status(200).json({ msg: 'Data Berhasil diTambahkan!' })
     } catch (error) {
@@ -29,10 +29,10 @@ const tambahPenBon = async (req, res) => {
 }
 
 const editPenBon = async (req, res) => {
-    const { totalBayar, idBarang, idAnggota, idPenjualan } = req.body
+    const { totalBayar, barangId, anggotaId, transPenjulanId } = req.body
     try {
         await PenjualanBonModel.update({
-            totalBayar, idAnggota, idPenjualan, idBarang
+            totalBayar, anggotaId, transPenjulanId, barangId
         }, {
             where: req.params.id
         })

@@ -1,12 +1,8 @@
 const { DataTypes } = require('sequelize')
 const db = require('../config/database.js')
+const supplierModel = require('./SupplierModel.js')
 
 const barangModel = db.define('barang', {
-    id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
-    },
     nama: {
         type: DataTypes.STRING
     },
@@ -27,17 +23,12 @@ const barangModel = db.define('barang', {
     },
     hargaJual: {
         type: DataTypes.INTEGER
-    },
-    idSupplier: {
-        type: DataTypes.INTEGER
     }
 }, {
     freezeTableName: true,
-    indexes: [
-        {
-            fields: ['idSupplier']
-        }
-    ]
 })
+
+supplierModel.hasMany(barangModel)
+barangModel.belongsTo(supplierModel)
 
 module.exports = barangModel

@@ -17,10 +17,10 @@ const getCicilan = async (req, res) => {
 }
 
 const tambahCicilan = async (req, res) => {
-    const { totalBayar, idTransaksi, idAnggota } = req.body
+    const { totalBayar, penjualanbonId, anggotaId } = req.body
     try {
         await PembayaranCicilanModel.create({
-            totalBayar, idTransaksi, idAnggota
+            totalBayar, penjualanbonId, anggotaId
         })
         res.status(200).json({ msg: 'Data Berhasil Ditambahkan!' })
     } catch (error) {
@@ -30,10 +30,10 @@ const tambahCicilan = async (req, res) => {
 }
 
 const editCicilan = async (req, res) => {
-    const { totalBayar, idTransaksi, idAnggota } = req.body
+    const { totalBayar, penjualanbonId, anggotaId } = req.body
     try {
         await PembayaranCicilanModel.update({
-            totalBayar, idTransaksi, idAnggota
+            totalBayar, penjualanbonId, anggotaId
         }, {
             where: {
                 id: req.params.id
