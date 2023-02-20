@@ -1,38 +1,26 @@
 import React, { Component } from 'react'
 import axios from '../../../../api/axios'
 import { generateFaktur } from '../../../../components/faktur/generateFaktur'
+import { connect } from 'react-redux'
+import ActionType from '../../../../redux/reducer/globalActionType'
+import AddChartManual from './addChartManual'
+import AddChartScan from './addChartScan'
+import ChartList from './chartList'
 
-export default class TransPenjualan extends Component {
+class TransPenjualan extends Component {
+
     state = {
         transaksi: [],
-        faktur: '',
         visiJenisInput: false,
-        anggota: '',
-        typePembayaran: '',
-        kodeBarang: '',
-        namaBarang: '',
-        jumlah: '',
-        jenis: '',
-        harga: '',
         displayAnggota: false,
         anggotas: []
     }
 
     componentDidMount() {
-        this.getTransaksi()
-        this.setState({ faktur: generateFaktur('FKJ') })
+        this.props.handleFakturPenjualan(generateFaktur('FKJ'))
         this.getAnggota()
     }
 
-
-    getTransaksi = async () => {
-        try {
-            const response = await axios.get('/transPenjualanJoin')
-            this.setState({ transaksi: response.data })
-        } catch (error) {
-            console.error(error.response)
-        }
-    }
 
     getAnggota = async () => {
         try {
@@ -65,7 +53,8 @@ export default class TransPenjualan extends Component {
         }
 
         const handleAutoAnggota = (val) => {
-            this.setState({ displayAnggota: false, anggota: val })
+            this.setState({ displayAnggota: false })
+            this.props.handleAnggota(val)
         }
 
 
@@ -80,10 +69,10 @@ export default class TransPenjualan extends Component {
                             <div className="card">
                                 <div className="card-body row">
                                     <div className="col-md-4">
-                                        <h1 className="card-title mt-1">Faktur : { this.state.faktur } </h1>
+                                        <h1 className="card-title mt-1">Faktur : { this.props.faktur } </h1>
                                     </div>
                                     <div className='col-md-3'>
-                                        <button type='button' className='btn btn-outline-secondary mt-3' onClick={ () => this.setState({ faktur: generateFaktur('FKJ') }) }>Generate Faktur</button>
+                                        <button type='button' className='btn btn-outline-secondary mt-3' onClick={ () => this.props.handleFakturPenjualan(generateFaktur('FKJ')) }>Generate Faktur</button>
                                     </div>
                                     <div className="search-bar col-5 text-center mt-3">
                                         <form className="search-form d-flex align-items-center" method="POST" action="#">
@@ -96,9 +85,9 @@ export default class TransPenjualan extends Component {
                                     <form className="row g-3" onSubmit={ handleChart }>
                                         <div className="col-md-6">
                                             <label htmlFor="namaAnggota" className="form-label">Nama Anggota</label>
-                                            <input type="text" className="form-control" id="namaAnggota" value={ this.state.anggota }
+                                            <input type="text" className="form-control" id="namaAnggota" value={ this.props.anggota }
                                                 autoComplete='false'
-                                                onChange={ (e) => this.setState({ anggota: e.target.value }) }
+                                                onChange={ (e) => this.props.handleAnggota(e.target.value) }
                                                 onClick={ () => this.setState({ displayAnggota: !this.state.displayAnggota }) } />
                                             {
                                                 this.state.displayAnggota &&
@@ -107,7 +96,7 @@ export default class TransPenjualan extends Component {
                                                         {
                                                             this.state.anggotas
                                                                 .filter(({ nama }) =>
-                                                                    nama.indexOf(this.state.anggota) > -1
+                                                                    nama.indexOf(this.props.anggota) > -1
                                                                 )
                                                                 .map((v, i) => (
                                                                     <li key={ i } onClick={ () => { handleAutoAnggota(v.nama) } } className="list-group-item" > { v.nama }</li>
@@ -119,12 +108,12 @@ export default class TransPenjualan extends Component {
                                         </div>
                                         <div className="col-md-6">
                                             <label htmlFor="typePembayaran" className="form-label">Type Pembayaran</label>
-                                            <select id="typePembayaran" className="form-select" onChange={ (e) => this.setState({ typePembayaran: e.target.value }) }>
+                                            <select id="typePembayaran" className="form-select" onChange={ (e) => this.props.handleTypeBayar(e.target.value) }>
                                                 <option
-                                                    selected={ this.state.typePembayaran == 'Tunai' && 'true' }
+                                                    selected={ this.props.typePembayaran == 'Tunai' && 'true' }
                                                     value={ 'Tunai' }>Tunai</option>
                                                 <option
-                                                    selected={ this.state.typePembayaran == 'Bon' && 'true' }
+                                                    selected={ this.props.typePembayaran == 'Bon' && 'true' }
                                                     value={ 'Bon' }>BON</option>
                                             </select>
                                         </div>
@@ -138,41 +127,9 @@ export default class TransPenjualan extends Component {
                                         {
                                             this.state.visiJenisInput
                                                 ?
-                                                <div className="col-12">
-                                                    <label htmlFor="kodeBarang" className="form-label">Kode Barang</label>
-                                                    <input type="password" className="form-control" id="kodeBarang" value={ this.state.kodeBarang } autoFocus={ true }
-                                                        onChange={ (e) => this.setState({ kodeBarang: e.target.value }) } />
-                                                </div>
+                                                <AddChartScan />
                                                 :
-                                                <>
-                                                    <div className="col-md-3">
-                                                        <label htmlFor="kodeBarang" className="form-label">Kode Barang</label>
-                                                        <input type="password" className="form-control" id="kodeBarang"
-                                                            value={ this.state.kodeBarang }
-                                                            onChange={ (e) => this.setState({ kodeBarang: e.target.value }) }
-                                                        />
-                                                    </div>
-                                                    <div className="col-md-3">
-                                                        <label htmlFor="namabarang" className="form-label">Nama Barang</label>
-                                                        <input type="password" className="form-control" id="namabarang" value={ this.state.namaBarang }
-                                                            onChange={ (e) => this.setState({ namaBarang: e.target.value }) } />
-                                                    </div>
-                                                    <div className="col-2">
-                                                        <label htmlFor="jumlah" className="form-label">Jumlah</label>
-                                                        <input type="text" className="form-control" id="jumlah" value={ this.state.jumlah }
-                                                            onChange={ (e) => this.setState({ jumlah: e.target.value }) } />
-                                                    </div>
-                                                    <div className="col-1">
-                                                        <label htmlFor="jenis" className="form-label">Jenis</label>
-                                                        <input type="text" className="form-control" id="jenis" value={ this.state.jenis }
-                                                            onChange={ (e) => this.setState({ jenis: e.target.value }) } />
-                                                    </div>
-                                                    <div className="col-md-3">
-                                                        <label htmlFor="harga" className="form-label">Harga</label>
-                                                        <input type="text" className="form-control" id="harga" value={ this.state.harga }
-                                                            onChange={ (e) => this.setState({ harga: e.target.value }) } />
-                                                    </div>
-                                                </>
+                                                <AddChartManual />
                                         }
                                         <div className="text-lg-end">
                                             <button type="submit" className="btn btn-primary">Tambah</button>
@@ -188,41 +145,7 @@ export default class TransPenjualan extends Component {
                         <div className="col-lg-12">
                             <div className="card">
                                 <div className="card-body">
-                                    <h1 className="card-title mt-1">Faktur : { this.state.faktur }</h1>
-                                    <table className="table">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Nama Anggota</th>
-                                                <th>Type Pembayaran</th>
-                                                <th>Kode Barang</th>
-                                                <th>Nama Barang</th>
-                                                <th>Jumlah</th>
-                                                <th>Harga</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {
-                                                this.state.transaksi.map((val, index) => (
-                                                    <tr key={ index }>
-                                                        <th>{ index + 1 }</th>
-                                                        <td>{ val.anggota.nama }</td>
-                                                        <td>{ val.typePembayaran }</td>
-                                                        <td>{ val.barang.kodeBarang }</td>
-                                                        <td>{ val.barang.nama }</td>
-                                                        <td>1</td>
-                                                        <td>{ val.barang.hargaJual }</td>
-                                                        <td>
-                                                            <button className="btn btn-warning bx bx-edit-alt text-black-50" />
-                                                            <button className="bx bx-trash btn btn-danger " />
-                                                        </td>
-                                                    </tr>
-
-                                                ))
-                                            }
-                                        </tbody>
-                                    </table>
+                                    <ChartList />
                                 </div>
                             </div>
                         </div>
@@ -248,3 +171,31 @@ export default class TransPenjualan extends Component {
         )
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        anggota: state.anggota,
+        typePembayaran: state.typePembayaran,
+        kodeBarang: state.kodeBarang,
+        namaBarang: state.namaBarang,
+        jumlah: state.jumlah,
+        jenis: state.jenis,
+        harga: state.harga,
+        faktur: state.faktur,
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        handleAnggota: (anggota) => dispatch({ type: ActionType.SET_ANGGOTA_PENJUALAN, index: anggota }),
+        handleTypeBayar: (typeBayar) => dispatch({ type: ActionType.SET_TYPE_BAYAR_PENJUALAN, index: typeBayar }),
+        handleKodeBarang: (kodeBarang) => dispatch({ type: ActionType.SET_KODE_BARANG_PENJUALAN, index: kodeBarang }),
+        handleNamaBarang: (namaBarang) => dispatch({ type: ActionType.SET_NAMA_BARANG_PENJUALAN, index: namaBarang }),
+        handleJumlah: (jumlah) => dispatch({ type: ActionType.SET_JUMLAH_PENJUALAN, index: jumlah }),
+        handlejenisBarang: (jenisBarang) => dispatch({ type: ActionType.SET_JENIS_PENJUALAN, index: jenisBarang }),
+        handleHargaBarang: (hargaBarang) => dispatch({ type: ActionType.SET_HARGA_PENJUALAN, index: hargaBarang }),
+        handleFakturPenjualan: (faktur) => dispatch({ type: ActionType.SET_FAKTUR_PENJUALAN, index: faktur })
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TransPenjualan)
