@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import ActionType from '../../../../redux/reducer/globalActionType'
 import getBarang from '../../../../utils/barang/getBarang'
 
-const addChartScan = (props) => {
+const addCartScan = (props) => {
 
     const [barang, setBarang] = useState([])
 
@@ -21,12 +21,11 @@ const addChartScan = (props) => {
             props.handleJumlah(1)
             props.handleNamaBarang(barangs.nama)
             props.handlejenisBarang(barangs.jenisBarang)
+            props.handleHargaBarang(barangs.hargaJual)
         }
     }
 
     return (
-
-
         <>
             <div className="col-12">
                 <label htmlFor="kodeBarangScan" className="form-label">Kode Barang</label>
@@ -63,4 +62,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(addChartScan)
+export default connect(mapStateToProps, mapDispatchToProps)(addCartScan)

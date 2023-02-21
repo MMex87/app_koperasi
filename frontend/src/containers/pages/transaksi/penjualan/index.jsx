@@ -3,10 +3,11 @@ import axios from '../../../../api/axios'
 import { generateFaktur } from '../../../../components/faktur/generateFaktur'
 import { connect } from 'react-redux'
 import ActionType from '../../../../redux/reducer/globalActionType'
-import AddChartManual from './addChartManual'
-import AddChartScan from './addChartScan'
-import ChartList from './chartList'
+import AddCartManual from './addCartManual'
+import AddCartScan from './addCartScan'
+import CartList from './cartList'
 import getAnggota from '../../../../utils/anggota/getAnggota'
+import getBarang from '../../../../utils/barang/getBarang'
 
 class TransPenjualan extends Component {
 
@@ -14,25 +15,51 @@ class TransPenjualan extends Component {
         transaksi: [],
         visiJenisInput: false,
         displayAnggota: false,
-        anggotas: []
+        anggotas: [],
+        barang: []
     }
 
     componentDidMount() {
-        this.props.handleFakturPenjualan(generateFaktur('FKJ'))
+        if (this.props.faktur == '') {
+            this.props.handleFakturPenjualan(generateFaktur('FKJ'))
+        }
         getAnggota().then((data) => {
             this.setState({ anggotas: data })
         })
-
+        getBarang().then((data) => {
+            this.setState({ barang: data })
+        })
     }
 
     render() {
-
-        const handleChart = async (e) => {
+        const handlecart = async (e) => {
             e.preventDefault()
+            let anggotaId = this.state.anggotas.find(({ nama }) => nama == this.props.anggota).id
+            let barangId = this.state.barang.find(({ nama }) => nama == this.props.namaBarang).id
+            let faktur = this.props.faktur
+            let jumlah = this.props.jumlah
+            let typePembayaran = this.props.typePembayaran
+            let harga = this.props.harga
             try {
-
+                if (jumlah == '' || faktur == '' || harga == '' || typePembayaran == '' || anggotaId == '' || barangId == '') {
+                    console.log('tidak memenuhi syarat')
+                } else {
+                    await axios.post('/transPenjualan', {
+                        jumlah,
+                        faktur,
+                        harga,
+                        typePembayaran,
+                        anggotaId,
+                        barangId
+                    })
+                    this.props.handleKodeBarang('')
+                    this.props.handlejenisBarang('')
+                    this.props.handleHargaBarang('')
+                    this.props.handleJumlah('')
+                    this.props.handleNamaBarang('')
+                }
             } catch (error) {
-                console.error(error)
+                console.error(error.response)
             }
         }
         const handleVisiInput = (e) => {
@@ -62,12 +89,14 @@ class TransPenjualan extends Component {
                                     <div className="col-md-3">
                                         <h1 className="card-title mt-1 fw-bolder">Faktur : { this.props.faktur } </h1>
                                     </div>
-                                    <div className="col-md-3">
-                                        <button type="button" className="btn btn-outline-secondary mt-3 " onClick={ () => this.props.handleFakturPenjualan(generateFaktur("FKJ")) }>
+                                    {/* <div className="col-md-3">
+                                        <button type="button" className="btn btn-outline-secondary mt-3 " 
+                                        onClick={ () => this.props.handleFakturPenjualan(generateFaktur("FKJ")) 
+                                        }>
                                             Buat Faktur
                                         </button>
-                                    </div>
-                                    <form className="row g-3" onSubmit={ handleChart }>
+                                    </div> */}
+                                    <form className="row g-3" onSubmit={ handlecart }>
                                         <div className="col-md-6">
                                             <label htmlFor="namaAnggota" className="form-label">Nama Anggota</label>
                                             <input type="text" className="form-control" id="namaAnggota" value={ this.props.anggota }
@@ -94,6 +123,7 @@ class TransPenjualan extends Component {
                                         <div className="col-md-6">
                                             <label htmlFor="typePembayaran" className="form-label">Type Pembayaran</label>
                                             <select id="typePembayaran" className="form-select" onChange={ (e) => this.props.handleTypeBayar(e.target.value) }>
+                                                <option selected value="">-- Pilih Type Pembayaran --</option>
                                                 <option
                                                     selected={ this.props.typePembayaran == 'Tunai' ? true : false }
                                                     value={ 'Tunai' }>Tunai</option>
@@ -112,9 +142,9 @@ class TransPenjualan extends Component {
                                         {
                                             this.state.visiJenisInput
                                                 ?
-                                                <AddChartScan />
+                                                <AddCartScan />
                                                 :
-                                                <AddChartManual />
+                                                <AddCartManual />
                                         }
                                         <div className="text-lg-end">
                                             <button type="submit" className="btn btn-primary">Tambah</button>
@@ -130,7 +160,7 @@ class TransPenjualan extends Component {
                         <div className="col-lg-12">
                             <div className="card">
                                 <div className="card-body">
-                                    <ChartList />
+                                    <CartList />
                                 </div>
                             </div>
                         </div>

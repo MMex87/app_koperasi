@@ -40,7 +40,7 @@ const getJoinPenAnBarang = async (req, res) => {
 
 const tambahPenjualan = async (req, res) => {
     try {
-        const [jumlah, faktur, harga, typePembayaran, anggotaId, barangId] = req.body
+        const { jumlah, faktur, harga, typePembayaran, anggotaId, barangId } = req.body
         await transPenjualanModel.create({
             jumlah, faktur, harga, typePembayaran, anggotaId, barangId
         })
@@ -53,7 +53,7 @@ const tambahPenjualan = async (req, res) => {
 
 const editPenjualan = async (req, res) => {
     try {
-        const [jumlah, faktur, harga, typePembayaran, anggotaId, barangId] = req.body
+        const { jumlah, faktur, harga, typePembayaran, anggotaId, barangId } = req.body
         await transPenjualanModel.update({
             jumlah, faktur, harga, typePembayaran, anggotaId, barangId
         }, {

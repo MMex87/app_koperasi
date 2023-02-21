@@ -17,7 +17,7 @@ const getReturnPenjualan = async (req, res) => {
 
 const tambahReturnPenjualan = async (req, res) => {
     try {
-        const [jumlah, faktur, transPenjualanId, anggotaId, barangId] = req.body
+        const { jumlah, faktur, transPenjualanId, anggotaId, barangId } = req.body
         await returnPenjualanModel.create({
             jumlah, faktur, transPenjualanId, typePembayaran, anggotaId, barangId
         })
@@ -30,7 +30,7 @@ const tambahReturnPenjualan = async (req, res) => {
 
 const editReturnPenjualan = async (req, res) => {
     try {
-        const [jumlah, faktur, transPenjualanId, anggotaId, barangId] = req.body
+        const { jumlah, faktur, transPenjualanId, anggotaId, barangId } = req.body
         await returnPenjualanModel.update({
             jumlah, faktur, transPenjualanId, typePembayaran, anggotaId, barangId
         }, {

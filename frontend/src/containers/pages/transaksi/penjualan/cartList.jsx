@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import axios from "../../../../api/axios";
 import ActionType from "../../../../redux/reducer/globalActionType";
 
-const chartList = (props) => {
+const CartList = (props) => {
   const [transaksi, setTransaksi] = useState([]);
 
   const getTransaksi = async () => {
@@ -17,14 +17,14 @@ const chartList = (props) => {
 
   useEffect(() => {
     getTransaksi();
-  }, []);
+  }, [props.harga]);
 
   return (
     <>
       <div className="col-lg-12">
         <div className="row">
           <div className="col-md-8">
-            <h1 className="card-title mt-1 fw-bold">Faktur : {props.faktur}</h1>
+            <h1 className="card-title mt-1 fw-bold">Faktur : { props.faktur }</h1>
           </div>
           <div className="col-md-4 ">
             <div className="search-bar text-center mt-3">
@@ -55,21 +55,21 @@ const chartList = (props) => {
           </tr>
         </thead>
         <tbody>
-          {transaksi.map((val, index) => (
-            <tr key={index}>
-              <th>{index + 1}</th>
-              <td>{val.anggota.nama}</td>
-              <td>{val.typePembayaran}</td>
-              <td>{val.barang.kodeBarang}</td>
-              <td>{val.barang.nama}</td>
-              <td>1</td>
-              <td>{val.barang.hargaJual}</td>
+          { transaksi.map((val, index) => (
+            <tr key={ index }>
+              <th>{ index + 1 }</th>
+              <td>{ val.anggota.nama }</td>
+              <td>{ val.typePembayaran }</td>
+              <td>{ val.barang.kodeBarang }</td>
+              <td>{ val.barang.nama }</td>
+              <td>{ val.jumlah }</td>
+              <td>{ val.barang.hargaJual }</td>
               <td>
                 <button className="btn btn-warning bx bx-edit-alt text-black-50" />
                 <button className="bx bx-trash btn btn-danger " />
               </td>
             </tr>
-          ))}
+          )) }
         </tbody>
       </table>
     </>
@@ -102,4 +102,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(chartList);
+export default connect(mapStateToProps, mapDispatchToProps)(CartList);

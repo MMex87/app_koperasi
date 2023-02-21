@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import ActionType from '../../../../redux/reducer/globalActionType'
 import getBarang from '../../../../utils/barang/getBarang'
 
-const addChartManual = (props) => {
+const addCartManual = (props) => {
   const [barang, setBarang] = useState([])
   const [displayKode, setDisplayKode] = useState(false)
   const [displayNama, setDisplayNama] = useState(false)
@@ -174,4 +174,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(addChartManual)
+export default connect(mapStateToProps, mapDispatchToProps)(addCartManual)

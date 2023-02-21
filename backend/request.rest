@@ -18,6 +18,20 @@ Content-Type: application/json
 "supplierId" : 1
 }
 
+
+###
+POST http://localhost:8800/transPenjualan
+Content-Type: application/json
+
+{
+    "jumlah": 1,
+    "faktur": "FKJ230222051009",
+    "harga": 12000,
+    "typePembayaran": "Tunai",
+    "anggotaId": 1,
+    "barangId": 2
+}
+
 ###
 PUT http://localhost:8800/barang/1
 Content-Type: application/json

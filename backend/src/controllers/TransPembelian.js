@@ -17,7 +17,7 @@ const getPembelian = async (req, res) => {
 
 const tambahPembelian = async (req, res) => {
     try {
-        const [jumlah, faktur, harga, typePembayaran, supplierId, barangId] = req.body
+        const { jumlah, faktur, harga, typePembayaran, supplierId, barangId } = req.body
         await transPembelianModel.create({
             jumlah, faktur, harga, typePembayaran, supplierId, barangId
         })
@@ -30,7 +30,7 @@ const tambahPembelian = async (req, res) => {
 
 const editPembelian = async (req, res) => {
     try {
-        const [jumlah, faktur, harga, typePembayaran, supplierId, barangId] = req.body
+        const { jumlah, faktur, harga, typePembayaran, supplierId, barangId } = req.body
         await transPembelianModel.update({
             jumlah, faktur, harga, typePembayaran, supplierId, barangId
         }, {
