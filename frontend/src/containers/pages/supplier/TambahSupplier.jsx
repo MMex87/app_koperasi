@@ -3,6 +3,7 @@ import Swal from 'sweetalert2'
 import withRouter from '../../../config/withRouter.jsx'
 import axios from '../../../api/axios.jsx'
 import { Link } from 'react-router-dom'
+import getSupplierId from '../../../utils/supplier/getSupplierId.jsx'
 
 
 class TambahSupplier extends Component {
@@ -14,23 +15,15 @@ class TambahSupplier extends Component {
 
     componentDidMount() {
         if (this.props.params.id) {
-            this.getSupplier()
-        }
-    }
-
-    getSupplier = async () => {
-        try {
-            const response = await axios.get(`/supplier/${this.props.params.id}`)
-            this.setState({
-                nama: response.data.nama,
-                noHP: response.data.noHP,
-                alamat: response.data.alamat
+            getSupplierId(this.props.params.id).then((data) => {
+                this.setState({
+                    nama: data.nama,
+                    noHP: data.noHP,
+                    alamat: data.alamat
+                })
             })
-        } catch (error) {
-            console.error(error)
         }
     }
-
 
     render() {
         // alert

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import axios from '../../../api/axios.jsx'
+import getBarang from '../../../utils/barang/getBarang.jsx'
 
 export default class Barang extends Component {
     state = {
@@ -7,17 +8,11 @@ export default class Barang extends Component {
     }
 
     componentDidMount() {
-        this.getBarang()
+        getBarang().then((data) => {
+            this.setState({ barang: data })
+        })
     }
 
-    getBarang = async () => {
-        try {
-            const response = await axios.get('/barang')
-            this.setState({ barang: response.data })
-        } catch (error) {
-            console.error(error)
-        }
-    }
 
     render() {
         return (

@@ -1,67 +1,66 @@
-import React, { Component } from "react";
-import axios from "../../../../api/axios";
-import { generateFaktur } from "../../../../components/faktur/generateFaktur";
-import { connect } from "react-redux";
-import ActionType from "../../../../redux/reducer/globalActionType";
-import AddChartManual from "./addChartManual";
-import AddChartScan from "./addChartScan";
-import ChartList from "./chartList";
+import React, { Component } from 'react'
+import axios from '../../../../api/axios'
+import { generateFaktur } from '../../../../components/faktur/generateFaktur'
+import { connect } from 'react-redux'
+import ActionType from '../../../../redux/reducer/globalActionType'
+import AddChartManual from './addChartManual'
+import AddChartScan from './addChartScan'
+import ChartList from './chartList'
+import getAnggota from '../../../../utils/anggota/getAnggota'
 
 class TransPenjualan extends Component {
-  state = {
-    transaksi: [],
-    visiJenisInput: false,
-    displayAnggota: false,
-    anggotas: [],
-  };
 
-  componentDidMount() {
-    this.props.handleFakturPenjualan(generateFaktur("FKJ"));
-    this.getAnggota();
-  }
-
-  getAnggota = async () => {
-    try {
-      const response = await axios.get("/anggota");
-      this.setState({ anggotas: response.data });
-    } catch (error) {
-      console.error(error);
+    state = {
+        transaksi: [],
+        visiJenisInput: false,
+        displayAnggota: false,
+        anggotas: []
     }
-  };
 
-  render() {
-    const handleChart = async (e) => {
-      e.preventDefault();
-      try {
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    const handleVisiInput = (e) => {
-      let handle = e.target.value;
-      if (handle == "scan") {
-        this.setState({ visiJenisInput: true });
-      } else {
-        this.setState({ visiJenisInput: false });
-      }
-    };
+    componentDidMount() {
+        this.props.handleFakturPenjualan(generateFaktur('FKJ'))
+        getAnggota().then((data) => {
+            this.setState({ anggotas: data })
+        })
 
-    const handleAutoAnggota = (val) => {
-      this.setState({ displayAnggota: false });
-      this.props.handleAnggota(val);
-    };
+    }
 
-    return (
-      <main id="main" className="main">
-        <div className="pagetitle text-center">
-          <h1>Transaksi Penjualan</h1>
-        </div>
-        <section className="section">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="card">
-                <div className="card-body row">
-                  <div className="col-md-3">
+    render() {
+
+        const handleChart = async (e) => {
+            e.preventDefault()
+            try {
+
+            } catch (error) {
+                console.error(error)
+            }
+        }
+        const handleVisiInput = (e) => {
+            let handle = e.target.value
+            if (handle == 'scan') {
+                this.setState({ visiJenisInput: true })
+            } else {
+                this.setState({ visiJenisInput: false })
+            }
+        }
+
+        const handleAutoAnggota = (val) => {
+            this.setState({ displayAnggota: false })
+            this.props.handleAnggota(val)
+        }
+
+
+        return (
+            <main id="main" className="main">
+                <div className="pagetitle text-center">
+                    <h1>Transaksi Penjualan</h1>
+                </div>
+                <section className="section">
+                    <div className="row">
+                        <div className="col-lg-12">
+                            <div className="card">
+                                <div className="card-body row">
+                                    <div className="col-md-3">
                     <h1 className="card-title mt-1 fw-bolder">Faktur : {this.props.faktur} </h1>
                   </div>
                   <div className="col-md-3">
@@ -69,38 +68,61 @@ class TransPenjualan extends Component {
                       Buat Faktur
                     </button>
                   </div>
-                  <form className="row g-3" onSubmit={handleChart}>
-                    <div className="col-md-6">
-                      <label htmlFor="namaAnggota" className="form-label">
-                        Nama Anggota
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="namaAnggota"
-                        value={this.props.anggota}
-                        autoComplete="false"
-                        onChange={(e) => this.props.handleAnggota(e.target.value)}
-                        onClick={() => this.setState({ displayAnggota: !this.state.displayAnggota })}
-                      />
-                      {this.state.displayAnggota && (
-                        <div className="flex-container flex-column pos-rel" style={{ height: 50 }}>
-                          <ul className="list-group list-group-flush">
-                            {this.state.anggotas
-                              .filter(({ nama }) => nama.indexOf(this.props.anggota) > -1)
-                              .map((v, i) => (
-                                <li
-                                  key={i}
-                                  onClick={() => {
-                                    handleAutoAnggota(v.nama);
-                                  }}
-                                  className="list-group-item"
-                                >
-                                  {" "}
-                                  {v.nama}
-                                </li>
-                              ))}
-                          </ul>
+                                    <form className="row g-3" onSubmit={ handleChart }>
+                                        <div className="col-md-6">
+                                            <label htmlFor="namaAnggota" className="form-label">Nama Anggota</label>
+                                            <input type="text" className="form-control" id="namaAnggota" value={ this.props.anggota }
+                                                autoComplete='false'
+                                                onChange={ (e) => this.props.handleAnggota(e.target.value) }
+                                                onClick={ () => this.setState({ displayAnggota: !this.state.displayAnggota }) } />
+                                            {
+                                                this.state.displayAnggota &&
+                                                <div className="flex-container flex-column pos-rel bodyAutoComplate">
+                                                    <ul className="list-group list-group-flush">
+                                                        {
+                                                            this.state.anggotas
+                                                                .filter(({ nama }) =>
+                                                                    nama.indexOf(this.props.anggota) > -1
+                                                                )
+                                                                .map((v, i) => (
+                                                                    <li key={ i } onClick={ () => { handleAutoAnggota(v.nama) } } className="list-group-item listAutoComplate" > { v.nama }</li>
+                                                                ))
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div className="col-md-6">
+                                            <label htmlFor="typePembayaran" className="form-label">Type Pembayaran</label>
+                                            <select id="typePembayaran" className="form-select" onChange={ (e) => this.props.handleTypeBayar(e.target.value) }>
+                                                <option
+                                                    selected={ this.props.typePembayaran == 'Tunai' ? true : false }
+                                                    value={ 'Tunai' }>Tunai</option>
+                                                <option
+                                                    selected={ this.props.typePembayaran == 'Bon' ? true : false }
+                                                    value={ 'Bon' }>BON</option>
+                                            </select>
+                                        </div>
+                                        <div className="col-12">
+                                            <label htmlFor="jenisInput" className="form-label">Jenis Input</label>
+                                            <select id="jenisInput" className="form-select" onChange={ handleVisiInput }>
+                                                <option value={ 'manual' }>Manual</option>
+                                                <option value={ 'scan' }>Scan Barcode</option>
+                                            </select>
+                                        </div>
+                                        {
+                                            this.state.visiJenisInput
+                                                ?
+                                                <AddChartScan />
+                                                :
+                                                <AddChartManual />
+                                        }
+                                        <div className="text-lg-end">
+                                            <button type="submit" className="btn btn-primary">Tambah</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                       )}
                     </div>
