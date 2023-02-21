@@ -62,10 +62,10 @@ class TransPenjualan extends Component {
               <div className="card">
                 <div className="card-body row">
                   <div className="col-md-3">
-                    <h1 className="card-title mt-1">Faktur : {this.props.faktur} </h1>
+                    <h1 className="card-title mt-1 fw-bolder">Faktur : {this.props.faktur} </h1>
                   </div>
                   <div className="col-md-3">
-                    <button type="button" className="btn btn-outline-secondary mt-3" onClick={() => this.props.handleFakturPenjualan(generateFaktur("FKJ"))}>
+                    <button type="button" className="btn btn-outline-secondary mt-3 " onClick={() => this.props.handleFakturPenjualan(generateFaktur("FKJ"))}>
                       Buat Faktur
                     </button>
                   </div>
@@ -128,8 +128,8 @@ class TransPenjualan extends Component {
                     </div>{" "}
                     {this.state.visiJenisInput ? <AddChartScan /> : <AddChartManual />}
                     <div className="text-lg-end">
-                      <button type="submit" className="btn btn-primary">
-                        Tambah
+                      <button type="submit" className="btn btn-primary fw-bolder">
+                        TAMBAH
                       </button>
                     </div>
                   </form>
@@ -149,22 +149,21 @@ class TransPenjualan extends Component {
             </div>
           </div>
         </section>
-        <section className="footer">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="card">
-                <div className="card-body text-end row">
-                  <div className="col-md-10">
-                    <h1 className="card-title mt-auto text-center">Total : 20000</h1>
-                  </div>
-                  <div className="col-md-2 mt-auto">
-                    <button className=" btn btn-primary">Print </button>
-                  </div>
+        <div className="row">
+          <div className="col-lg-12">
+            <div className="card">
+              <div className="card-body text-end row">
+                <div className="col-md-10">
+                  <h1 className="card-title text-end fw-bold fs-1">Total :</h1>
+                </div>
+                <div className="col-md-2 mt-3 text-start fs-2 fw-bold">Rp.2000</div>
+                <div className="col-md-11 ">
+                  <button className=" btn mt-auto fs-3 fw-normal btn-success bx bx-printer"> </button>
                 </div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
       </main>
     );
   }

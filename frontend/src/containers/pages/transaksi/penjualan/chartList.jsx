@@ -21,12 +21,12 @@ const chartList = (props) => {
 
   return (
     <>
-      <div className="row">
-        <div className="col-lg-12">
-          <div className="col-md-10">
-            <h1 className="card-title mt-1">Faktur : {props.faktur}</h1>
+      <div className="col-lg-12">
+        <div className="row">
+          <div className="col-md-8">
+            <h1 className="card-title mt-1 fw-bold">Faktur : {props.faktur}</h1>
           </div>
-          <div className="col-md-10">
+          <div className="col-md-4 ">
             <div className="search-bar text-center mt-3">
               <form className="search-form d-flex align-items-center" method="POST" action="#">
                 <div className="input-group mb-3">
