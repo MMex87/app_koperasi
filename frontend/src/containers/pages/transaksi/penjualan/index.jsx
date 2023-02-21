@@ -49,7 +49,6 @@ class TransPenjualan extends Component {
             this.props.handleAnggota(val)
         }
 
-
         return (
             <main id="main" className="main">
                 <div className="pagetitle text-center">
@@ -61,13 +60,13 @@ class TransPenjualan extends Component {
                             <div className="card">
                                 <div className="card-body row">
                                     <div className="col-md-3">
-                    <h1 className="card-title mt-1 fw-bolder">Faktur : {this.props.faktur} </h1>
-                  </div>
-                  <div className="col-md-3">
-                    <button type="button" className="btn btn-outline-secondary mt-3 " onClick={() => this.props.handleFakturPenjualan(generateFaktur("FKJ"))}>
-                      Buat Faktur
-                    </button>
-                  </div>
+                                        <h1 className="card-title mt-1 fw-bolder">Faktur : { this.props.faktur } </h1>
+                                    </div>
+                                    <div className="col-md-3">
+                                        <button type="button" className="btn btn-outline-secondary mt-3 " onClick={ () => this.props.handleFakturPenjualan(generateFaktur("FKJ")) }>
+                                            Buat Faktur
+                                        </button>
+                                    </div>
                                     <form className="row g-3" onSubmit={ handleChart }>
                                         <div className="col-md-6">
                                             <label htmlFor="namaAnggota" className="form-label">Nama Anggota</label>
@@ -124,97 +123,63 @@ class TransPenjualan extends Component {
                                 </div>
                             </div>
                         </div>
-                      )}
                     </div>
-                    <div className="col-md-6">
-                      <label htmlFor="typePembayaran" className="form-label">
-                        Type Pembayaran
-                      </label>
-                      <select id="typePembayaran" className="form-select" onChange={(e) => this.props.handleTypeBayar(e.target.value)}>
-                        <option selected={this.props.typePembayaran == "Tunai" && "true"} value={"Tunai"}>
-                          Tunai
-                        </option>
-                        <option selected={this.props.typePembayaran == "Bon" && "true"} value={"Bon"}>
-                          BON
-                        </option>
-                      </select>
+                </section >
+                <section className="section">
+                    <div className="row">
+                        <div className="col-lg-12">
+                            <div className="card">
+                                <div className="card-body">
+                                    <ChartList />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div className="col-12">
-                      <label htmlFor="jenisInput" className="form-label">
-                        Jenis Input
-                      </label>
-                      <select id="jenisInput" className="form-select" onChange={handleVisiInput}>
-                        <option value={"manual"}>Manual</option>
-                        <option value={"scan"}>Scan Barcode</option>
-                      </select>
-                    </div>{" "}
-                    {this.state.visiJenisInput ? <AddChartScan /> : <AddChartManual />}
-                    <div className="text-lg-end">
-                      <button type="submit" className="btn btn-primary fw-bolder">
-                        TAMBAH
-                      </button>
+                </section>
+                <div className="row">
+                    <div className="col-lg-12">
+                        <div className="card">
+                            <div className="card-body text-end row">
+                                <div className="col-md-10">
+                                    <h1 className="card-title text-end fw-bold fs-1">Total :</h1>
+                                </div>
+                                <div className="col-md-2 mt-3 text-start fs-2 fw-bold">Rp.2000</div>
+                                <div className="col-md-11 ">
+                                    <button className=" btn mt-auto fs-3 fw-normal btn-success bx bx-printer"> </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </form>
                 </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section className="section">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="card">
-                <div className="card-body">
-                  <ChartList />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-        <div className="row">
-          <div className="col-lg-12">
-            <div className="card">
-              <div className="card-body text-end row">
-                <div className="col-md-10">
-                  <h1 className="card-title text-end fw-bold fs-1">Total :</h1>
-                </div>
-                <div className="col-md-2 mt-3 text-start fs-2 fw-bold">Rp.2000</div>
-                <div className="col-md-11 ">
-                  <button className=" btn mt-auto fs-3 fw-normal btn-success bx bx-printer"> </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-    );
-  }
+            </main >
+        )
+    }
 }
 
 const mapStateToProps = (state) => {
-  return {
-    anggota: state.anggota,
-    typePembayaran: state.typePembayaran,
-    kodeBarang: state.kodeBarang,
-    namaBarang: state.namaBarang,
-    jumlah: state.jumlah,
-    jenis: state.jenis,
-    harga: state.harga,
-    faktur: state.faktur,
-  };
+    return {
+        anggota: state.anggota,
+        typePembayaran: state.typePembayaran,
+        kodeBarang: state.kodeBarang,
+        namaBarang: state.namaBarang,
+        jumlah: state.jumlah,
+        jenis: state.jenis,
+        harga: state.harga,
+        faktur: state.faktur,
+    };
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    handleAnggota: (anggota) => dispatch({ type: ActionType.SET_ANGGOTA_PENJUALAN, index: anggota }),
-    handleTypeBayar: (typeBayar) => dispatch({ type: ActionType.SET_TYPE_BAYAR_PENJUALAN, index: typeBayar }),
-    handleKodeBarang: (kodeBarang) => dispatch({ type: ActionType.SET_KODE_BARANG_PENJUALAN, index: kodeBarang }),
-    handleNamaBarang: (namaBarang) => dispatch({ type: ActionType.SET_NAMA_BARANG_PENJUALAN, index: namaBarang }),
-    handleJumlah: (jumlah) => dispatch({ type: ActionType.SET_JUMLAH_PENJUALAN, index: jumlah }),
-    handlejenisBarang: (jenisBarang) => dispatch({ type: ActionType.SET_JENIS_PENJUALAN, index: jenisBarang }),
-    handleHargaBarang: (hargaBarang) => dispatch({ type: ActionType.SET_HARGA_PENJUALAN, index: hargaBarang }),
-    handleFakturPenjualan: (faktur) => dispatch({ type: ActionType.SET_FAKTUR_PENJUALAN, index: faktur }),
-  };
+    return {
+        handleAnggota: (anggota) => dispatch({ type: ActionType.SET_ANGGOTA_PENJUALAN, index: anggota }),
+        handleTypeBayar: (typeBayar) => dispatch({ type: ActionType.SET_TYPE_BAYAR_PENJUALAN, index: typeBayar }),
+        handleKodeBarang: (kodeBarang) => dispatch({ type: ActionType.SET_KODE_BARANG_PENJUALAN, index: kodeBarang }),
+        handleNamaBarang: (namaBarang) => dispatch({ type: ActionType.SET_NAMA_BARANG_PENJUALAN, index: namaBarang }),
+        handleJumlah: (jumlah) => dispatch({ type: ActionType.SET_JUMLAH_PENJUALAN, index: jumlah }),
+        handlejenisBarang: (jenisBarang) => dispatch({ type: ActionType.SET_JENIS_PENJUALAN, index: jenisBarang }),
+        handleHargaBarang: (hargaBarang) => dispatch({ type: ActionType.SET_HARGA_PENJUALAN, index: hargaBarang }),
+        handleFakturPenjualan: (faktur) => dispatch({ type: ActionType.SET_FAKTUR_PENJUALAN, index: faktur }),
+    };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TransPenjualan);
