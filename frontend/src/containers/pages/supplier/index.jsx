@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import axios from '../../../api/axios.jsx'
 import Swal from 'sweetalert2'
 import { Link } from 'react-router-dom'
+import getSupplier from '../../../utils/supplier/getSupplier.jsx'
 
 export default class Supplier extends Component {
 
@@ -10,17 +11,11 @@ export default class Supplier extends Component {
     }
 
     componentDidMount() {
-        this.getSupplier()
+        getSupplier().then((data) => {
+            this.setState({ supplier: data })
+        })
     }
 
-    getSupplier = async () => {
-        try {
-            const response = await axios.get('/supplier')
-            this.setState({ supplier: response.data })
-        } catch (error) {
-            console.error(error)
-        }
-    }
 
     render() {
         const Toast = Swal.mixin({

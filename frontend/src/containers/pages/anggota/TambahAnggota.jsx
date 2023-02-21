@@ -3,6 +3,7 @@ import axios from '../../../api/axios.jsx'
 import Swal from 'sweetalert2'
 import withRouter from '../../../config/withRouter.jsx'
 import { Link } from 'react-router-dom'
+import getAnggotaId from '../../../utils/anggota/getAnggotaId.jsx'
 
 class TambahAnggota extends Component {
     constructor(props) {
@@ -16,27 +17,17 @@ class TambahAnggota extends Component {
 
     componentDidMount() {
         if (this.props.params.id) {
-            this.getAnggota()
+            getAnggotaId(this.props.params.id).then((data) => {
+                this.setState({
+                    nama: data.nama,
+                    nik: data.nik,
+                    noHP: data.noHP
+                })
+            })
         }
-        // this.setState({
-        //     nama: '',
-        //     nik: '',
-        //     noHP: ''
-        // })
     }
 
-    getAnggota = async () => {
-        try {
-            const response = await axios.get(`/anggota/${this.props.params.id}`)
-            this.setState({
-                nama: response.data.nama,
-                nik: response.data.nik,
-                noHP: response.data.noHP
-            })
-        } catch (error) {
-            console.error(error)
-        }
-    }
+
 
     render() {
         // alert

@@ -32,11 +32,11 @@ dotenv.config()
 // barangModel.sync()
 // barangModel.drop()
 // transPembelianModel.sync()
-// transPenjualanModel.sync({ alter: true })
+// transPenjualanModel.sync()
 // returnPembelianModel.sync()
-// returnPenjualanModel.sync({ force: true })
-// PenjualanBonModel.sync({ force: true })
-// PembayaranCicilanModel.sync({ force: true })
+// returnPenjualanModel.drop()
+// PenjualanBonModel.sync()
+// PembayaranCicilanModel.sync()
 
 
 // Body Parser

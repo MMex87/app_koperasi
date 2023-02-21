@@ -2,6 +2,7 @@ import React, { Component, useEffect } from 'react'
 import axios from '../../../api/axios.jsx'
 import Swal from 'sweetalert2'
 import { Link } from 'react-router-dom'
+import getAnggota from '../../../utils/anggota/getAnggota.jsx'
 
 export class Anggota extends Component {
     constructor(props) {
@@ -12,17 +13,9 @@ export class Anggota extends Component {
     }
 
     componentDidMount() {
-        this.getAnggota()
-    }
-
-
-    getAnggota = async () => {
-        try {
-            const response = await axios.get('/anggota')
-            this.setState({ anggota: response.data })
-        } catch (error) {
-            console.error(error)
-        }
+        getAnggota().then((data) => {
+            this.setState({ anggota: data })
+        })
     }
 
     render() {

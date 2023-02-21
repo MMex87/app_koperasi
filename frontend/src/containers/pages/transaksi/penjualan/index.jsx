@@ -6,6 +6,7 @@ import ActionType from '../../../../redux/reducer/globalActionType'
 import AddChartManual from './addChartManual'
 import AddChartScan from './addChartScan'
 import ChartList from './chartList'
+import getAnggota from '../../../../utils/anggota/getAnggota'
 
 class TransPenjualan extends Component {
 
@@ -18,20 +19,11 @@ class TransPenjualan extends Component {
 
     componentDidMount() {
         this.props.handleFakturPenjualan(generateFaktur('FKJ'))
-        this.getAnggota()
+        getAnggota().then((data) => {
+            this.setState({ anggotas: data })
+        })
+
     }
-
-
-    getAnggota = async () => {
-        try {
-            const response = await axios.get('/anggota')
-            this.setState({ anggotas: response.data })
-        } catch (error) {
-            console.error(error)
-        }
-    }
-
-
 
     render() {
 
@@ -91,7 +83,7 @@ class TransPenjualan extends Component {
                                                 onClick={ () => this.setState({ displayAnggota: !this.state.displayAnggota }) } />
                                             {
                                                 this.state.displayAnggota &&
-                                                <div className="flex-container flex-column pos-rel" style={ { height: 50 } }>
+                                                <div className="flex-container flex-column pos-rel bodyAutoComplate">
                                                     <ul className="list-group list-group-flush">
                                                         {
                                                             this.state.anggotas
@@ -99,7 +91,7 @@ class TransPenjualan extends Component {
                                                                     nama.indexOf(this.props.anggota) > -1
                                                                 )
                                                                 .map((v, i) => (
-                                                                    <li key={ i } onClick={ () => { handleAutoAnggota(v.nama) } } className="list-group-item" > { v.nama }</li>
+                                                                    <li key={ i } onClick={ () => { handleAutoAnggota(v.nama) } } className="list-group-item listAutoComplate" > { v.nama }</li>
                                                                 ))
                                                         }
                                                     </ul>
@@ -110,10 +102,10 @@ class TransPenjualan extends Component {
                                             <label htmlFor="typePembayaran" className="form-label">Type Pembayaran</label>
                                             <select id="typePembayaran" className="form-select" onChange={ (e) => this.props.handleTypeBayar(e.target.value) }>
                                                 <option
-                                                    selected={ this.props.typePembayaran == 'Tunai' && 'true' }
+                                                    selected={ this.props.typePembayaran == 'Tunai' ? true : false }
                                                     value={ 'Tunai' }>Tunai</option>
                                                 <option
-                                                    selected={ this.props.typePembayaran == 'Bon' && 'true' }
+                                                    selected={ this.props.typePembayaran == 'Bon' ? true : false }
                                                     value={ 'Bon' }>BON</option>
                                             </select>
                                         </div>

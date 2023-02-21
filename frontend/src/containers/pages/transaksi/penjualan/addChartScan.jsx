@@ -1,13 +1,37 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
+import ActionType from '../../../../redux/reducer/globalActionType'
+import getBarang from '../../../../utils/barang/getBarang'
 
 const addChartScan = (props) => {
+
+    const [barang, setBarang] = useState([])
+
+    useEffect(() => {
+        getBarang().then((data) => {
+            setBarang(data)
+        })
+    }, [])
+
+    const handleScan = (e) => {
+        const kode = e.target.value
+        const barangs = barang.find(({ kodeBarang }) => kodeBarang == kode)
+        props.handleKodeBarang(kode)
+        if (barangs != undefined) {
+            props.handleJumlah(1)
+            props.handleNamaBarang(barangs.nama)
+            props.handlejenisBarang(barangs.jenisBarang)
+        }
+    }
+
     return (
+
+
         <>
             <div className="col-12">
                 <label htmlFor="kodeBarangScan" className="form-label">Kode Barang</label>
-                <input type="text" className="form-control" id="kodeBarangScan" value={ this.props.kodeBarang } autoFocus={ true }
-                    onChange={ (e) => this.props.handleKodeBarang(e.target.value) } />
+                <input type="text" className="form-control" id="kodeBarangScan" value={ props.kodeBarang } autoFocus={ true }
+                    onChange={ handleScan } />
             </div>
         </>
     )
