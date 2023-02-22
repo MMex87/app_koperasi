@@ -8,6 +8,7 @@ import AddCartScan from './addCartScan'
 import CartList from './cartList'
 import getAnggota from '../../../../utils/anggota/getAnggota'
 import getBarang from '../../../../utils/barang/getBarang'
+import getTransPenjualan from '../../../../utils/transaksiPenjualan/getTransPenjualan'
 
 class TransPenjualan extends Component {
 
@@ -16,7 +17,8 @@ class TransPenjualan extends Component {
         visiJenisInput: false,
         displayAnggota: false,
         anggotas: [],
-        barang: []
+        barang: [],
+        penjualan: []
     }
 
     componentDidMount() {
@@ -29,29 +31,52 @@ class TransPenjualan extends Component {
         getBarang().then((data) => {
             this.setState({ barang: data })
         })
+        getTransPenjualan().then((data) => {
+            this.setState({ penjualan: data })
+        })
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.namaBarang != this.props.namaBarang) {
+            getTransPenjualan().then((data) => {
+                this.setState({ penjualan: data })
+            })
+        }
     }
 
     render() {
         const handlecart = async (e) => {
             e.preventDefault()
             let anggotaId = this.state.anggotas.find(({ nama }) => nama == this.props.anggota).id
-            let barangId = this.state.barang.find(({ nama }) => nama == this.props.namaBarang).id
-            let faktur = this.props.faktur
+            let barangIdLokal = this.state.barang.find(({ nama }) => nama == this.props.namaBarang).id
+            let fakturLokal = this.props.faktur
             let jumlah = this.props.jumlah
             let typePembayaran = this.props.typePembayaran
             let harga = this.props.harga
+            let trans = this.state.penjualan.find(({ faktur, barangId }) => faktur == fakturLokal && barangId == barangIdLokal)
+            console.log(trans)
             try {
-                if (jumlah == '' || faktur == '' || harga == '' || typePembayaran == '' || anggotaId == '' || barangId == '') {
+                if (jumlah == '' || fakturLokal == '' || harga == '' || typePembayaran == '' || anggotaId == '' || barangIdLokal == '') {
                     console.log('tidak memenuhi syarat')
                 } else {
-                    await axios.post('/transPenjualan', {
-                        jumlah,
-                        faktur,
-                        harga,
-                        typePembayaran,
-                        anggotaId,
-                        barangId
-                    })
+                    if (
+                        trans == undefined
+                    ) {
+                        console.log('masuk kosong')
+                        await axios.post('/transPenjualan', {
+                            jumlah,
+                            faktur: fakturLokal,
+                            harga,
+                            typePembayaran,
+                            anggotaId,
+                            barangId: barangIdLokal
+                        })
+                    } else {
+                        console.log('masuk ada')
+                        await axios.put(`/transPenjualan/${trans.id}`, {
+                            jumlah: parseInt(trans.jumlah) + parseInt(jumlah)
+                        })
+                    }
                     this.props.handleKodeBarang('')
                     this.props.handlejenisBarang('')
                     this.props.handleHargaBarang('')
@@ -166,21 +191,6 @@ class TransPenjualan extends Component {
                         </div>
                     </div>
                 </section>
-                <div className="row">
-                    <div className="col-lg-12">
-                        <div className="card">
-                            <div className="card-body text-end row">
-                                <div className="col-md-10">
-                                    <h1 className="card-title text-end fw-bold fs-1">Total :</h1>
-                                </div>
-                                <div className="col-md-2 mt-3 text-start fs-2 fw-bold">Rp.2000</div>
-                                <div className="col-md-11 ">
-                                    <button className=" btn mt-auto fs-3 fw-normal btn-success bx bx-printer"> </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </main >
         )
     }

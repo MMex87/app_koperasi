@@ -31,6 +31,16 @@ const getBarangId = async (req, res) => {
     }
 }
 
+const barangTerjual = async (req, res) => {
+    try {
+        await barangModel.increment({ jumlah: -parseInt(req.params.jumlah) })
+        res.status(200).json({ msg: 'Data Berhasil Diubah' })
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ msg: "Gagal Mengubah Data! " + error })
+    }
+}
+
 const tambahBarang = async (req, res) => {
     try {
         const { nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, supplierId } = req.body
@@ -83,6 +93,7 @@ const hapusBarang = async (req, res) => {
 
 module.exports = {
     getBarang,
+    barangTerjual,
     getBarangId,
     tambahBarang,
     editBarang,

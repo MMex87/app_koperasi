@@ -29,9 +29,36 @@ const getJoinPenAnBarang = async (req, res) => {
                     as: 'anggota'
                 }
             ],
-            attributes: ['jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuBeli']]
+            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuBeli']]
         })
         res.status(200).json(penjualan)
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    }
+}
+
+const getTotalHarga = async (req, res) => {
+    try {
+        const faktur = req.params.faktur
+        const transaksi = await transPenjualanModel.findAll({
+            include: [
+                {
+                    model: barangModel
+                }
+            ],
+            where: { faktur }
+        })
+        let total = 0
+        for (let val of transaksi) {
+            if (val.faktur == faktur) {
+                let temp = parseInt(val.barang.hargaJual) * parseInt(val.jumlah)
+                total = total + temp
+            }
+        }
+
+
+        res.status(200).json({ total })
     } catch (error) {
         console.error(error)
         res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
@@ -85,6 +112,7 @@ const hapusPenjualan = async (req, res) => {
 module.exports = {
     getPenjualan,
     getJoinPenAnBarang,
+    getTotalHarga,
     tambahPenjualan,
     editPenjualan,
     hapusPenjualan
