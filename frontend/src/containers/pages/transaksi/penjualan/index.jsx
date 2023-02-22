@@ -76,7 +76,7 @@ class TransPenjualan extends Component {
     };
 
     return (
-      <main id="main" className="main">
+      <main id="main_card" className="main">
         <div className="pagetitle text-center">
           <h1>Transaksi Penjualan</h1>
         </div>
@@ -181,13 +181,13 @@ class TransPenjualan extends Component {
 
         <div className="row">
           <div className="col-lg-12">
-            <div className="card">
+            <div className="card" id="card_total">
               <div className="card-body text-end row">
-                <div className="col-md-9">
+                <div className="col-md-7">
                   <h1 className="card-title text-end fw-bold fs-1">TOTAL :</h1>
                 </div>
-                <div className="col-md-3 ">
-                  <h1 className="card-title text-end fs-1 fw-bold">Rp.2000</h1>
+                <div className="col-md-5">
+                  <h1 className="card-title text-end fs-1 fw-bold">Rp 10.000.000,00</h1>
                 </div>
                 <div className="col-md-12 ">
                   <button className=" btn mt-auto fs-3 fw-normal btn-success bx bx-printer"> </button>

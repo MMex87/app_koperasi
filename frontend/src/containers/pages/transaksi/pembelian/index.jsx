@@ -28,8 +28,18 @@ export default class TransPembelian extends Component {
                         Type Pembayaran
                       </label>
                       <select id="inputState" className="form-select">
-                        <option selected>Tunai</option>
+                        <option selected>-- Pilih Type Pembayaran --</option>
+                        <option>Tunai</option>
                         <option>BON</option>
+                      </select>
+                    </div>
+                    <div className="col-12">
+                      <label htmlFor="jenisInput" className="form-label">
+                        Jenis Input
+                      </label>
+                      <select id="jenisInput" className="form-select">
+                        <option value={"manual"}>Manual</option>
+                        <option value={"scan"}>Scan Barcode</option>
                       </select>
                     </div>
                     <div className="col-md-3">
@@ -60,7 +70,7 @@ export default class TransPembelian extends Component {
                       <label htmlFor="inputState" className="form-label">
                         Harga
                       </label>
-                      <input type="text" className="form-control" id="inputEmail5" />
+                      <input type="text" className="form-control" id="inputEmail5" disabled />
                     </div>
                     <div className="text-lg-end">
                       <button type="submit" className="btn btn-primary fw-bold">

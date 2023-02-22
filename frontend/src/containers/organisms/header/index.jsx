@@ -1,5 +1,5 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React from "react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
@@ -9,7 +9,6 @@ const Header = () => {
           <img src={"assets/img/logo_koperasi.png"} />
           <span className="d-none d-lg-block">Kantin</span>
         </Link>
-        <i className="bi bi-list toggle-sidebar-btn" />
       </div>
       <nav className="header-nav ms-auto">
         <ul className="d-flex align-items-center">
