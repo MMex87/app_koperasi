@@ -69,7 +69,8 @@ class TransPenjualan extends Component {
                             harga,
                             typePembayaran,
                             anggotaId,
-                            barangId: barangIdLokal
+                            barangId: barangIdLokal,
+                            statusPenjualan: 'onProcess'
                         })
                     } else {
                         console.log('masuk ada')

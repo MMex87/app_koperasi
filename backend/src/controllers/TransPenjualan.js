@@ -29,7 +29,7 @@ const getJoinPenAnBarang = async (req, res) => {
                     as: 'anggota'
                 }
             ],
-            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuBeli']]
+            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPenjualan']
         })
         res.status(200).json(penjualan)
     } catch (error) {
@@ -67,9 +67,9 @@ const getTotalHarga = async (req, res) => {
 
 const tambahPenjualan = async (req, res) => {
     try {
-        const { jumlah, faktur, harga, typePembayaran, anggotaId, barangId } = req.body
+        const { jumlah, faktur, harga, typePembayaran, anggotaId, barangId, statusPenjualan } = req.body
         await transPenjualanModel.create({
-            jumlah, faktur, harga, typePembayaran, anggotaId, barangId
+            jumlah, faktur, harga, typePembayaran, anggotaId, barangId, statusPenjualan
         })
         res.status(200).json({ msg: 'Data Berhasil diTambahkan!' })
     } catch (error) {
@@ -80,9 +80,9 @@ const tambahPenjualan = async (req, res) => {
 
 const editPenjualan = async (req, res) => {
     try {
-        const { jumlah, faktur, harga, typePembayaran, anggotaId, barangId } = req.body
+        const { jumlah, faktur, harga, typePembayaran, anggotaId, barangId, statusPenjualan } = req.body
         await transPenjualanModel.update({
-            jumlah, faktur, harga, typePembayaran, anggotaId, barangId
+            jumlah, faktur, harga, typePembayaran, anggotaId, barangId, statusPenjualan
         }, {
             where: {
                 id: req.params.id

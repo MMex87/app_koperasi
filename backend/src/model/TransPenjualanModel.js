@@ -15,6 +15,9 @@ const transPenjualanModel = db.define('transPenjualan', {
     },
     typePembayaran: {
         type: DataTypes.STRING
+    },
+    statusPenjualan: {
+        type: DataTypes.STRING
     }
 }, {
     freezeTableName: true,
