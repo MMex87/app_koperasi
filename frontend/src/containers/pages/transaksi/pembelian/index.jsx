@@ -1,7 +1,25 @@
 import React, { Component } from "react";
+import AddCartManual from "../penjualan/addCartManual";
+import AddCartScan from "../penjualan/addCartScan";
 
 export default class TransPembelian extends Component {
+  state = {
+    transaksi: [],
+    visiJenisInput: false,
+    displayAnggota: false,
+    anggotas: [],
+    barang: [],
+  };
   render() {
+    const handleVisiInput = (e) => {
+      let handle = e.target.value;
+      if (handle == "scan") {
+        this.setState({ visiJenisInput: true });
+      } else {
+        this.setState({ visiJenisInput: false });
+      }
+    };
+
     return (
       <main id="main" className="main">
         <div className="pagetitle text-center">
@@ -37,41 +55,13 @@ export default class TransPembelian extends Component {
                       <label htmlFor="jenisInput" className="form-label">
                         Jenis Input
                       </label>
-                      <select id="jenisInput" className="form-select">
+                      <select id="jenisInput" className="form-select" onChange={handleVisiInput}>
                         <option value={"manual"}>Manual</option>
                         <option value={"scan"}>Scan Barcode</option>
                       </select>
                     </div>
-                    <div className="col-md-3">
-                      <label htmlFor="inputPassword5" className="form-label">
-                        Kode Barang
-                      </label>
-                      <input type="password" className="form-control" id="inputPassword5" />
-                    </div>
-                    <div className="col-md-3">
-                      <label htmlFor="inputPassword5" className="form-label">
-                        Nama Barang
-                      </label>
-                      <input type="password" className="form-control" id="inputPassword5" />
-                    </div>
-                    <div className="col-2">
-                      <label htmlFor="inputAddress5" className="form-label">
-                        Jumlah
-                      </label>
-                      <input type="text" className="form-control" id="inputAddres5s" />
-                    </div>
-                    <div className="col-1">
-                      <label htmlFor="inputAddress5" className="form-label">
-                        Jenis
-                      </label>
-                      <input type="text" className="form-control" id="inputAddres5s" />
-                    </div>
-                    <div className="col-md-3">
-                      <label htmlFor="inputState" className="form-label">
-                        Harga
-                      </label>
-                      <input type="text" className="form-control" id="inputEmail5" disabled />
-                    </div>
+                    {this.state.visiJenisInput ? <AddCartScan /> : <AddCartManual />}
+
                     <div className="text-lg-end">
                       <button type="submit" className="btn btn-primary fw-bold">
                         TAMBAH

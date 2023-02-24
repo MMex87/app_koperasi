@@ -75,7 +75,6 @@ export default class Supplier extends Component {
                     <Link to="/supplier/tambah">
                       <img src={"assets/img/add.svg"} alt="" id="add" />
                     </Link>
-                    {""}
                   </div>
                   <table className="table">
                     <thead>
