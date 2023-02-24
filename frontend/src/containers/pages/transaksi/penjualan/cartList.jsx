@@ -154,7 +154,7 @@ const CartList = (props) => {
       <div className="col-lg-12">
         <div className="row">
           <div className="col-md-8">
-            <h1 className="card-title mt-1 fw-bold">Faktur : {props.faktur}</h1>
+            <h1 className="card-title mt-1 fw-bold">Faktur : { props.faktur }</h1>
           </div>
           {
             displaySearch
@@ -238,10 +238,10 @@ const CartList = (props) => {
                 }
               </td>
             </tr>
-          ))}
+          )) }
         </tbody>
       </table>
-      <div className="row">
+      {/* <div id="main" className="row">
         <div className="col-lg-12">
           <div className="card">
             <div className="card-body text-end row">
@@ -255,7 +255,24 @@ const CartList = (props) => {
             </div>
           </div>
         </div>
+      </div> */}
+
+      <div className="col-lg-12">
+        <div className="card" id="card_total">
+          <div className="card-body text-end row">
+            <div className="col-md-7">
+              <h1 className="card-title text-end fw-bold fs-1">TOTAL :</h1>
+            </div>
+            <div className="col-md-5">
+              <h1 className="card-title text-end fs-1 fw-bold">Rp 10.000.000,00</h1>
+            </div>
+            <div className="col-md-12 ">
+              <button className=" btn mt-auto fs-3 fw-normal btn-success bx bx-printer"> </button>
+            </div>
+          </div>
+        </div>
       </div>
+
     </>
   );
 };
