@@ -18,7 +18,7 @@ class TransPenjualan extends Component {
         displayAnggota: false,
         anggotas: [],
         barang: [],
-        penjualan: []
+        penjualan: [],
     }
 
     componentDidMount() {

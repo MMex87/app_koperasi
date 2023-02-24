@@ -6,6 +6,7 @@ import getTotalHarga from "../../../../utils/transaksiPenjualan/getTotalHarga";
 import getTransPenjualanJoin from "../../../../utils/transaksiPenjualan/getTransPenjualanJoin";
 import hapusTransaksiPenjualan from "../../../../utils/transaksiPenjualan/hapusTransaksiPenjualan";
 import Swal from 'sweetalert2'
+import { generateFaktur } from "../../../../components/faktur/generateFaktur";
 
 const CartList = (props) => {
   // alert
@@ -22,24 +23,97 @@ const CartList = (props) => {
   const [jumlah, setJumlah] = useState(0)
   const [refresh, setRefresh] = useState(false)
   const [display, setDisplay] = useState(false)
+
+  // state search faktur
+  const [displaySearch, setDisplaySearch] = useState(false)
+  const [displayAutoFaktur, setDisplayAutoFaktur] = useState(false)
+  const [searchFaktur, setSearchFaktur] = useState('')
+
+  const [dataFilterFaktur, setDataFilterFaktur] = useState([])
   // let hargaJual = 0
 
   useEffect(() => {
     getTransPenjualanJoin().then((data) => {
       setTransaksi(data);
+      let arrayFilterPenjualan = []
+      let dataFaktur = []
+      dataFaktur = data
+
+      // sortir Data Double
+      const filteredSearchFaktur = dataFaktur.filter(
+        (value, index, self) =>
+          index === self.findIndex((t) => t.faktur === value.faktur)
+      );
+      arrayFilterPenjualan = filteredSearchFaktur
+
+      // filter status penjualan
+      if (dataFaktur.filter(({ statusPenjualan }) => statusPenjualan == 'onProcess').length == 0) {
+        setDisplaySearch(true)
+
+        // filter Faktur Search
+        if (dataFaktur.filter(({ faktur }) => faktur == searchFaktur).length == 0) {
+          props.handleFakturPenjualan(generateFaktur('FKJ'))
+        } else {
+          getTotalHarga(searchFaktur).then((data) => {
+            setHargaJual(data)
+          })
+        }
+
+
+      } else {
+        setDisplaySearch(false)
+        let fakturLama = dataFaktur.find(({ statusPenjualan }) => statusPenjualan == 'onProcess')
+        let dataPenjualan = arrayFilterPenjualan.find(({ faktur }) => faktur == fakturLama.faktur)
+
+        props.handleFakturPenjualan(dataPenjualan.faktur)
+        props.handleAnggota(dataPenjualan.anggota.nama)
+        props.handleTypeBayar(dataPenjualan.typePembayaran)
+      }
+
+      setDataFilterFaktur(filteredSearchFaktur)
     })
     getTotalHarga(props.faktur).then((data) => {
       setHargaJual(data)
     })
 
-  }, [props.harga, props.jumlah, refresh]);
+  }, [props.harga, props.jumlah, refresh, searchFaktur]);
 
   const handleEditJumlah = (val) => {
     setDisplay(true)
   }
 
-  const save = () => {
+  const handleAutoFaktur = (val) => {
+    setDisplayAutoFaktur(false)
+    setSearchFaktur(val)
+    props.handleFakturPenjualan(val)
+  }
 
+
+
+  const save = async () => {
+
+  }
+
+  const handlePrint = async () => {
+    const { value: formValues } = await Swal.fire({
+      title: 'Checkout Pembayaran',
+      html: (
+        <>
+          <p>{ hargaJual?.total }</p>
+        </>
+      ),
+      focusConfirm: false,
+      preConfirm: () => {
+        return [
+          document.getElementById('swal-input1').value,
+          document.getElementById('swal-input2').value
+        ]
+      }
+    })
+
+    if (formValues) {
+      Swal.fire(JSON.stringify(formValues))
+    }
   }
 
   const handleHapusTransaksi = (val) => {
@@ -74,6 +148,7 @@ const CartList = (props) => {
   }
 
 
+
   return (
     <>
       <div className="col-lg-12">
@@ -81,18 +156,40 @@ const CartList = (props) => {
           <div className="col-md-8">
             <h1 className="card-title mt-1 fw-bold">Faktur : { props.faktur }</h1>
           </div>
-          <div className="col-md-4 ">
-            <div className="search-bar text-center mt-3">
-              <form className="search-form d-flex align-items-center" method="POST" action="#">
-                <div className="input-group mb-3">
-                  <input type="text" className="form-control" name="query" placeholder="Cari Faktur" title="Enter search keyword" aria-label="Recipient's username" aria-describedby="button-addon2" />
-                  <button className="btn btn-outline-secondary" type="button" id="button-addon2">
-                    <i className="bi bi-search" />
-                  </button>
-                </div>
-              </form>
+          {
+            displaySearch
+            &&
+            <div className="col-md-4 ">
+              <div className="search-bar text-center mt-3">
+                <form className="search-form d-flex align-items-center" method="POST" action="#">
+                  <div className="input-group mb-3">
+                    <div>
+                      <input type="text" className="form-control" name="query" placeholder="Cari Faktur" title="Enter search keyword" aria-label="Recipient's username" aria-describedby="button-addon2"
+                        value={ searchFaktur }
+                        onChange={ (e) => setSearchFaktur(e.target.value) }
+                        onClick={ () => setDisplayAutoFaktur(!displayAutoFaktur) }
+                      />
+                      {
+                        displayAutoFaktur &&
+                        <div className="flex-container flex-column pos-rel bodyAutoComplate position-relative">
+                          <ul className="list-group list-group-flush">
+                            {
+                              dataFilterFaktur.filter(({ faktur }) =>
+                                faktur.indexOf(searchFaktur) > -1
+                              )
+                                .map((v, i) => (
+                                  <li key={ i } onClick={ () => handleAutoFaktur(v.faktur) } className="list-group-item listAutoComplate" > { v.faktur }</li>
+                                ))
+                            }
+                          </ul>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </form>
+              </div>
             </div>
-          </div>
+          }
         </div>
       </div>
 
@@ -153,7 +250,7 @@ const CartList = (props) => {
               </div>
               <div className="col-md-4 mt-3 text-start fs-2 fw-bold">{ hargaJual.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }) }</div>
               <div className="col-md-11 ">
-                <button className=" btn mt-auto fs-3 fw-normal btn-success bx bx-printer"> </button>
+                <button className=" btn mt-auto fs-3 fw-normal btn-success bx bx-printer" onClick={ handlePrint }> </button>
               </div>
             </div>
           </div>

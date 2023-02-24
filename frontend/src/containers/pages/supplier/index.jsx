@@ -44,7 +44,9 @@ export default class Supplier extends Component {
                             'Data Supplier Sudah Terhapus.',
                             'success'
                         )
-                        this.getSupplier()
+                        getSupplier().then((data) => {
+                            this.setState({ supplier: data })
+                        })
                     } else if (
                         /* Read more about handling dismissals below */
                         result.dismiss === Swal.DismissReason.cancel

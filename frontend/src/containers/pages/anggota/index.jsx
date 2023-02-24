@@ -46,7 +46,9 @@ export class Anggota extends Component {
                             'Data Anggota Sudah Terhapus.',
                             'success'
                         )
-                        this.getAnggota()
+                        getAnggota().then((data) => {
+                            this.setState({ anggota: data })
+                        })
                     } else if (
                         /* Read more about handling dismissals below */
                         result.dismiss === Swal.DismissReason.cancel
