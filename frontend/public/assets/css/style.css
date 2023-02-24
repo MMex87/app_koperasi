@@ -12,6 +12,37 @@
   scroll-behavior: smooth;
 }
 
+#add {
+  height: 45px;
+  width: 45px;
+  margin-top: 13px;
+  margin-left: 20px;
+}
+
+#li {
+  margin-left: -90px;
+}
+
+#main_card {
+  position: absolute;
+  top: 0;
+  height: 0;
+  bottom: 1;
+  width: 1200px;
+  padding-top: 100px;
+  margin-left: 300px;
+  padding-left: 30px;
+  padding-bottom: 1000px;
+}
+
+#card_total {
+  position: fixed;
+  bottom: 0;
+  width: 82%;
+  background-color: #ffffff;
+  text-align: center;
+}
+
 body {
   font-family: "Open Sans", sans-serif;
   background: #f6f9ff;
@@ -61,6 +92,7 @@ h6 {
 
 .pagetitle h1 {
   font-size: 24px;
+  margin-left: -90px;
   margin-bottom: 0;
   font-weight: 600;
   color: #012970;
@@ -234,7 +266,8 @@ h6 {
 
 /* Card */
 .card {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  margin-left: -90px;
   border: none;
   border-radius: 5px;
   box-shadow: 0px 0 30px rgba(1, 41, 112, 0.1);
@@ -245,7 +278,6 @@ h6 {
   border-color: #ebeef4;
   background-color: #fff;
   color: #798eb3;
-  padding: 15px;
 }
 
 .card-title {
@@ -488,9 +520,10 @@ h6 {
   list-style: none;
 }
 
-.header-nav>ul {
+.header-nav > ul {
   margin: 0;
   padding: 0;
+  margin-left: -90px;
 }
 
 .header-nav .nav-icon {
@@ -629,10 +662,10 @@ h6 {
   top: 60px;
   left: 0;
   bottom: 0;
-  width: 300px;
+  width: 220px;
   z-index: 996;
   transition: all 0.3s;
-  padding: 20px;
+  padding: 10px;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #aab7cf transparent;
@@ -657,7 +690,6 @@ h6 {
 }
 
 @media (min-width: 1200px) {
-
   #main,
   #footer {
     margin-left: 300px;
@@ -671,7 +703,6 @@ h6 {
 }
 
 @media (min-width: 1200px) {
-
   .toggle-sidebar #main,
   .toggle-sidebar #footer {
     margin-left: 0;
@@ -910,7 +941,7 @@ h6 {
 }
 
 /* News & Updates */
-.dashboard .news .post-item+.post-item {
+.dashboard .news .post-item + .post-item {
   margin-top: 15px;
 }
 
@@ -1177,7 +1208,7 @@ h6 {
   padding: 12px 15px;
 }
 
-.contact .php-email-form button[type=submit] {
+.contact .php-email-form button[type="submit"] {
   background: #4154f1;
   border: 0;
   padding: 10px 30px;
@@ -1186,7 +1217,7 @@ h6 {
   border-radius: 4px;
 }
 
-.contact .php-email-form button[type=submit]:hover {
+.contact .php-email-form button[type="submit"]:hover {
   background: #5969f3;
 }
 

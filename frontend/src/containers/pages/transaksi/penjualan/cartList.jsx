@@ -154,7 +154,7 @@ const CartList = (props) => {
       <div className="col-lg-12">
         <div className="row">
           <div className="col-md-8">
-            <h1 className="card-title mt-1 fw-bold">Faktur : { props.faktur }</h1>
+            <h1 className="card-title mt-1 fw-bold">Faktur : {props.faktur}</h1>
           </div>
           {
             displaySearch
@@ -238,7 +238,7 @@ const CartList = (props) => {
                 }
               </td>
             </tr>
-          )) }
+          ))}
         </tbody>
       </table>
       <div className="row">
