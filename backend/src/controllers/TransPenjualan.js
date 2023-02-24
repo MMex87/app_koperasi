@@ -29,7 +29,7 @@ const getJoinPenAnBarang = async (req, res) => {
                     as: 'anggota'
                 }
             ],
-            attributes: ['jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuBeli']]
+            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPenjualan']
         })
         res.status(200).json(penjualan)
     } catch (error) {
@@ -38,11 +38,38 @@ const getJoinPenAnBarang = async (req, res) => {
     }
 }
 
+const getTotalHarga = async (req, res) => {
+    try {
+        const faktur = req.params.faktur
+        const transaksi = await transPenjualanModel.findAll({
+            include: [
+                {
+                    model: barangModel
+                }
+            ],
+            where: { faktur }
+        })
+        let total = 0
+        for (let val of transaksi) {
+            if (val.faktur == faktur) {
+                let temp = parseInt(val.barang.hargaJual) * parseInt(val.jumlah)
+                total = total + temp
+            }
+        }
+
+
+        res.status(200).json({ total })
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    }
+}
+
 const tambahPenjualan = async (req, res) => {
     try {
-        const { jumlah, faktur, harga, typePembayaran, anggotaId, barangId } = req.body
+        const { jumlah, faktur, harga, typePembayaran, anggotaId, barangId, statusPenjualan } = req.body
         await transPenjualanModel.create({
-            jumlah, faktur, harga, typePembayaran, anggotaId, barangId
+            jumlah, faktur, harga, typePembayaran, anggotaId, barangId, statusPenjualan
         })
         res.status(200).json({ msg: 'Data Berhasil diTambahkan!' })
     } catch (error) {
@@ -53,9 +80,9 @@ const tambahPenjualan = async (req, res) => {
 
 const editPenjualan = async (req, res) => {
     try {
-        const { jumlah, faktur, harga, typePembayaran, anggotaId, barangId } = req.body
+        const { jumlah, faktur, harga, typePembayaran, anggotaId, barangId, statusPenjualan } = req.body
         await transPenjualanModel.update({
-            jumlah, faktur, harga, typePembayaran, anggotaId, barangId
+            jumlah, faktur, harga, typePembayaran, anggotaId, barangId, statusPenjualan
         }, {
             where: {
                 id: req.params.id
@@ -85,6 +112,7 @@ const hapusPenjualan = async (req, res) => {
 module.exports = {
     getPenjualan,
     getJoinPenAnBarang,
+    getTotalHarga,
     tambahPenjualan,
     editPenjualan,
     hapusPenjualan

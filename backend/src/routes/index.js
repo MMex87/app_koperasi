@@ -17,6 +17,7 @@ const router = express.Router()
 // barang
 router.get('/barang', barang.getBarang)
 router.post('/barang', barang.tambahBarang)
+router.put('/barangTerjual/:jumlah', barang.barangTerjual)
 router.put('/barang/:id', barang.editBarang)
 router.delete('/barang/:id', barang.hapusBarang)
 
@@ -42,6 +43,7 @@ router.delete('/transPembelian/:id', transPembelian.hapusPembelian)
 
 // Transakasi Penjualan
 router.get('/transPenjualan', transPenjualan.getPenjualan)
+router.get('/totalHargaPenjualan/:faktur', transPenjualan.getTotalHarga)
 router.get('/transPenjualanJoin', transPenjualan.getJoinPenAnBarang)
 router.post('/transPenjualan', transPenjualan.tambahPenjualan)
 router.put('/transPenjualan/:id', transPenjualan.editPenjualan)
