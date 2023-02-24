@@ -54,26 +54,29 @@ export default class Supplier extends Component {
     return (
       <main id="main" className="main">
         <div className="pagetitle">
-          <h1>Data Supplier</h1>
-          <nav>
-            <ol className="breadcrumb">
-              <li className="breadcrumb-item" id="li">
-                {" "}
-                Data Supplier
-              </li>
-              <li className="breadcrumb-item">
-                {" "}
-                <Link to="/supplier/tambah">Input Supplier</Link>{" "}
-              </li>
-            </ol>
-          </nav>
+          <h1 className="text-center ">Data Supplier</h1>
         </div>
         <section className="section">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="card">
-                <div className="card-body">
-                  <h5 className="card-title text-center "> Data Supplier</h5>
+          <div className="card">
+            <div className="card-body">
+              <div className="col-lg-12">
+                <div className="row">
+                  <div className="col-md-7"></div>
+                  <div className="col-md-4">
+                    <div className="search-bar text-center mt-3">
+                      <form className="search-form d-flex align-items-center" method="POST" action="#">
+                        <div className="input-group mb-3">
+                          <input type="text" className="form-control" name="query" placeholder="Cari Supplier" title="Enter search keyword" aria-label="Recipient's username" aria-describedby="button-addon2" />
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                  <div className="col-md-1">
+                    <Link to="/supplier/tambah">
+                      <img src={"assets/img/add.svg"} alt="" id="add" />
+                    </Link>
+                    {""}
+                  </div>
                   <table className="table">
                     <thead>
                       <tr>

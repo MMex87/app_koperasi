@@ -12,6 +12,13 @@
   scroll-behavior: smooth;
 }
 
+#add {
+  height: 45px;
+  width: 45px;
+  margin-top: 13px;
+  margin-left: 20px;
+}
+
 #li {
   margin-left: -90px;
 }

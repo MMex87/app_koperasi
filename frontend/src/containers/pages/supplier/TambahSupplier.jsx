@@ -148,7 +148,7 @@ class TambahSupplier extends Component {
                     </div>
                     <div class="text-center">
                       <button type="submit" class="btn btn-primary">
-                        {judul}
+                        SIMPAN
                       </button>
                     </div>
                   </form>

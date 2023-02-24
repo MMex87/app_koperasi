@@ -88,7 +88,6 @@ class TambahAnggota extends Component {
     return (
       <main id="main" className="main">
         <div className="pagetitle">
-          <h1>Input Anggota</h1>
           <nav>
             <ol className="breadcrumb">
               <li className="breadcrumb-item " id="li">
@@ -118,11 +117,11 @@ class TambahAnggota extends Component {
           </nav>
         </div>
         <section className="section">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="card">
-                <div className="card-body">
-                  <h5 className="card-title text-center ">{judul} Anggota</h5>
+          <div className="card">
+            <div className="card-body">
+              <div className="row">
+                <div className="col-lg-12">
+                  <h1 className="card-title  fs-3 text-center">{judul} Anggota</h1>
                   <form onSubmit={tambahAnggota}>
                     <div className="row mb-3">
                       <label htmlFor="nama" className="col-sm-2 col-form-label">
@@ -142,7 +141,7 @@ class TambahAnggota extends Component {
                     </div>
                     <div className="text-center">
                       <button type="submit" className="btn btn-primary">
-                        {judul}
+                        SIMPAN
                       </button>
                     </div>
                   </form>
