@@ -204,6 +204,7 @@ class TransPenjualan extends Component {
                         </div>
                     </div>
                 </section>
+                <div style={ { height: 200 } } />
             </main>
         );
     }

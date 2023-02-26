@@ -241,30 +241,14 @@ const CartList = (props) => {
           )) }
         </tbody>
       </table>
-      {/* <div id="main" className="row">
-        <div className="col-lg-12">
-          <div className="card">
-            <div className="card-body text-end row">
-              <div className="col-md-8">
-                <h1 className="card-title text-end fw-bold fs-1">Total :</h1>
-              </div>
-              <div className="col-md-4 mt-3 text-start fs-2 fw-bold">{ hargaJual.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }) }</div>
-              <div className="col-md-11 ">
-                <button className=" btn mt-auto fs-3 fw-normal btn-success bx bx-printer" onClick={ handlePrint }> </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> */}
-
-      <div className="col-lg-12">
+      <div className="col-lg-12 sticky-footer">
         <div className="card" id="card_total">
           <div className="card-body text-end row">
             <div className="col-md-7">
               <h1 className="card-title text-end fw-bold fs-1">TOTAL :</h1>
             </div>
             <div className="col-md-5">
-              <h1 className="card-title text-end fs-1 fw-bold">Rp 10.000.000,00</h1>
+              <h1 className="card-title text-end fs-1 fw-bold">{ hargaJual.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' }) }</h1>
             </div>
             <div className="col-md-12 ">
               <button className=" btn mt-auto fs-3 fw-normal btn-success bx bx-printer"> </button>
