@@ -1,4 +1,6 @@
-const barangModel = require('../model/BarangModel.js')
+const { Op } = require('sequelize');
+const barangModel = require('../model/BarangModel.js');
+const supplierModel = require('../model/SupplierModel.js');
 
 
 const getBarang = async (req, res) => {
@@ -25,6 +27,85 @@ const getBarangId = async (req, res) => {
             }
         })
         res.status(200).json(barang)
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ msg: "Gagal Mengambil Data! " + error })
+    }
+}
+
+const getSearchBarang = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 0
+        const limit = parseInt(req.query.limit) || 10
+        const search = req.query.search || ''
+        const offset = limit * page
+        const totalRows = await barangModel.count({
+            include: [
+                {
+                    model: supplierModel,
+                    as: 'supplier'
+                }
+            ],
+            where: {
+                [Op.or]: [{
+                    nama: {
+                        [Op.like]: '%' + search + '%'
+                    },
+                }, {
+                    kodeBarang: {
+                        [Op.like]: '%' + search + '%'
+                    },
+                }, {
+                    jenisBarang: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }, {
+                    '$supplier.nama$': {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }]
+            }
+        })
+        const totalPage = Math.ceil(totalRows / limit)
+        const result = await barangModel.findAll({
+            include: [
+                {
+                    model: supplierModel,
+                    as: 'supplier'
+                }
+            ],
+            where: {
+                [Op.or]: [{
+                    nama: {
+                        [Op.like]: '%' + search + '%'
+                    },
+                }, {
+                    kodeBarang: {
+                        [Op.like]: '%' + search + '%'
+                    },
+                }, {
+                    jenisBarang: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }, {
+                    '$supplier.nama$': {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }]
+            },
+            offset,
+            limit,
+            order: [
+                ['id', 'DESC']
+            ]
+        })
+        res.status(200).json({
+            page,
+            result,
+            totalPage,
+            totalRows,
+            limit
+        })
     } catch (error) {
         console.error(error);
         res.status(400).json({ msg: "Gagal Mengambil Data! " + error })
@@ -94,6 +175,7 @@ const hapusBarang = async (req, res) => {
 module.exports = {
     getBarang,
     barangTerjual,
+    getSearchBarang,
     getBarangId,
     tambahBarang,
     editBarang,

@@ -1,6 +1,5 @@
+const { Op } = require("sequelize");
 const supplierModel = require("../model/SupplierModel.js");
-
-
 
 const getSupplier = async (req, res) => {
     try {
@@ -26,6 +25,66 @@ const getSupplierId = async (req, res) => {
             }
         })
         res.status(200).json(supplier)
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ msg: "Gagal Mengambil Data: " + error })
+    }
+}
+
+const getSearchSupplier = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 0
+        const limit = parseInt(req.query.limit) || 10
+        const search = req.query.search || ''
+        const offset = page * limit
+        const totalRows = await supplierModel.count({
+            where: {
+                [Op.or]: [{
+                    nama: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }, {
+                    noHP: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }, {
+                    alamat: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }]
+            }
+        })
+        const totalPage = Math.ceil(totalRows / limit)
+        const result = await supplierModel.findAll({
+            where: {
+                [Op.or]: [{
+                    nama: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }, {
+                    noHP: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }, {
+                    alamat: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }]
+            },
+            limit,
+            offset,
+            order: [
+                ['id', 'DESC']
+            ]
+        })
+
+        res.status(200).json({
+            result,
+            page,
+            totalPage,
+            totalRows,
+            limit
+        })
     } catch (error) {
         console.error(error);
         res.status(400).json({ msg: "Gagal Mengambil Data: " + error })
@@ -79,6 +138,7 @@ const hapusSupplier = async (req, res) => {
 module.exports = {
     getSupplier,
     getSupplierId,
+    getSearchSupplier,
     tambahSupplier,
     editSupplier,
     hapusSupplier

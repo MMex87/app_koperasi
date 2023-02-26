@@ -16,6 +16,7 @@ const router = express.Router()
 
 // barang
 router.get('/barang', barang.getBarang)
+router.get('/barangSearch', barang.getSearchBarang)
 router.post('/barang', barang.tambahBarang)
 router.put('/barangTerjual/:jumlah', barang.barangTerjual)
 router.put('/barang/:id', barang.editBarang)
@@ -24,6 +25,7 @@ router.delete('/barang/:id', barang.hapusBarang)
 // supplier
 router.get('/supplier', supplier.getSupplier)
 router.get('/supplier/:id', supplier.getSupplierId)
+router.get('/supplierSearch', supplier.getSearchSupplier)
 router.post('/supplier', supplier.tambahSupplier)
 router.put('/supplier/:id', supplier.editSupplier)
 router.delete('/supplier/:id', supplier.hapusSupplier)
@@ -31,6 +33,7 @@ router.delete('/supplier/:id', supplier.hapusSupplier)
 // anggota
 router.get('/anggota', anggota.getAnggota)
 router.get('/anggota/:id', anggota.getAnggotaId)
+router.get('/anggotaSearch', anggota.getSearchAnggota)
 router.post('/anggota', anggota.tambahAnggota)
 router.put('/anggota/:id', anggota.editAnggota)
 router.delete('/anggota/:id', anggota.hapusAnggota)

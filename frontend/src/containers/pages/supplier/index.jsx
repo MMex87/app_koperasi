@@ -2,17 +2,37 @@ import React, { Component } from "react";
 import axios from "../../../api/axios.jsx";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
-import getSupplier from "../../../utils/supplier/getSupplier.jsx";
+import ReactPaginate from 'react-paginate'
+import getSearchSupplier from "../../../utils/supplier/getSearchSupplier.jsx";
 
 export default class Supplier extends Component {
   state = {
     supplier: [],
+    page: 0,
+    search: '',
+    limit: 5,
+    pages: 0,
+    rows: 0
   };
 
   componentDidMount() {
-    getSupplier().then((data) => {
-      this.setState({ supplier: data });
-    });
+    getSearchSupplier(this.state.search, this.state.limit, this.state.page).then((data) => {
+      this.setState({ pages: data.totalPage })
+      this.setState({ rows: data.totalRows })
+      this.setState({ page: data.page })
+      this.setState({ supplier: data.result })
+    })
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.search != this.state.search || prevState.page != this.state.page) {
+      getSearchSupplier(this.state.search, this.state.limit, this.state.page).then((data) => {
+        this.setState({ pages: data.totalPage })
+        this.setState({ rows: data.totalRows })
+        this.setState({ page: data.page })
+        this.setState({ supplier: data.result })
+      })
+    }
   }
 
   render() {
@@ -23,6 +43,11 @@ export default class Supplier extends Component {
       },
       buttonsStyling: false
     })
+
+    // handel page
+    const changePage = (selected) => {
+      this.setState({ page: selected })
+    }
 
     const handleHapus = (val) => {
       try {
@@ -42,8 +67,11 @@ export default class Supplier extends Component {
               'Data Supplier Sudah Terhapus.',
               'success'
             )
-            getSupplier().then((data) => {
-              this.setState({ supplier: data })
+            getSearchSupplier(this.state.search, this.state.limit, this.state.page).then((data) => {
+              this.setState({ pages: data.totalPage })
+              this.setState({ rows: data.totalRows })
+              this.setState({ page: data.page })
+              this.setState({ supplier: data.result })
             })
           } else if (
             /* Read more about handling dismissals below */
@@ -76,67 +104,62 @@ export default class Supplier extends Component {
                     <div className="search-bar text-center mt-3">
                       <form className="search-form d-flex align-items-center" method="POST" action="#">
                         <div className="input-group mb-3">
-                          <input type="text" className="form-control" name="query" placeholder="Cari Supplier" title="Enter search keyword" aria-label="Recipient's username" aria-describedby="button-addon2" />
+                          <input type="text" className="form-control" name="query" placeholder="Cari Supplier" title="Enter search keyword" aria-label="Recipient's username" aria-describedby="button-addon2"
+                            onChange={ (e) => this.setState({ search: e.target.value }) }
+                          />
                         </div>
                       </form>
-                      <div className="col-md-1">
-                        <Link to="/supplier/tambah">
-                          <img src={ "assets/img/add.svg" } alt="" id="add" />
-                        </Link>
-                      </div>
-                      <table className="table">
-                        <thead>
-                          <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Nama Supplier</th>
-                            <th scope="col">Nomor Handphone</th>
-                            <th scope="col">Alamat</th>
-                            <th scope="col">Aksi</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          { this.state.supplier.map((val, index) => (
-                            <tr key={ index }>
-                              <th>{ index + 1 }</th>
-                              <td>{ val.nama }</td>
-                              <td>{ val.noHP }</td>
-                              <td>{ val.alamat }</td>
-                              <td>
-                                <Link className="btn btn-warning bx bx-edit-alt text-black-50" to={ `edit/${val.id}` } />
-                                <button className="bx bx-trash btn btn-danger " onClick={ () => handleHapus(val.id) } />
-                              </td>
-                            </tr>
-                          )) }
-                        </tbody>
-                      </table>
-                      <nav aria-label="...">
-                        <ul className="pagination justify-content-center">
-                          <li className="page-item disabled">
-                            <a className="page-link" href="#" aria-label="Previous">
-                              <span aria-hidden="true">«</span>
-                            </a>
-                          </li>
-                          <li className="page-item">
-                            <a className="page-link" href="#">
-                              1
-                            </a>
-                          </li>
-                          <li className="page-item active">
-                            <a className="page-link" href="#">
-                              2
-                            </a>
-                          </li>
-                          <li className="page-item">
-                            <a className="page-link" href="#">
-                              3
-                            </a>
-                          </li>
-                          <li className="page-item">
-                            <a className="page-link" href="#" aria-label="Next">
-                              <span aria-hidden="true">»</span>
-                            </a>
-                          </li>
-                        </ul>
+                    </div>
+                  </div>
+
+                  <div className="col-md-1">
+                    <Link to="/supplier/tambah">
+                      <img src={ "assets/img/add.svg" } alt="" id="add" />
+                    </Link>
+                  </div>
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nama Supplier</th>
+                        <th scope="col">Nomor Handphone</th>
+                        <th scope="col">Alamat</th>
+                        <th scope="col">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      { this.state.supplier.map((val, index) => (
+                        <tr key={ index }>
+                          <th>{ index + 1 }</th>
+                          <td>{ val.nama }</td>
+                          <td>{ val.noHP }</td>
+                          <td>{ val.alamat }</td>
+                          <td>
+                            <Link className="btn btn-warning bx bx-edit-alt text-black-50" to={ `edit/${val.id}` } />
+                            <button className="bx bx-trash btn btn-danger " onClick={ () => handleHapus(val.id) } />
+                          </td>
+                        </tr>
+                      )) }
+                    </tbody>
+                  </table>
+                  <div className="p-3">
+                    <div className="d-flex justify-content-between">
+                      <p className="text-center">Total Anggota: { this.state.rows } Page: { this.state.rows ? this.state.page + 1 : 0 } of { this.state.pages }</p>
+                      <nav aria-label="Page navigate example justify-content-end">
+                        <ReactPaginate
+                          previousLabel={ "< Prev" }
+                          nextLabel={ "Next >" }
+                          pageCount={ this.state.pages }
+                          onPageChange={ changePage }
+                          containerClassName={ 'pagination' }
+                          pageLinkClassName={ 'page-link' }
+                          pageClassName={ 'page-item' }
+                          previousLinkClassName={ 'page-link' }
+                          previousClassName={ 'page-item' }
+                          nextClassName={ 'page-item' }
+                          nextLinkClassName={ 'page-link' }
+                          activeClassName={ 'active' }
+                        />
                       </nav>
                     </div>
                   </div>

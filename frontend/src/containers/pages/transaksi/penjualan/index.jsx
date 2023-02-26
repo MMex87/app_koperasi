@@ -114,13 +114,6 @@ class TransPenjualan extends Component {
                                     <div className="col-md-3">
                                         <h1 className="card-title mt-1 fw-bolder">Faktur : { this.props.faktur } </h1>
                                     </div>
-                                    {/* <div className="col-md-3">
-                                        <button type="button" className="btn btn-outline-secondary mt-3 " 
-                                        onClick={ () => this.props.handleFakturPenjualan(generateFaktur("FKJ")) 
-                                        }>
-                                            Buat Faktur
-                                        </button>
-                                    </div> */}
                                     <form className="row g-3" onSubmit={ handlecart }>
                                         <div className="col-md-6">
                                             <label htmlFor="namaAnggota" className="form-label">
@@ -146,8 +139,7 @@ class TransPenjualan extends Component {
                                                                     onClick={ () => {
                                                                         handleAutoAnggota(v.nama);
                                                                     } }
-                                                                    className="list-group-item listAutoComplate"
-                                                                >
+                                                                    className="list-group-item listAutoComplate">
                                                                     { " " }
                                                                     { v.nama }
                                                                 </li>

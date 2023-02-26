@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const anggotaModel = require("../model/AnggotaModel.js");
 
 
@@ -27,6 +28,57 @@ const getAnggotaId = async (req, res) => {
         res.status(200).json(anggota)
     } catch (error) {
         console.error(error);
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    }
+}
+
+const getSearchAnggota = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 0
+        const limit = parseInt(req.query.limit) || 10
+        const search = req.query.search || ''
+        const offset = limit * page
+        const totalRows = await anggotaModel.count({
+            where: {
+                [Op.or]: [{
+                    nama: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }, {
+                    noHP: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }]
+            }
+        })
+        const totalPage = Math.ceil(totalRows / limit)
+        const result = await anggotaModel.findAll({
+            where: {
+                [Op.or]: [{
+                    nama: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }, {
+                    noHP: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }]
+            },
+            offset,
+            limit,
+            order: [
+                ['id', 'DESC']
+            ]
+        })
+        res.status(200).json({
+            page,
+            result,
+            totalPage,
+            totalRows,
+            limit
+        })
+    } catch (error) {
+        console.error(error)
         res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
     }
 }
@@ -81,6 +133,7 @@ const hapusAnggota = async (req, res) => {
 module.exports = {
     getAnggota,
     getAnggotaId,
+    getSearchAnggota,
     tambahAnggota,
     editAnggota,
     hapusAnggota
