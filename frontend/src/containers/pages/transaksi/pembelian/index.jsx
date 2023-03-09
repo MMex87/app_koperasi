@@ -22,8 +22,8 @@ export default class TransPembelian extends Component {
 
     return (
       <main id="main" className="main">
-        <div className="pagetitle text-center">
-          <h1>Transaksi Pembelian</h1>
+        <div className="pagetile text-center">
+          <h1 className="fw-bold fs-2">Transaksi Pembelian</h1>
         </div>
         <section className="section">
           <div className="row">

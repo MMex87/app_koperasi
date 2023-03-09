@@ -85,7 +85,6 @@ class TambahSupplier extends Component {
     return (
       <main id="main" class="main">
         <div class="pagetitle">
-          <h1>Input Supplier</h1>
           <nav>
             <ol class="breadcrumb">
               <li class="breadcrumb-item" id="li">
@@ -120,7 +119,7 @@ class TambahSupplier extends Component {
             <div class="col-lg-12">
               <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title text-center "> {judul} Supplier</h5>
+                  <h5 class="card-title text-center fs-2 "> {judul} Supplier</h5>
                   <form onSubmit={tambah}>
                     <div class="row mb-3">
                       <label for="nama" class="col-sm-2 col-form-label">
