@@ -13,18 +13,31 @@ const transPembelianModel = db.define('transPembelian', {
     harga: {
         type: DataTypes.INTEGER
     },
-    typePembayaran: {
+    statusPembelian: {
         type: DataTypes.STRING
+    },
+    hargaJual: {
+        type: DataTypes.INTEGER
     }
 }, {
     freezeTableName: true,
 
 })
 
-barangModel.hasMany(transPembelianModel)
-transPembelianModel.belongsTo(barangModel)
+barangModel.hasMany(transPembelianModel, {
+    foreignKey: 'barangId'
+})
+transPembelianModel.belongsTo(barangModel, {
+    foreignKey: 'barangId'
+})
 
-supplierModel.hasMany(transPembelianModel)
-transPembelianModel.belongsTo(supplierModel)
+supplierModel.hasMany(transPembelianModel, {
+    foreignKey: 'supplierId',
+    as: 'supplier'
+})
+transPembelianModel.belongsTo(supplierModel, {
+    foreignKey: 'supplierId',
+    as: 'supplier'
+})
 
 module.exports = transPembelianModel

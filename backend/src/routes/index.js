@@ -16,9 +16,12 @@ const router = express.Router()
 
 // barang
 router.get('/barang', barang.getBarang)
+router.get('/barang/:id', barang.getBarangId)
 router.get('/barangSearch', barang.getSearchBarang)
+router.get('/barangJoin', barang.getBarangJoin)
 router.post('/barang', barang.tambahBarang)
-router.put('/barangTerjual/:jumlah', barang.barangTerjual)
+router.put('/barangTerjual/:id/:jumlah', barang.barangTerjual)
+router.put('/barangTerbeli/:id/:jumlah', barang.barangTerbeli)
 router.put('/barang/:id', barang.editBarang)
 router.delete('/barang/:id', barang.hapusBarang)
 
@@ -40,6 +43,8 @@ router.delete('/anggota/:id', anggota.hapusAnggota)
 
 // Transakasi Pembelian
 router.get('/transPembelian', transPembelian.getPembelian)
+router.get('/transPembelian/:id', transPembelian.getPembelianId)
+router.get('/transPembelianJoin', transPembelian.getJoinPemBarang)
 router.post('/transPembelian', transPembelian.tambahPembelian)
 router.put('/transPembelian/:id', transPembelian.editPembelian)
 router.delete('/transPembelian/:id', transPembelian.hapusPembelian)

@@ -23,6 +23,18 @@
   margin-left: -90px;
 }
 
+/* Auto Comlate Body */
+
+.bodyAutoComplate {
+  height: 100px;
+  border: 1px solid #888;
+  overflow: auto;
+}
+
+.listAutoComplate:hover {
+  background-color: #777;
+}
+
 /* Fotter Harga Jual */
 .sticky-footer {
   height: 150px;
@@ -290,17 +302,6 @@ h6 {
 
 .card-img-overlay {
   background-color: rgba(255, 255, 255, 0.6);
-}
-
-/* Auto Comlate Body */
-
-.bodyAutoComplate {
-  height: 100px;
-  border: 1px solid #888;
-}
-
-.listAutoComplate:hover {
-  background-color: #777;
 }
 
 /* Alerts */

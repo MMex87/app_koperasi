@@ -12,7 +12,7 @@ import getTransPenjualan from '../../../../utils/transaksiPenjualan/getTransPenj
 
 class TransPenjualan extends Component {
     state = {
-        transaksi: [],
+        penjualan: [],
         visiJenisInput: false,
         displayAnggota: false,
         anggotas: [],
@@ -52,7 +52,6 @@ class TransPenjualan extends Component {
             let typePembayaran = this.props.typePembayaran
             let harga = this.props.harga
             let trans = this.state.penjualan.find(({ faktur, barangId }) => faktur == fakturLokal && barangId == barangIdLokal)
-            console.log(trans)
             try {
                 if (jumlah == '' || fakturLokal == '' || harga == '' || typePembayaran == '' || anggotaId == '' || barangIdLokal == '') {
                     console.log('tidak memenuhi syarat')
@@ -60,7 +59,6 @@ class TransPenjualan extends Component {
                     if (
                         trans == undefined
                     ) {
-                        console.log('masuk kosong')
                         await axios.post('/transPenjualan', {
                             jumlah,
                             faktur: fakturLokal,
