@@ -133,17 +133,11 @@ const addCartManual = (props) => {
           </div>
         )}
       </div>
-      <div className="col-2">
+      <div className="col-3">
         <label htmlFor="jumlah" className="form-label">
           Jumlah
         </label>
         <input type="text" className="form-control" id="jumlah" value={props.jumlah} onChange={(e) => props.handleJumlah(e.target.value)} />
-      </div>
-      <div className="col-1">
-        <label htmlFor="jenis" className="form-label">
-          Jenis
-        </label>
-        <input type="text" className="form-control" id="jenis" value={props.jenis} onChange={(e) => props.handlejenisBarang(e.target.value)} />
       </div>
       <div className="col-md-3">
         <label htmlFor="harga" className="form-label">

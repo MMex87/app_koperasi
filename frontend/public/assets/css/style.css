@@ -26,14 +26,16 @@
 /* Auto Comlate Body */
 
 .bodyAutoComplate {
-  height: 100px;
-  border: 1px solid #888;
+  height: 85px;
+  border: 1px solid #d3d3d3;
+  border-radius: 5px;
   overflow: auto;
 }
 
 .listAutoComplate:hover {
-  background-color: #777;
+  background-color: #bebebe;
 }
+
 
 /* Fotter Harga Jual */
 .sticky-footer {
@@ -43,7 +45,6 @@
   position: fixed;
   right: 0;
 }
-
 
 body {
   font-family: "Open Sans", sans-serif;
@@ -511,7 +512,7 @@ h6 {
   list-style: none;
 }
 
-.header-nav>ul {
+.header-nav > ul {
   margin: 0;
   padding: 0;
   margin-left: -90px;
@@ -681,7 +682,6 @@ h6 {
 }
 
 @media (min-width: 1200px) {
-
   #main,
   #footer {
     margin-left: 300px;
@@ -695,7 +695,6 @@ h6 {
 }
 
 @media (min-width: 1200px) {
-
   .toggle-sidebar #main,
   .toggle-sidebar #footer {
     margin-left: 0;
@@ -934,7 +933,7 @@ h6 {
 }
 
 /* News & Updates */
-.dashboard .news .post-item+.post-item {
+.dashboard .news .post-item + .post-item {
   margin-top: 15px;
 }
 

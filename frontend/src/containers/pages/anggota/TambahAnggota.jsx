@@ -121,7 +121,7 @@ class TambahAnggota extends Component {
             <div className="card-body">
               <div className="row">
                 <div className="col-lg-12">
-                  <h1 className="card-title  fs-3 text-center">{judul} Anggota</h1>
+                  <h1 className="card-title  fs-2 text-center">{judul} Anggota</h1>
                   <form onSubmit={tambahAnggota}>
                     <div className="row mb-3">
                       <label htmlFor="nama" className="col-sm-2 col-form-label">
