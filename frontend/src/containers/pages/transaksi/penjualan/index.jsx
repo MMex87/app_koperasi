@@ -11,13 +11,13 @@ import getBarang from "../../../../utils/barang/getBarang";
 import getTransPenjualan from "../../../../utils/transaksiPenjualan/getTransPenjualan";
 
 class TransPenjualan extends Component {
-    state = {
-        penjualan: [],
-        visiJenisInput: false,
-        displayAnggota: false,
-        anggotas: [],
-        barang: [],
-    };
+  state = {
+    penjualan: [],
+    visiJenisInput: false,
+    displayAnggota: false,
+    anggotas: [],
+    barang: [],
+  };
 
   componentDidMount() {
     if (this.props.faktur == "") {
@@ -42,52 +42,49 @@ class TransPenjualan extends Component {
     }
   }
 
-    render() {
-        const handlecart = async (e) => {
-            e.preventDefault()
-            let anggotaId = this.state.anggotas.find(({ nama }) => nama == this.props.anggota).id
-            let barangIdLokal = this.state.barang.find(({ nama }) => nama == this.props.namaBarang).id
-            let fakturLokal = this.props.faktur
-            let jumlah = this.props.jumlah
-            let typePembayaran = this.props.typePembayaran
-            let harga = this.props.harga
-            let trans = this.state.penjualan.find(({ faktur, barangId }) => faktur == fakturLokal && barangId == barangIdLokal)
-            try {
-                if (jumlah == '' || fakturLokal == '' || harga == '' || typePembayaran == '' || anggotaId == '' || barangIdLokal == '') {
-                    console.log('tidak memenuhi syarat')
-                } else {
-                    if (
-                        trans == undefined
-                    ) {
-                        await axios.post('/transPenjualan', {
-                            jumlah,
-                            faktur: fakturLokal,
-                            harga,
-                            typePembayaran,
-                            anggotaId,
-                            barangId: barangIdLokal,
-                            statusPenjualan: 'onProcess'
-                        })
-                    } else {
-                        console.log('masuk ada')
-                        await axios.put(`/transPenjualan/${trans.id}`, {
-                            jumlah: parseInt(trans.jumlah) + parseInt(jumlah)
-                        })
-                    }
-                    this.props.handleKodeBarang('')
-                    this.props.handlejenisBarang('')
-                    this.props.handleHargaBarang('')
-                    this.props.handleJumlah('')
-                    this.props.handleNamaBarang('')
-                }
-            } catch (error) {
-                console.error(error.response)
-            }
+  render() {
+    const handlecart = async (e) => {
+      e.preventDefault()
+      let anggotaId = this.state.anggotas.find(({ nama }) => nama == this.props.anggota).id
+      let barangIdLokal = this.state.barang.find(({ nama }) => nama == this.props.namaBarang).id
+      let fakturLokal = this.props.faktur
+      let jumlah = this.props.jumlah
+      let typePembayaran = this.props.typePembayaran
+      let harga = this.props.harga
+      let trans = this.state.penjualan.find(({ faktur, barangId }) => faktur == fakturLokal && barangId == barangIdLokal)
+      try {
+        if (jumlah == '' || fakturLokal == '' || harga == '' || typePembayaran == '' || anggotaId == '' || barangIdLokal == '') {
+          console.log('tidak memenuhi syarat')
+        } else {
+          if (
+            trans == undefined
+          ) {
+            await axios.post('/transPenjualan', {
+              jumlah,
+              faktur: fakturLokal,
+              harga,
+              typePembayaran,
+              anggotaId,
+              barangId: barangIdLokal,
+              statusPenjualan: 'onProcess'
+            })
+          } else {
+            console.log('masuk ada')
+            await axios.put(`/transPenjualan/${trans.id}`, {
+              jumlah: parseInt(trans.jumlah) + parseInt(jumlah)
+            })
+          }
+          this.props.handleKodeBarang('')
+          this.props.handlejenisBarang('')
+          this.props.handleHargaBarang('')
+          this.props.handleJumlah('')
+          this.props.handleNamaBarang('')
         }
+
       } catch (error) {
         console.error(error.response);
       }
-    };
+    }
 
     const handleVisiInput = (e) => {
       let handle = e.target.value;
@@ -104,7 +101,7 @@ class TransPenjualan extends Component {
     };
 
     return (
-      <main id="main" className="main">
+      <main id="main" className="main" >
         <div className="pagetitle text-center">
           <h1 className="fw-bold fs-2">Transaksi Penjualan</h1>
         </div>
@@ -114,9 +111,9 @@ class TransPenjualan extends Component {
               <div className="card">
                 <div className="card-body row">
                   <div className="col-md-3">
-                    <h1 className="card-title mt-1 fw-bolder">Faktur : {this.props.faktur} </h1>
+                    <h1 className="card-title mt-1 fw-bolder">Faktur : { this.props.faktur } </h1>
                   </div>
-                  <form className="row g-3" onSubmit={handlecart}>
+                  <form className="row g-3" onSubmit={ handlecart }>
                     <div className="col-md-6">
                       <label htmlFor="namaAnggota" className="form-label">
                         Nama Anggota
@@ -125,44 +122,44 @@ class TransPenjualan extends Component {
                         type="text"
                         className="form-control"
                         id="namaAnggota"
-                        value={this.props.anggota}
+                        value={ this.props.anggota }
                         autoComplete="false"
-                        onChange={(e) => this.props.handleAnggota(e.target.value)}
-                        onClick={() => this.setState({ displayAnggota: !this.state.displayAnggota })}
+                        onChange={ (e) => this.props.handleAnggota(e.target.value) }
+                        onClick={ () => this.setState({ displayAnggota: !this.state.displayAnggota }) }
                       />
-                      {this.state.displayAnggota && (
+                      { this.state.displayAnggota && (
                         <div className="flex-container flex-column pos-rel bodyAutoComplate">
                           <ul className="list-group list-group-flush">
-                            {this.state.anggotas
+                            { this.state.anggotas
                               .filter(({ nama }) => nama.indexOf(this.props.anggota) > -1)
                               .map((v, i) => (
                                 <li
-                                  key={i}
-                                  onClick={() => {
+                                  key={ i }
+                                  onClick={ () => {
                                     handleAutoAnggota(v.nama);
-                                  }}
+                                  } }
                                   className="list-group-item listAutoComplate"
                                 >
-                                  {" "}
-                                  {v.nama}
+                                  { " " }
+                                  { v.nama }
                                 </li>
-                              ))}
+                              )) }
                           </ul>
                         </div>
-                      )}
+                      ) }
                     </div>
                     <div className="col-md-6">
                       <label htmlFor="typePembayaran" className="form-label">
                         Type Pembayaran
                       </label>
-                      <select id="typePembayaran" className="form-select" onChange={(e) => this.props.handleTypeBayar(e.target.value)}>
+                      <select id="typePembayaran" className="form-select" onChange={ (e) => this.props.handleTypeBayar(e.target.value) }>
                         <option selected value="">
                           -- Pilih Type Pembayaran --
                         </option>
-                        <option selected={this.props.typePembayaran == "Tunai" ? true : false} value={"Tunai"}>
+                        <option selected={ this.props.typePembayaran == "Tunai" ? true : false } value={ "Tunai" }>
                           TUNAI
                         </option>
-                        <option selected={this.props.typePembayaran == "Bon" ? true : false} value={"Bon"}>
+                        <option selected={ this.props.typePembayaran == "Bon" ? true : false } value={ "Bon" }>
                           BON
                         </option>
                       </select>
@@ -171,12 +168,12 @@ class TransPenjualan extends Component {
                       <label htmlFor="jenisInput" className="form-label">
                         Jenis Input
                       </label>
-                      <select id="jenisInput" className="form-select" onChange={handleVisiInput}>
-                        <option value={"manual"}>Manual</option>
-                        <option value={"scan"}>Scan Barcode</option>
+                      <select id="jenisInput" className="form-select" onChange={ handleVisiInput }>
+                        <option value={ "manual" }>Manual</option>
+                        <option value={ "scan" }>Scan Barcode</option>
                       </select>
                     </div>
-                    {this.state.visiJenisInput ? <AddCartScan /> : <AddCartManual />}
+                    { this.state.visiJenisInput ? <AddCartScan /> : <AddCartManual /> }
                     <div className="text-lg-end">
                       <button type="submit" className="btn btn-primary">
                         Tambah
@@ -199,7 +196,7 @@ class TransPenjualan extends Component {
             </div>
           </div>
         </section>
-        <div style={{ height: 200 }} />
+        <div style={ { height: 200 } } />
       </main>
     );
   }
