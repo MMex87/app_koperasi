@@ -1,3 +1,5 @@
+const barangModel = require("../model/BarangModel.js")
+const supplierModel = require("../model/SupplierModel.js")
 const transPembelianModel = require("../model/TransPembelianModel.js")
 
 
@@ -14,14 +16,51 @@ const getPembelian = async (req, res) => {
         res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
     }
 }
+const getPembelianId = async (req, res) => {
+    try {
+        const pembelian = await transPembelianModel.findOne({
+            order: [
+                ['id', 'ASC']
+            ],
+            where: {
+                id: req.params.id
+            }
+        })
+        res.status(200).json(pembelian)
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    }
+}
+
+const getJoinPemBarang = async (req, res) => {
+    try {
+        const pembelian = await transPembelianModel.findAll({
+            include: [
+                {
+                    model: barangModel
+                },
+                {
+                    model: supplierModel,
+                    as: 'supplier'
+                }
+            ],
+            attributes: ['id', 'jumlah', 'faktur', 'harga', 'hargaJual', 'supplierId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPembelian']
+        })
+        res.status(200).json(pembelian)
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    }
+}
 
 const tambahPembelian = async (req, res) => {
     try {
-        const { jumlah, faktur, harga, typePembayaran, supplierId, barangId } = req.body
-        await transPembelianModel.create({
-            jumlah, faktur, harga, typePembayaran, supplierId, barangId
+        const { jumlah, faktur, harga, hargaJual, supplierId, barangId, statusPembelian } = req.body
+        const pembelian = await transPembelianModel.create({
+            jumlah, faktur, harga, hargaJual, supplierId, barangId, statusPembelian
         })
-        res.status(200).json({ msg: 'Data Berhasil diTambahkan!' })
+        res.status(200).json({ msg: 'Data Berhasil diTambahkan!', id: pembelian.id })
     } catch (error) {
         console.error(error)
         res.status(400).json({ msg: 'Gagal Menambah Data: ' + error })
@@ -30,9 +69,9 @@ const tambahPembelian = async (req, res) => {
 
 const editPembelian = async (req, res) => {
     try {
-        const { jumlah, faktur, harga, typePembayaran, supplierId, barangId } = req.body
+        const { jumlah, faktur, harga, hargaJual, supplierId, barangId, statusPembelian } = req.body
         await transPembelianModel.update({
-            jumlah, faktur, harga, typePembayaran, supplierId, barangId
+            jumlah, faktur, harga, hargaJual, supplierId, barangId, statusPembelian
         }, {
             where: {
                 id: req.params.id
@@ -61,6 +100,8 @@ const hapusPembelian = async (req, res) => {
 
 module.exports = {
     getPembelian,
+    getPembelianId,
+    getJoinPemBarang,
     tambahPembelian,
     editPembelian,
     hapusPembelian

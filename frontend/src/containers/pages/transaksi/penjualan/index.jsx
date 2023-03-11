@@ -11,13 +11,13 @@ import getBarang from "../../../../utils/barang/getBarang";
 import getTransPenjualan from "../../../../utils/transaksiPenjualan/getTransPenjualan";
 
 class TransPenjualan extends Component {
-  state = {
-    transaksi: [],
-    visiJenisInput: false,
-    displayAnggota: false,
-    anggotas: [],
-    barang: [],
-  };
+    state = {
+        penjualan: [],
+        visiJenisInput: false,
+        displayAnggota: false,
+        anggotas: [],
+        barang: [],
+    };
 
   componentDidMount() {
     if (this.props.faktur == "") {
@@ -42,43 +42,47 @@ class TransPenjualan extends Component {
     }
   }
 
-  render() {
-    const handlecart = async (e) => {
-      e.preventDefault();
-      let anggotaId = this.state.anggotas.find(({ nama }) => nama == this.props.anggota).id;
-      let barangIdLokal = this.state.barang.find(({ nama }) => nama == this.props.namaBarang).id;
-      let fakturLokal = this.props.faktur;
-      let jumlah = this.props.jumlah;
-      let typePembayaran = this.props.typePembayaran;
-      let harga = this.props.harga;
-      let trans = this.state.penjualan.find(({ faktur, barangId }) => faktur == fakturLokal && barangId == barangIdLokal);
-      console.log(trans);
-      try {
-        if (jumlah == "" || fakturLokal == "" || harga == "" || typePembayaran == "" || anggotaId == "" || barangIdLokal == "") {
-          console.log("tidak memenuhi syarat");
-        } else {
-          if (trans == undefined) {
-            console.log("masuk kosong");
-            await axios.post("/transPenjualan", {
-              jumlah,
-              faktur: fakturLokal,
-              harga,
-              typePembayaran,
-              anggotaId,
-              barangId: barangIdLokal,
-              statusPenjualan: "onProcess",
-            });
-          } else {
-            console.log("masuk ada");
-            await axios.put(`/transPenjualan/${trans.id}`, {
-              jumlah: parseInt(trans.jumlah) + parseInt(jumlah),
-            });
-          }
-          this.props.handleKodeBarang("");
-          this.props.handlejenisBarang("");
-          this.props.handleHargaBarang("");
-          this.props.handleJumlah("");
-          this.props.handleNamaBarang("");
+    render() {
+        const handlecart = async (e) => {
+            e.preventDefault()
+            let anggotaId = this.state.anggotas.find(({ nama }) => nama == this.props.anggota).id
+            let barangIdLokal = this.state.barang.find(({ nama }) => nama == this.props.namaBarang).id
+            let fakturLokal = this.props.faktur
+            let jumlah = this.props.jumlah
+            let typePembayaran = this.props.typePembayaran
+            let harga = this.props.harga
+            let trans = this.state.penjualan.find(({ faktur, barangId }) => faktur == fakturLokal && barangId == barangIdLokal)
+            try {
+                if (jumlah == '' || fakturLokal == '' || harga == '' || typePembayaran == '' || anggotaId == '' || barangIdLokal == '') {
+                    console.log('tidak memenuhi syarat')
+                } else {
+                    if (
+                        trans == undefined
+                    ) {
+                        await axios.post('/transPenjualan', {
+                            jumlah,
+                            faktur: fakturLokal,
+                            harga,
+                            typePembayaran,
+                            anggotaId,
+                            barangId: barangIdLokal,
+                            statusPenjualan: 'onProcess'
+                        })
+                    } else {
+                        console.log('masuk ada')
+                        await axios.put(`/transPenjualan/${trans.id}`, {
+                            jumlah: parseInt(trans.jumlah) + parseInt(jumlah)
+                        })
+                    }
+                    this.props.handleKodeBarang('')
+                    this.props.handlejenisBarang('')
+                    this.props.handleHargaBarang('')
+                    this.props.handleJumlah('')
+                    this.props.handleNamaBarang('')
+                }
+            } catch (error) {
+                console.error(error.response)
+            }
         }
       } catch (error) {
         console.error(error.response);

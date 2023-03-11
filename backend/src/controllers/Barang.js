@@ -112,9 +112,47 @@ const getSearchBarang = async (req, res) => {
     }
 }
 
+const getBarangJoin = async (req, res) => {
+    try {
+        const barang = await barangModel.findAll({
+            include: [
+                {
+                    model: supplierModel,
+                    as: 'supplier'
+                }
+            ],
+            attributes: ['id', 'nama', 'kodeBarang', 'jenisBarang', 'satuan', 'jumlah', 'hargaBeli', 'hargaJual', 'supplierId']
+        })
+        res.status(200).json(barang)
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    }
+}
+
 const barangTerjual = async (req, res) => {
     try {
-        await barangModel.increment({ jumlah: -parseInt(req.params.jumlah) })
+        await barangModel.increment('jumlah', {
+            by: -parseInt(req.params.jumlah),
+            where: {
+                id: req.params.id
+            }
+        })
+        res.status(200).json({ msg: 'Data Berhasil Diubah' })
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ msg: "Gagal Mengubah Data! " + error })
+    }
+}
+
+const barangTerbeli = async (req, res) => {
+    try {
+        await barangModel.increment('jumlah', {
+            by: parseInt(req.params.jumlah),
+            where: {
+                id: req.params.id
+            }
+        })
         res.status(200).json({ msg: 'Data Berhasil Diubah' })
     } catch (error) {
         console.error(error);
@@ -126,11 +164,11 @@ const tambahBarang = async (req, res) => {
     try {
         const { nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, supplierId } = req.body
 
-        await barangModel.create({
+        const barang = await barangModel.create({
             nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, supplierId
         })
 
-        res.status(200).json({ msg: 'Data Berhasil Ditambahakan' })
+        res.status(200).json({ msg: 'Data Berhasil Ditambahakan', barangId: barang.id })
     } catch (error) {
         console.error(error);
         res.status(400).json({ msg: "Gagal Menambah Data! " + error })
@@ -174,7 +212,9 @@ const hapusBarang = async (req, res) => {
 
 module.exports = {
     getBarang,
+    getBarangJoin,
     barangTerjual,
+    barangTerbeli,
     getSearchBarang,
     getBarangId,
     tambahBarang,
