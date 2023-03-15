@@ -102,12 +102,9 @@ const CartList = (props) => {
             jumlah: jumlah,
             id: idEdit
         }
-        editTransaksiCartListPembelian(data).then((data) => {
-            console.log(data)
-        })
+        editTransaksiCartListPembelian(data)
         const resTrans = await axios.get(`/transPembelian/${idEdit}`)
         const resBarang = await axios.get(`/barang/${resTrans.data.barangId}`)
-        console.log(resTrans.data.jumlah)
         if (jumlah > resTrans.data.jumlah) {
             let selisih = jumlah - resTrans.data.jumlah
             await axios.put(`/barang/${resTrans.data.barangId}`, {

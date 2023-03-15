@@ -9,6 +9,7 @@ import CartList from "./cartList";
 import getAnggota from "../../../../utils/anggota/getAnggota";
 import getBarang from "../../../../utils/barang/getBarang";
 import getTransPenjualan from "../../../../utils/transaksiPenjualan/getTransPenjualan";
+import Swal from "sweetalert2";
 
 class TransPenjualan extends Component {
   state = {
@@ -45,16 +46,29 @@ class TransPenjualan extends Component {
   render() {
     const handlecart = async (e) => {
       e.preventDefault()
-      let anggotaId = this.state.anggotas.find(({ nama }) => nama == this.props.anggota).id
-      let barangIdLokal = this.state.barang.find(({ nama }) => nama == this.props.namaBarang).id
+      let kondisiAnggota = this.state.anggotas.find(({ nama }) => nama == this.props.anggota)
+      let kondisiBarang = this.state.barang.find(({ nama }) => nama == this.props.namaBarang)
+      let anggotaId
+      let barangIdLokal
       let fakturLokal = this.props.faktur
       let jumlah = this.props.jumlah
       let typePembayaran = this.props.typePembayaran
       let harga = this.props.harga
+      if (kondisiAnggota != undefined) {
+        anggotaId = this.state.anggotas.find(({ nama }) => nama == this.props.anggota).id
+      }
+      if (kondisiBarang != undefined) {
+        barangIdLokal = this.state.barang.find(({ nama }) => nama == this.props.namaBarang).id
+      }
       let trans = this.state.penjualan.find(({ faktur, barangId }) => faktur == fakturLokal && barangId == barangIdLokal)
       try {
-        if (jumlah == '' || fakturLokal == '' || harga == '' || typePembayaran == '' || anggotaId == '' || barangIdLokal == '') {
-          console.log('tidak memenuhi syarat')
+        if (jumlah == '' || fakturLokal == '' || harga == '' || typePembayaran == '' || anggotaId == undefined || barangIdLokal == undefined) {
+          // ketika barang kurang lengkap di isinya
+          Swal.fire(
+            'Gagal menambahkan data!!',
+            'Tolong isi semua Data',
+            'warning'
+          )
         } else {
           if (
             trans == undefined

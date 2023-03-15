@@ -7,6 +7,8 @@ import getTransPenjualanJoin from "../../../../utils/transaksiPenjualan/getTrans
 import hapusTransaksiPenjualan from "../../../../utils/transaksiPenjualan/hapusTransaksiPenjualan";
 import Swal from "sweetalert2";
 import { generateFaktur } from "../../../../components/faktur/generateFaktur";
+import ModalCheckout from "./ModalCheckout";
+import editTransaksiCartListPenjualan from "../../../../utils/transaksiPenjualan/editTransaksiCartListPenjualan";
 
 const CartList = (props) => {
   // alert
@@ -23,6 +25,7 @@ const CartList = (props) => {
   const [jumlah, setJumlah] = useState(0);
   const [refresh, setRefresh] = useState(false);
   const [display, setDisplay] = useState(false);
+  const [idEdit, setIdEdit] = useState('')
 
   // state search faktur
   const [displaySearch, setDisplaySearch] = useState(false);
@@ -30,7 +33,10 @@ const CartList = (props) => {
   const [searchFaktur, setSearchFaktur] = useState("");
 
   const [dataFilterFaktur, setDataFilterFaktur] = useState([]);
-  // let hargaJual = 0
+
+  const refreshAutoFokus = () => {
+    setRefresh(!refresh)
+  }
 
   useEffect(() => {
     getTransPenjualanJoin().then((data) => {
@@ -49,7 +55,11 @@ const CartList = (props) => {
 
         // filter Faktur Search
         if (dataFaktur.filter(({ faktur }) => faktur == searchFaktur).length == 0) {
-          props.handleFakturPenjualan(generateFaktur("FKJ"));
+          let genFaktur = generateFaktur("FKJ")
+          props.handleFakturPenjualan(genFaktur);
+          getTotalHarga(genFaktur).then((data) => {
+            setHargaJual(data);
+          });
         } else {
           getTotalHarga(searchFaktur).then((data) => {
             setHargaJual(data);
@@ -60,21 +70,34 @@ const CartList = (props) => {
         let fakturLama = dataFaktur.find(({ statusPenjualan }) => statusPenjualan == "onProcess");
         let dataPenjualan = arrayFilterPenjualan.find(({ faktur }) => faktur == fakturLama.faktur);
 
+        getTotalHarga(dataPenjualan.faktur).then((data) => {
+          setHargaJual(data);
+        });
+
         props.handleFakturPenjualan(dataPenjualan.faktur);
         props.handleAnggota(dataPenjualan.anggota.nama);
         props.handleTypeBayar(dataPenjualan.typePembayaran);
       }
 
+      getTotalHarga(props.faktur).then((data) => {
+        setHargaJual(data);
+      });
+
       setDataFilterFaktur(filteredSearchFaktur);
     });
-    getTotalHarga(props.faktur).then((data) => {
-      setHargaJual(data);
-    });
-  }, [props.harga, props.jumlah, refresh, searchFaktur]);
+  }, [props.harga, props.jumlah, props.anggota, refresh, searchFaktur]);
 
-  const handleEditJumlah = (val) => {
+  const handleEditJumlah = (val, val2) => {
     setDisplay(true);
+    setIdEdit(val)
+    setJumlah(val2)
   };
+
+  const batal = async () => {
+    setDisplay(false)
+    setIdEdit(0)
+    setJumlah(0)
+  }
 
   const handleAutoFaktur = (val) => {
     setDisplayAutoFaktur(false);
@@ -82,25 +105,19 @@ const CartList = (props) => {
     props.handleFakturPenjualan(val);
   };
 
-  const save = async () => {};
-
-  const handlePrint = async () => {
-    const { value: formValues } = await Swal.fire({
-      title: "Checkout Pembayaran",
-      html: (
-        <>
-          <p>{hargaJual}</p>
-        </>
-      ),
-      focusConfirm: false,
-      preConfirm: () => {
-        return [document.getElementById("swal-input1").value, document.getElementById("swal-input2").value];
-      },
-    });
-
-    if (formValues) {
-      Swal.fire(JSON.stringify(formValues));
+  const save = async () => {
+    const data = {
+      jumlah: jumlah,
+      id: idEdit
     }
+    editTransaksiCartListPenjualan(data)
+
+    setIdEdit(0)
+    setJumlah(0)
+    setDisplay(false)
+    setTimeout(() => {
+      setRefresh(!refresh)
+    }, 100)
   };
 
   const handleHapusTransaksi = (val) => {
@@ -131,9 +148,9 @@ const CartList = (props) => {
       <div className="col-lg-12">
         <div className="row">
           <div className="col-md-9">
-            <h1 className="card-title mt-1 fw-bold">Faktur : {props.faktur}</h1>
+            <h1 className="card-title mt-1 fw-bold">Faktur : { props.faktur }</h1>
           </div>
-          {displaySearch && (
+          { displaySearch && (
             <div className="col-md-3">
               <div className="search-bar text-center mt-3">
                 <form className="search-form d-flex align-items-center" method="POST" action="#">
@@ -147,33 +164,32 @@ const CartList = (props) => {
                         title="Enter search keyword"
                         aria-label="Recipient's username"
                         aria-describedby="button-addon2"
-                        value={searchFaktur}
-                        onChange={(e) => setSearchFaktur(e.target.value)}
-                        onClick={() => setDisplayAutoFaktur(!displayAutoFaktur)}
+                        value={ searchFaktur }
+                        onChange={ (e) => setSearchFaktur(e.target.value) }
+                        onClick={ () => setDisplayAutoFaktur(!displayAutoFaktur) }
                       />
-                      {displayAutoFaktur && (
+                      { displayAutoFaktur && (
                         <div className="flex-container flex-column pos-rel bodyAutoComplate position-relative">
                           <ul className="list-group list-group-flush">
-                            {dataFilterFaktur
+                            { dataFilterFaktur
                               .filter(({ faktur }) => faktur.indexOf(searchFaktur) > -1)
                               .map((v, i) => (
-                                <li key={i} onClick={() => handleAutoFaktur(v.faktur)} className="list-group-item listAutoComplate">
-                                  {" "}
-                                  {v.faktur}
+                                <li key={ i } onClick={ () => handleAutoFaktur(v.faktur) } className="list-group-item listAutoComplate">
+                                  { " " }
+                                  { v.faktur }
                                 </li>
-                              ))}
+                              )) }
                           </ul>
                         </div>
-                      )}
+                      ) }
                     </div>
                   </div>
                 </form>
               </div>
             </div>
-          )}
+          ) }
         </div>
       </div>
-
       <table className="table">
         <thead>
           <tr>
@@ -187,30 +203,37 @@ const CartList = (props) => {
           </tr>
         </thead>
         <tbody>
-          {transaksi
+          { transaksi
             .filter(({ faktur }) => faktur == props.faktur)
             .map((val, index) => (
-              <tr key={index}>
-                <th>{index + 1}</th>
-                <td>{val.anggota.nama}</td>
-                <td>{val.barang.nama}</td>
-                <td>{val.barang.jenisBarang}</td>
-                <td>{display ? <input type="text" className="form-control" id="jumlah" value={val.jumlah} onChange={(e) => setJumlah(e.target.value)} /> : val.jumlah}</td>
-                <td>{val.barang.hargaJual}</td>
+              <tr key={ index }>
+                <th>{ index + 1 }</th>
+                <td>{ val.anggota.nama }</td>
+                <td>{ val.barang.nama }</td>
+                <td>{ val.barang.jenisBarang }</td>
+                <td>{ display && val.id == idEdit
+                  ?
+                  <input type="text" className="form-control" id="jumlah" value={ jumlah } onChange={ (e) => setJumlah(e.target.value) } /> : val.jumlah }</td>
+                <td>{ val.barang.hargaJual }</td>
                 <td>
-                  {display ? (
-                    <button className="btn btn-success" onClick={save}>
-                      Save
-                    </button>
-                  ) : (
-                    <>
-                      <button className="btn btn-warning bx bx-edit-alt text-black-50 me-2" onClick={() => handleEditJumlah(val.id)} />
-                      <button className="bx bx-trash btn btn-danger " onClick={() => handleHapusTransaksi(val.id)} />
-                    </>
-                  )}
+                  { display && val.id == idEdit
+                    ?
+                    (
+                      <>
+                        <button className="btn btn-warning" onClick={ batal }>Batal</button>
+                        <button className="btn btn-success" onClick={ save }>
+                          Save
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button className="btn btn-warning bx bx-edit-alt text-black-50 me-2" onClick={ () => handleEditJumlah(val.id, val.jumlah) } />
+                        <button className="bx bx-trash btn btn-danger " onClick={ () => handleHapusTransaksi(val.id) } />
+                      </>
+                    ) }
                 </td>
               </tr>
-            ))}
+            )) }
         </tbody>
       </table>
       <div className="col-lg-12 sticky-footer">
@@ -220,14 +243,18 @@ const CartList = (props) => {
               <h1 className="card-title text-end fw-bold fs-1">TOTAL :</h1>
             </div>
             <div className="col-md-5">
-              <h1 className="card-title text-end fs-1 fw-bold">{hargaJual.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}</h1>
+              <h1 className="card-title text-end fs-1 fw-bold">{ hargaJual.toLocaleString("id-ID", { style: "currency", currency: "IDR" }) }</h1>
             </div>
             <div className="col-md-12 ">
-              <button className=" btn mt-auto fs-3 fw-normal btn-success bx bx-printer" onClick={handlePrint}></button>
+              <button className=" btn mt-auto fs-3 fw-normal btn-success bx bx-printer" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                onClick={ () => setRefresh(!refresh) }></button>
             </div>
           </div>
         </div>
       </div>
+      {/* <!-- Modal Chekout--> */ }
+      <ModalCheckout transaksiProps={ transaksi } totalHarga={ hargaJual }
+        refreshAutoFokus={ refreshAutoFokus } refresh={ refresh } />
     </>
   );
 };
