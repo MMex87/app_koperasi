@@ -11,7 +11,7 @@ const ModalCheckout = (props) => {
     const [pembayaran, setPembayaran] = useState('')
     const inputRef = useRef(null);
 
-    const print = (e) => {
+    const print = async (e) => {
         e.preventDefault()
         try {
             if (props.transaksiProps.find(({ faktur }) => faktur == props.faktur) == undefined) {
@@ -26,8 +26,14 @@ const ModalCheckout = (props) => {
                     if (trans.faktur == props.faktur) {
                         barangTerjual(trans.barangId, trans.jumlah)
                         if (props.typePembayaran == 'Bon') {
-                            axios.put(`/transPenjualan/${trans.id}`, {
+                            await axios.put(`/transPenjualan/${trans.id}`, {
                                 statusPenjualan: "Bon"
+                            })
+                            await axios.post(`/penjualanBon`, {
+                                statusBon: 'Belum Lunas',
+                                anggotaId: trans.anggotaId,
+                                barangId: trans.barangId,
+                                transPenjualanId: trans.id
                             })
                         } else {
                             axios.put(`/transPenjualan/${trans.id}`, {
@@ -258,6 +264,7 @@ const mapStateToProps = (state) => {
         jenis: state.jenis,
         harga: state.harga,
         faktur: state.faktur,
+        supplierId: state.supplierId
     };
 };
 
@@ -271,6 +278,7 @@ const mapDispatchToProps = (dispatch) => {
         handlejenisBarang: (jenisBarang) => dispatch({ type: ActionType.SET_JENIS_PENJUALAN, index: jenisBarang }),
         handleHargaBarang: (hargaBarang) => dispatch({ type: ActionType.SET_HARGA_PENJUALAN, index: hargaBarang }),
         handleFakturPenjualan: (faktur) => dispatch({ type: ActionType.SET_FAKTUR_PENJUALAN, index: faktur }),
+        handleSupplierIdPenjualan: (supplier) => dispatch({ type: ActionType.SET_ID_SUPPLIER_PENJUALAN, index: supplier }),
     };
 };
 

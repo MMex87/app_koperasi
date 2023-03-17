@@ -7,9 +7,9 @@ import AddCartManual from "./addCartManual";
 import AddCartScan from "./addCartScan";
 import CartList from "./cartList";
 import getAnggota from "../../../../utils/anggota/getAnggota";
-import getBarang from "../../../../utils/barang/getBarang";
 import getTransPenjualan from "../../../../utils/transaksiPenjualan/getTransPenjualan";
 import Swal from "sweetalert2";
+import getBarangJoin from "../../../../utils/barang/getBarangJoin";
 
 class TransPenjualan extends Component {
   state = {
@@ -27,7 +27,7 @@ class TransPenjualan extends Component {
     getAnggota().then((data) => {
       this.setState({ anggotas: data });
     });
-    getBarang().then((data) => {
+    getBarangJoin().then((data) => {
       this.setState({ barang: data });
     });
     getTransPenjualan().then((data) => {
@@ -46,23 +46,23 @@ class TransPenjualan extends Component {
   render() {
     const handlecart = async (e) => {
       e.preventDefault()
-      let kondisiAnggota = this.state.anggotas.find(({ nama }) => nama == this.props.anggota)
-      let kondisiBarang = this.state.barang.find(({ nama }) => nama == this.props.namaBarang)
-      let anggotaId
+      let anggota = this.state.anggotas.find(({ nama }) => nama == this.props.anggota)
+      let barang = this.state.barang.find(({ nama, supplierId }) => nama == this.props.namaBarang && supplierId == this.props.supplierId)
+      let anggotaIdLokal
       let barangIdLokal
       let fakturLokal = this.props.faktur
       let jumlah = this.props.jumlah
       let typePembayaran = this.props.typePembayaran
       let harga = this.props.harga
-      if (kondisiAnggota != undefined) {
-        anggotaId = this.state.anggotas.find(({ nama }) => nama == this.props.anggota).id
+      if (anggota != undefined) {
+        anggotaIdLokal = this.state.anggotas.find(({ nama }) => nama == this.props.anggota).id
       }
-      if (kondisiBarang != undefined) {
-        barangIdLokal = this.state.barang.find(({ nama }) => nama == this.props.namaBarang).id
+      if (barang != undefined) {
+        barangIdLokal = this.state.barang.find(({ nama, supplierId }) => nama == this.props.namaBarang && supplierId == this.props.supplierId).id
       }
-      let trans = this.state.penjualan.find(({ faktur, barangId }) => faktur == fakturLokal && barangId == barangIdLokal)
+      let trans = this.state.penjualan.find(({ faktur, barangId, anggotaId }) => faktur == fakturLokal && barangId == barangIdLokal && anggotaId == anggotaIdLokal)
       try {
-        if (jumlah == '' || fakturLokal == '' || harga == '' || typePembayaran == '' || anggotaId == undefined || barangIdLokal == undefined) {
+        if (jumlah == '' || fakturLokal == '' || harga == '' || typePembayaran == '' || anggotaIdLokal == undefined || barangIdLokal == undefined) {
           // ketika barang kurang lengkap di isinya
           Swal.fire(
             'Gagal menambahkan data!!',
@@ -70,23 +70,29 @@ class TransPenjualan extends Component {
             'warning'
           )
         } else {
-          if (
-            trans == undefined
-          ) {
-            await axios.post('/transPenjualan', {
-              jumlah,
-              faktur: fakturLokal,
-              harga,
-              typePembayaran,
-              anggotaId,
-              barangId: barangIdLokal,
-              statusPenjualan: 'onProcess'
-            })
+          if (barang.jumlah - jumlah < 0) {
+            // ketika stok barang tidak mencukupi
+            Swal.fire(
+              'Gagal menambahkan data!!',
+              'Stok Barang Tidak cukup!!',
+              'warning'
+            )
           } else {
-            console.log('masuk ada')
-            await axios.put(`/transPenjualan/${trans.id}`, {
-              jumlah: parseInt(trans.jumlah) + parseInt(jumlah)
-            })
+            if (trans == undefined) {
+              await axios.post('/transPenjualan', {
+                jumlah,
+                faktur: fakturLokal,
+                harga,
+                typePembayaran,
+                anggotaId: anggotaIdLokal,
+                barangId: barangIdLokal,
+                statusPenjualan: 'onProcess'
+              })
+            } else {
+              await axios.put(`/transPenjualan/${trans.id}`, {
+                jumlah: parseInt(trans.jumlah) + parseInt(jumlah)
+              })
+            }
           }
           this.props.handleKodeBarang('')
           this.props.handlejenisBarang('')
@@ -226,6 +232,7 @@ const mapStateToProps = (state) => {
     jenis: state.jenis,
     harga: state.harga,
     faktur: state.faktur,
+    supplierId: state.supplierId
   };
 };
 
@@ -239,6 +246,7 @@ const mapDispatchToProps = (dispatch) => {
     handlejenisBarang: (jenisBarang) => dispatch({ type: ActionType.SET_JENIS_PENJUALAN, index: jenisBarang }),
     handleHargaBarang: (hargaBarang) => dispatch({ type: ActionType.SET_HARGA_PENJUALAN, index: hargaBarang }),
     handleFakturPenjualan: (faktur) => dispatch({ type: ActionType.SET_FAKTUR_PENJUALAN, index: faktur }),
+    handleSupplierIdPenjualan: (supplier) => dispatch({ type: ActionType.SET_ID_SUPPLIER_PENJUALAN, index: supplier }),
   };
 };
 

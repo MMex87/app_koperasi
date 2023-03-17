@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import ActionType from '../../../../redux/reducer/globalActionType'
-import getBarang from '../../../../utils/barang/getBarang'
+import getBarangJoin from '../../../../utils/barang/getBarangJoin'
 
 const addCartScan = (props) => {
 
     const [barang, setBarang] = useState([])
 
     useEffect(() => {
-        getBarang().then((data) => {
+        getBarangJoin().then((data) => {
             setBarang(data)
         })
     }, [])
@@ -22,6 +22,7 @@ const addCartScan = (props) => {
             props.handleNamaBarang(barangs.nama)
             props.handlejenisBarang(barangs.jenisBarang)
             props.handleHargaBarang(barangs.hargaJual)
+            props.handleSupplierIdPenjualan(barangs.supplierId)
         }
     }
 
@@ -36,7 +37,7 @@ const addCartScan = (props) => {
     )
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {
         anggota: state.anggota,
         typePembayaran: state.typePembayaran,
@@ -46,8 +47,9 @@ const mapStateToProps = state => {
         jenis: state.jenis,
         harga: state.harga,
         faktur: state.faktur,
-    }
-}
+        supplierId: state.supplierId
+    };
+};
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -58,8 +60,9 @@ const mapDispatchToProps = (dispatch) => {
         handleJumlah: (jumlah) => dispatch({ type: ActionType.SET_JUMLAH_PENJUALAN, index: jumlah }),
         handlejenisBarang: (jenisBarang) => dispatch({ type: ActionType.SET_JENIS_PENJUALAN, index: jenisBarang }),
         handleHargaBarang: (hargaBarang) => dispatch({ type: ActionType.SET_HARGA_PENJUALAN, index: hargaBarang }),
-        handleFakturPenjualan: (faktur) => dispatch({ type: ActionType.SET_FAKTUR_PENJUALAN, index: faktur })
-    }
-}
+        handleFakturPenjualan: (faktur) => dispatch({ type: ActionType.SET_FAKTUR_PENJUALAN, index: faktur }),
+        handleSupplierIdPenjualan: (supplier) => dispatch({ type: ActionType.SET_ID_SUPPLIER_PENJUALAN, index: supplier }),
+    };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(addCartScan)

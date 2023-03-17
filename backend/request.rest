@@ -3,6 +3,26 @@ GET http://localhost:8800/transPembelianJoin
 ###
 GET http://localhost:8800/transPenjualanJoin
 
+
+###
+GET http://localhost:8800/barangJoin
+
+
+
+###
+POST http://localhost:8800/penjualanBon
+Content-Type: application/json
+
+{
+"statusBon": "Belum Lunas",
+"anggotaId": 2,
+"barangId": 16,
+"transPenjualanId": 75
+}
+
+
+
+
 ###
 GET http://localhost:8800/barang
 

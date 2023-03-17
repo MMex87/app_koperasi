@@ -37,6 +37,8 @@ dotenv.config()
 // returnPenjualanModel.drop()
 // PenjualanBonModel.sync()
 // PembayaranCicilanModel.sync()
+// PenjualanBonModel.drop()
+// PembayaranCicilanModel.drop()
 
 
 // Body Parser

@@ -10,6 +10,7 @@ import getSupplier from '../../../../utils/supplier/getSupplier'
 import getTransPembelian from '../../../../utils/transaksiPembelian/getTransaksiPembelian'
 import Swal from 'sweetalert2'
 import getBarangJoin from '../../../../utils/barang/getBarangJoin'
+import barangTerbeli from '../../../../utils/barang/barangTerbeli'
 
 class TransaksiPembalian extends Component {
   state = {
@@ -71,8 +72,8 @@ class TransaksiPembalian extends Component {
       }
       let trans = this.state.transaksi.find(({ faktur, barangId }) => faktur == fakturLokal && barangId == barangIdLokal)
       let cariBarang = this.state.barang.find(({ kodeBarang, supplier }) => kodeBarang == this.props.kodeBarang && supplier.nama == this.props.supplier)
-      // console.log(cariBarang)
-      console.log(barangKondisi)
+
+
       try {
         if (jumlah == '' || fakturLokal == '' || harga == '' || idSupplier == '' || hargaJual == '') {
           // ketika barang kurang lengkap di isinya
@@ -128,8 +129,8 @@ class TransaksiPembalian extends Component {
 
             } else {
               // ketika barang sudah ada di db barang
-              await axios.put(`/barangTerbeli/${barangIdLokal}/${jumlah}`)
-              await axios.post('/transPembelian', {
+              barangTerbeli(barangIdLokal, jumlah)
+              await axios.post(`/transPembelian`, {
                 jumlah,
                 faktur: fakturLokal,
                 harga,
@@ -141,7 +142,7 @@ class TransaksiPembalian extends Component {
             }
           } else {
             // ketika barang sudah ada di keranjang dan menambahkan barang yang sama
-            await axios.put(`/barangTerbeli/${barangIdLokal}/${jumlah}`)
+            barangTerbeli(barangIdLokal, jumlah)
             await axios.put(`/transPembelian/${trans.id}`, {
               jumlah: parseInt(trans.jumlah) + parseInt(jumlah)
             })
@@ -153,6 +154,7 @@ class TransaksiPembalian extends Component {
           this.props.handleSatuanBarang("")
           this.props.handleHargaJualBarang('')
           this.props.handleNamaBarang('')
+          this.props.handleSupplier('')
         }
       } catch (error) {
         console.error(error.response)

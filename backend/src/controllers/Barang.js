@@ -7,7 +7,7 @@ const getBarang = async (req, res) => {
     try {
         const barang = await barangModel.findAll({
             order: [
-                ['nama', 'ASC']
+                ['id', 'DESC']
             ]
         })
         res.status(200).json(barang)
@@ -20,7 +20,7 @@ const getBarangId = async (req, res) => {
     try {
         const barang = await barangModel.findOne({
             order: [
-                ['nama', 'ASC']
+                ['id', 'DESC']
             ],
             where: {
                 id: req.params.id
@@ -121,6 +121,10 @@ const getBarangJoin = async (req, res) => {
                     as: 'supplier'
                 }
             ],
+            order: [
+                ['id', 'DESC']
+            ]
+            ,
             attributes: ['id', 'nama', 'kodeBarang', 'jenisBarang', 'satuan', 'jumlah', 'hargaBeli', 'hargaJual', 'supplierId']
         })
         res.status(200).json(barang)
@@ -131,9 +135,10 @@ const getBarangJoin = async (req, res) => {
 }
 
 const barangTerjual = async (req, res) => {
+    const { jumlah } = req.body
     try {
         await barangModel.increment('jumlah', {
-            by: -parseInt(req.params.jumlah),
+            by: -parseInt(jumlah),
             where: {
                 id: req.params.id
             }
@@ -146,9 +151,10 @@ const barangTerjual = async (req, res) => {
 }
 
 const barangTerbeli = async (req, res) => {
+    const { jumlah } = req.body
     try {
         await barangModel.increment('jumlah', {
-            by: parseInt(req.params.jumlah),
+            by: parseInt(jumlah),
             where: {
                 id: req.params.id
             }

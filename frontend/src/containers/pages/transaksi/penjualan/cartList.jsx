@@ -269,6 +269,7 @@ const mapStateToProps = (state) => {
     jenis: state.jenis,
     harga: state.harga,
     faktur: state.faktur,
+    supplierId: state.supplierId
   };
 };
 
@@ -282,6 +283,7 @@ const mapDispatchToProps = (dispatch) => {
     handlejenisBarang: (jenisBarang) => dispatch({ type: ActionType.SET_JENIS_PENJUALAN, index: jenisBarang }),
     handleHargaBarang: (hargaBarang) => dispatch({ type: ActionType.SET_HARGA_PENJUALAN, index: hargaBarang }),
     handleFakturPenjualan: (faktur) => dispatch({ type: ActionType.SET_FAKTUR_PENJUALAN, index: faktur }),
+    handleSupplierIdPenjualan: (supplier) => dispatch({ type: ActionType.SET_ID_SUPPLIER_PENJUALAN, index: supplier }),
   };
 };
 

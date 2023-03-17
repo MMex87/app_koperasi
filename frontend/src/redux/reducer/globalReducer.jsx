@@ -1,6 +1,7 @@
 import ActionType from "./globalActionType"
 
 const globalState = {
+    // state penjualan
     anggota: '',
     typePembayaran: '',
     kodeBarang: '',
@@ -9,6 +10,9 @@ const globalState = {
     jenis: '',
     harga: '',
     faktur: '',
+    supplierId: '',
+
+    // state pembelian
     supplier: '',
     kodeBarang_beli: '',
     namaBarang_beli: '',
@@ -22,6 +26,7 @@ const globalState = {
 
 const rootReducer = (state = globalState, action) => {
     switch (action.type) {
+        // switch penjualan
         case ActionType.SET_ANGGOTA_PENJUALAN:
             return {
                 ...state,
@@ -62,6 +67,13 @@ const rootReducer = (state = globalState, action) => {
                 ...state,
                 faktur: action.index
             }
+        case ActionType.SET_ID_SUPPLIER_PENJUALAN:
+            return {
+                ...state,
+                supplierId: action.index
+            }
+
+        // Switch pembelian
         case ActionType.SET_SUPPLIER_PEMBELIAN:
             return {
                 ...state,

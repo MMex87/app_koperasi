@@ -4,7 +4,7 @@ const anggotaModel = require('./AnggotaModel')
 const PenjualanBonModel = require('./PenjualanBonModel')
 
 const PembayaranCicilanModel = db.define('pembayarancicilan', {
-    totalBayar: {
+    jumlahBayar: {
         type: DataTypes.INTEGER
     }
 }, {

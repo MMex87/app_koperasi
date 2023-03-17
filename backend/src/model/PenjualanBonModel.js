@@ -6,8 +6,8 @@ const transPenjualanModel = require('./TransPenjualanModel')
 
 
 const PenjualanBonModel = db.define('penjualanbon', {
-    totalBayar: {
-        type: DataTypes.INTEGER
+    statusBon: {
+        type: DataTypes.STRING
     }
 }, {
     freezeTableName: true
