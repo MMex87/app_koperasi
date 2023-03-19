@@ -8,13 +8,13 @@ const transPenjualanModel = require('./TransPenjualanModel')
 const PenjualanBonModel = db.define('penjualanbon', {
     statusBon: {
         type: DataTypes.STRING
+    },
+    totalBayar: {
+        type: DataTypes.INTEGER
     }
 }, {
     freezeTableName: true
 })
-
-barangModel.hasMany(PenjualanBonModel)
-PenjualanBonModel.belongsTo(barangModel)
 
 anggotaModel.hasMany(PenjualanBonModel, {
     foreignKey: 'anggotaId'

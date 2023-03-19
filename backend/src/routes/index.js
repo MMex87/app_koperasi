@@ -71,6 +71,8 @@ router.delete('/returnPenjualan/:id', returnTransPenjualan.hapusReturnPenjualan)
 
 // PenjualanBon
 router.get('/penjualanBon', penjualanBon.getPenBon)
+router.get('/penjualanBonSearch', penjualanBon.getPenBonJoinSearch)
+router.get('/penjualanBonJoin', penjualanBon.getPenBonJoin)
 router.post('/penjualanBon', penjualanBon.tambahPenBon)
 router.put('/penjualanBon/:id', penjualanBon.editPenBon)
 router.delete('/penjualanBon/:id', penjualanBon.hapusPenBon)

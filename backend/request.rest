@@ -8,6 +8,14 @@ GET http://localhost:8800/transPenjualanJoin
 GET http://localhost:8800/barangJoin
 
 
+###
+GET http://localhost:8800/penjualanBonJoin
+
+
+###
+GET http://localhost:8800/penjualanBonSearch?search=anton
+
+
 
 ###
 POST http://localhost:8800/penjualanBon

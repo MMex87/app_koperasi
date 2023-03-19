@@ -82,7 +82,7 @@ class TransPenjualan extends Component {
               await axios.post('/transPenjualan', {
                 jumlah,
                 faktur: fakturLokal,
-                harga,
+                harga: harga * parseInt(jumlah),
                 typePembayaran,
                 anggotaId: anggotaIdLokal,
                 barangId: barangIdLokal,
@@ -90,7 +90,8 @@ class TransPenjualan extends Component {
               })
             } else {
               await axios.put(`/transPenjualan/${trans.id}`, {
-                jumlah: parseInt(trans.jumlah) + parseInt(jumlah)
+                jumlah: parseInt(trans.jumlah) + parseInt(jumlah),
+                harga: trans.harga * parseInt(jumlah)
               })
             }
           }

@@ -11,11 +11,21 @@ const ModalCheckout = (props) => {
     const [pembayaran, setPembayaran] = useState('')
     const inputRef = useRef(null);
 
+    const getTotal = (faktur) => {
+        let total = 0
+        for (let val of props.transaksiProps) {
+            if (val.faktur == faktur) {
+                total = total + parseInt(val.harga)
+            }
+        }
+        return total
+    }
+
     const print = async (e) => {
         e.preventDefault()
         try {
             if (props.transaksiProps.find(({ faktur }) => faktur == props.faktur) == undefined) {
-                Swal.fire(
+                return Swal.fire(
                     'Gagal Print data!!',
                     'Tolong isi CartList Terlebih Dahulu!',
                     'warning'
@@ -29,18 +39,24 @@ const ModalCheckout = (props) => {
                             await axios.put(`/transPenjualan/${trans.id}`, {
                                 statusPenjualan: "Bon"
                             })
-                            await axios.post(`/penjualanBon`, {
-                                statusBon: 'Belum Lunas',
-                                anggotaId: trans.anggotaId,
-                                barangId: trans.barangId,
-                                transPenjualanId: trans.id
-                            })
                         } else {
-                            axios.put(`/transPenjualan/${trans.id}`, {
+                            await axios.put(`/transPenjualan/${trans.id}`, {
                                 statusPenjualan: "Selesai"
                             })
                         }
                     }
+                }
+
+                if (props.typePembayaran == 'Bon') {
+                    const anggotaId = props.transaksiProps.find(({ faktur }) => faktur == props.faktur).anggotaId
+                    const totalBayar = getTotal(props.faktur) + getTotal(props.faktur) * (2 / 100)
+                    const transPenjualanId = props.transaksiProps.find(({ faktur }) => faktur == props.faktur).id
+                    await axios.post(`/penjualanBon`, {
+                        statusBon: 'Belum Lunas',
+                        anggotaId,
+                        totalBayar,
+                        transPenjualanId
+                    })
                 }
 
                 // Deklarasi Pdf

@@ -22,6 +22,9 @@ const globalState = {
     harga_beli: '',
     harga_jual: '',
     faktur_beli: '',
+
+    // state cicilan
+    cicilanId: ''
 }
 
 const rootReducer = (state = globalState, action) => {
@@ -119,6 +122,14 @@ const rootReducer = (state = globalState, action) => {
                 ...state,
                 faktur_beli: action.index
             }
+
+        // Switch Cicilan
+        case ActionType.SET_ID_CICILAN:
+            return {
+                ...state,
+                cicilanId: action.index
+            }
+
         default:
             return state
     }
