@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 15, 2023 at 06:42 PM
+-- Generation Time: Mar 20, 2023 at 06:31 AM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 8.0.11
 
@@ -33,13 +33,6 @@ CREATE TABLE `anggota` (
   `noHP` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `anggota`
---
-
-INSERT INTO `anggota` (`id`, `nama`, `noHP`) VALUES
-(1, 'bayu bayu', '08998817853');
-
 -- --------------------------------------------------------
 
 --
@@ -55,9 +48,9 @@ CREATE TABLE `barang` (
   `jumlah` int(11) DEFAULT NULL,
   `hargaBeli` int(11) DEFAULT NULL,
   `hargaJual` int(11) DEFAULT NULL,
-  `idSupplier` int(11) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL
+  `updatedAt` datetime NOT NULL,
+  `supplierId` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -68,11 +61,11 @@ CREATE TABLE `barang` (
 
 CREATE TABLE `pembayarancicilan` (
   `id` int(11) NOT NULL,
-  `totalBayar` int(11) DEFAULT NULL,
-  `idTransaksi` int(11) DEFAULT NULL,
-  `idAnggota` int(11) DEFAULT NULL,
+  `jumlahBayar` int(11) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL
+  `updatedAt` datetime NOT NULL,
+  `anggotaId` int(11) DEFAULT NULL,
+  `penjualanbonId` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -83,12 +76,12 @@ CREATE TABLE `pembayarancicilan` (
 
 CREATE TABLE `penjualanbon` (
   `id` int(11) NOT NULL,
+  `statusBon` varchar(255) DEFAULT NULL,
   `totalBayar` int(11) DEFAULT NULL,
-  `idPenjualan` int(11) DEFAULT NULL,
-  `idSupplier` int(11) DEFAULT NULL,
-  `idBarang` int(11) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL
+  `updatedAt` datetime NOT NULL,
+  `anggotaId` int(11) DEFAULT NULL,
+  `transPenjualanId` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -101,11 +94,11 @@ CREATE TABLE `returnpembelian` (
   `id` int(11) NOT NULL,
   `jumlah` int(11) DEFAULT NULL,
   `faktur` varchar(255) DEFAULT NULL,
-  `idTransPembelian` int(11) DEFAULT NULL,
-  `idSupplier` int(11) DEFAULT NULL,
-  `idBarang` int(11) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL
+  `updatedAt` datetime NOT NULL,
+  `barangId` int(11) DEFAULT NULL,
+  `supplierId` int(11) DEFAULT NULL,
+  `transPembelianId` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -118,11 +111,11 @@ CREATE TABLE `returnpenjualan` (
   `id` int(11) NOT NULL,
   `jumlah` int(11) DEFAULT NULL,
   `faktur` varchar(255) DEFAULT NULL,
-  `idTransPenjualan` int(11) DEFAULT NULL,
-  `idAnggota` int(11) DEFAULT NULL,
-  `idBarang` int(11) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL
+  `updatedAt` datetime NOT NULL,
+  `transPenjualanId` int(11) DEFAULT NULL,
+  `anggotaId` int(11) DEFAULT NULL,
+  `barangId` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -149,11 +142,12 @@ CREATE TABLE `transpembelian` (
   `jumlah` int(11) DEFAULT NULL,
   `faktur` varchar(255) DEFAULT NULL,
   `harga` int(11) DEFAULT NULL,
-  `typePembayaran` varchar(255) DEFAULT NULL,
-  `idSupplier` int(11) DEFAULT NULL,
-  `idBarang` int(11) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL
+  `updatedAt` datetime NOT NULL,
+  `barangId` int(11) DEFAULT NULL,
+  `supplierId` int(11) DEFAULT NULL,
+  `statusPembelian` varchar(255) DEFAULT NULL,
+  `hargaJual` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -168,10 +162,11 @@ CREATE TABLE `transpenjualan` (
   `faktur` varchar(255) DEFAULT NULL,
   `harga` int(11) DEFAULT NULL,
   `typePembayaran` varchar(255) DEFAULT NULL,
-  `idAnggota` int(11) DEFAULT NULL,
-  `idBarang` int(11) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
-  `updatedAt` datetime NOT NULL
+  `updatedAt` datetime NOT NULL,
+  `barangId` int(11) DEFAULT NULL,
+  `anggotaId` int(11) DEFAULT NULL,
+  `statusPenjualan` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -189,42 +184,41 @@ ALTER TABLE `anggota`
 --
 ALTER TABLE `barang`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `barang_id_supplier` (`idSupplier`);
+  ADD KEY `supplierId` (`supplierId`);
 
 --
 -- Indexes for table `pembayarancicilan`
 --
 ALTER TABLE `pembayarancicilan`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `pembayarancicilan_id_transaksi` (`idTransaksi`),
-  ADD KEY `pembayarancicilan_id_anggota` (`idAnggota`);
+  ADD KEY `anggotaId` (`anggotaId`),
+  ADD KEY `penjualanbonId` (`penjualanbonId`);
 
 --
 -- Indexes for table `penjualanbon`
 --
 ALTER TABLE `penjualanbon`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `penjualanbon_id_penjualan` (`idPenjualan`),
-  ADD KEY `penjualanbon_id_supplier` (`idSupplier`),
-  ADD KEY `penjualanbon_id_barang` (`idBarang`);
+  ADD KEY `anggotaId` (`anggotaId`),
+  ADD KEY `transPenjualanId` (`transPenjualanId`);
 
 --
 -- Indexes for table `returnpembelian`
 --
 ALTER TABLE `returnpembelian`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `return_pembelian_id_trans_pembelian` (`idTransPembelian`),
-  ADD KEY `return_pembelian_id_supplier` (`idSupplier`),
-  ADD KEY `return_pembelian_id_barang` (`idBarang`);
+  ADD KEY `barangId` (`barangId`),
+  ADD KEY `supplierId` (`supplierId`),
+  ADD KEY `transPembelianId` (`transPembelianId`);
 
 --
 -- Indexes for table `returnpenjualan`
 --
 ALTER TABLE `returnpenjualan`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `return_penjualan_id_trans_penjualan` (`idTransPenjualan`),
-  ADD KEY `return_penjualan_id_barang` (`idBarang`),
-  ADD KEY `return_penjualan_id_anggota` (`idAnggota`);
+  ADD KEY `transPenjualanId` (`transPenjualanId`),
+  ADD KEY `anggotaId` (`anggotaId`),
+  ADD KEY `barangId` (`barangId`);
 
 --
 -- Indexes for table `supplier`
@@ -237,16 +231,16 @@ ALTER TABLE `supplier`
 --
 ALTER TABLE `transpembelian`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `trans_pembelian_id_supplier` (`idSupplier`),
-  ADD KEY `trans_pembelian_id_barang` (`idBarang`);
+  ADD KEY `barangId` (`barangId`),
+  ADD KEY `supplierId` (`supplierId`);
 
 --
 -- Indexes for table `transpenjualan`
 --
 ALTER TABLE `transpenjualan`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `trans_penjualan_id_anggota` (`idAnggota`),
-  ADD KEY `trans_penjualan_id_barang` (`idBarang`);
+  ADD KEY `barangId` (`barangId`),
+  ADD KEY `anggotaId` (`anggotaId`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -256,7 +250,7 @@ ALTER TABLE `transpenjualan`
 -- AUTO_INCREMENT for table `anggota`
 --
 ALTER TABLE `anggota`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `barang`
@@ -305,6 +299,60 @@ ALTER TABLE `transpembelian`
 --
 ALTER TABLE `transpenjualan`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `barang`
+--
+ALTER TABLE `barang`
+  ADD CONSTRAINT `barang_ibfk_1` FOREIGN KEY (`supplierId`) REFERENCES `supplier` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `pembayarancicilan`
+--
+ALTER TABLE `pembayarancicilan`
+  ADD CONSTRAINT `pembayarancicilan_ibfk_1` FOREIGN KEY (`anggotaId`) REFERENCES `anggota` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `pembayarancicilan_ibfk_2` FOREIGN KEY (`penjualanbonId`) REFERENCES `penjualanbon` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `penjualanbon`
+--
+ALTER TABLE `penjualanbon`
+  ADD CONSTRAINT `penjualanbon_ibfk_1` FOREIGN KEY (`anggotaId`) REFERENCES `anggota` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `penjualanbon_ibfk_2` FOREIGN KEY (`transPenjualanId`) REFERENCES `transpenjualan` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `returnpembelian`
+--
+ALTER TABLE `returnpembelian`
+  ADD CONSTRAINT `returnpembelian_ibfk_1` FOREIGN KEY (`barangId`) REFERENCES `barang` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `returnpembelian_ibfk_2` FOREIGN KEY (`supplierId`) REFERENCES `supplier` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `returnpembelian_ibfk_3` FOREIGN KEY (`transPembelianId`) REFERENCES `transpembelian` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `returnpenjualan`
+--
+ALTER TABLE `returnpenjualan`
+  ADD CONSTRAINT `returnpenjualan_ibfk_1` FOREIGN KEY (`transPenjualanId`) REFERENCES `transpenjualan` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `returnpenjualan_ibfk_2` FOREIGN KEY (`anggotaId`) REFERENCES `anggota` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `returnpenjualan_ibfk_3` FOREIGN KEY (`barangId`) REFERENCES `barang` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `transpembelian`
+--
+ALTER TABLE `transpembelian`
+  ADD CONSTRAINT `transpembelian_ibfk_7` FOREIGN KEY (`barangId`) REFERENCES `barang` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `transpembelian_ibfk_8` FOREIGN KEY (`supplierId`) REFERENCES `supplier` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `transpenjualan`
+--
+ALTER TABLE `transpenjualan`
+  ADD CONSTRAINT `transpenjualan_ibfk_3` FOREIGN KEY (`barangId`) REFERENCES `barang` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `transpenjualan_ibfk_4` FOREIGN KEY (`anggotaId`) REFERENCES `anggota` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

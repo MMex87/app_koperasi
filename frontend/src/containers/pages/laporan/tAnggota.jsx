@@ -18,7 +18,7 @@ class tAnggota extends Component {
                 <div className="row">
                   <div className="col-md-8"></div>
                   <div className="text-end col-md-2 pt-3">
-                    <input type="date" className=" form-control" placeholder={ this.state.search } value={ this.state.search } onChange={ (e) => this.setState({ search: e.target.value }) } />
+                    {/* <input type="date" className=" form-control" placeholder={ this.state.search } value={ this.state.search } onChange={ (e) => this.setState({ search: e.target.value }) } /> */ }
 
                   </div>
                   <div className="text-end col-md-2 pt-3">

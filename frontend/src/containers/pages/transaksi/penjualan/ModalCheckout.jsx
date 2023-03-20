@@ -72,8 +72,8 @@ const ModalCheckout = (props) => {
 
                 doc.setFontSize(12)
                 doc.line(1, 3.5, 4, 3.5)
-                doc.text(`KANTIN`, 5, 5)
-                doc.line(22, 3.5, 46, 3.5)
+                doc.text(`Cafe-Wijaya`, 5, 5)
+                doc.line(29, 3.5, 46, 3.5)
                 doc.setFontSize(7)
                 doc.text(`Faktur`, 1, 11)
                 doc.text(`:`, 16, 11)
