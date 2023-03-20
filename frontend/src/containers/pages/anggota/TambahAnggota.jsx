@@ -91,17 +91,17 @@ class TambahAnggota extends Component {
           <nav>
             <ol className="breadcrumb">
               <li className="breadcrumb-item " id="li">
-                {" "}
-                <Link to="/anggota">Data Anggota</Link>{" "}
+                { " " }
+                <Link to="/anggota">Data Anggota</Link>{ " " }
               </li>
-              {judul == "Tambah" ? (
+              { judul == "Tambah" ? (
                 <li className="breadcrumb-item"> Input Anggota </li>
               ) : (
                 <li className="breadcrumb-item">
-                  {" "}
+                  { " " }
                   <Link
                     to="/anggota/tambah"
-                    onClick={() =>
+                    onClick={ () =>
                       this.setState({
                         nama: "",
                         noHP: "",
@@ -109,10 +109,10 @@ class TambahAnggota extends Component {
                     }
                   >
                     Input Anggota
-                  </Link>{" "}
+                  </Link>{ " " }
                 </li>
-              )}
-              {judul == "Edit" && <li className="breadcrumb-item"> Edit Anggota</li>}
+              ) }
+              { judul == "Edit" && <li className="breadcrumb-item"> Edit Anggota</li> }
             </ol>
           </nav>
         </div>
@@ -121,14 +121,14 @@ class TambahAnggota extends Component {
             <div className="card-body">
               <div className="row">
                 <div className="col-lg-12">
-                  <h1 className="card-title  fs-2 text-center">{judul} Anggota</h1>
-                  <form onSubmit={tambahAnggota}>
+                  <h1 className="card-title  fs-2 text-center">{ judul } Anggota</h1>
+                  <form onSubmit={ tambahAnggota }>
                     <div className="row mb-3">
                       <label htmlFor="nama" className="col-sm-2 col-form-label">
                         Nama Anggota
                       </label>
                       <div className="col-sm-10">
-                        <input type="text" value={this.state.nama} className="form-control" id="nama" onChange={(e) => this.setState({ nama: e.target.value })} />
+                        <input type="text" value={ this.state.nama } className="form-control" id="nama" onChange={ (e) => this.setState({ nama: e.target.value }) } />
                       </div>
                     </div>
                     <div className="row mb-3">
@@ -136,7 +136,7 @@ class TambahAnggota extends Component {
                         Nomor Handphone
                       </label>
                       <div className="col-sm-10">
-                        <input type="number" value={this.state.noHP} className="form-control" id="noHP" onChange={(e) => this.setState({ noHP: e.target.value })} />
+                        <input type="number" value={ this.state.noHP } className="form-control" id="noHP" onChange={ (e) => this.setState({ noHP: e.target.value }) } />
                       </div>
                     </div>
                     <div className="text-center">

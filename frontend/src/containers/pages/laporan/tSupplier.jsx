@@ -2,6 +2,9 @@ import { Component } from "react";
 
 class tSupplier extends Component {
   render() {
+    const simpan = () => {
+
+    }
     return (
       <main id="main">
         <div className="text-center pagetitle">
@@ -13,9 +16,13 @@ class tSupplier extends Component {
             <div className="card-body">
               <div className="col-lg-12">
                 <div className="row">
-                  <div className="col-md-10"></div>
+                  <div className="col-md-8"></div>
                   <div className="text-end col-md-2 pt-3">
-                    <input type="text" className=" form-control" placeholder="Cari Supplier" />
+                    <input type="date" className=" form-control" placeholder={ this.state.search } value={ this.state.search } onChange={ (e) => this.setState({ search: e.target.value }) } />
+
+                  </div>
+                  <div className="text-end col-md-2 pt-3">
+                    <button className="btn btn-success me-3" onClick={ simpan }> Simpan</button>
                   </div>
                   <table className="table mt-2">
                     <thead>
@@ -44,7 +51,7 @@ class tSupplier extends Component {
                     </tbody> */}
                   </table>
                   <div>
-                    <button className="btn btn-success"> Simpan</button>
+                    <button className="btn btn-success">Simpan</button>
                   </div>
                 </div>
               </div>

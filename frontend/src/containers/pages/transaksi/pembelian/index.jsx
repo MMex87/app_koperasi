@@ -62,7 +62,7 @@ class TransaksiPembalian extends Component {
       let jumlah = this.props.jumlah
       let harga = this.props.harga
       let hargaJual = this.props.harga_jual
-      let barangKondisi = this.state.barang.find(({ nama }) => nama == this.props.namaBarang)
+      let barangKondisi = this.state.barang.find(({ nama, supplier }) => nama == this.props.namaBarang && supplier.nama == this.props.supplier)
       let supplierKondisi = this.state.suppliers.find(({ nama }) => nama == this.props.supplier)
       if (supplierKondisi != undefined) {
         idSupplier = this.state.suppliers.find(({ nama }) => nama == this.props.supplier).id
