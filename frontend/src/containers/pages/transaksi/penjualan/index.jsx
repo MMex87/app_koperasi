@@ -62,7 +62,7 @@ class TransPenjualan extends Component {
       }
       let trans = this.state.penjualan.find(({ faktur, barangId, anggotaId }) => faktur == fakturLokal && barangId == barangIdLokal && anggotaId == anggotaIdLokal)
       try {
-        if (jumlah == '' || fakturLokal == '' || harga == '' || typePembayaran == '' || anggotaIdLokal == undefined || barangIdLokal == undefined) {
+        if (jumlah == '' || fakturLokal == '' || harga == '' || typePembayaran == '' || anggota == undefined || barang == undefined) {
           // ketika barang kurang lengkap di isinya
           Swal.fire(
             'Gagal menambahkan data!!',

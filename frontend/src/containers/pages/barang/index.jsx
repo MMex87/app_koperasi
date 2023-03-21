@@ -1,3 +1,4 @@
+import axios from "../../../api/axios";
 import React, { Component } from "react";
 import ReactPaginate from "react-paginate";
 import { Link } from "react-router-dom";
@@ -11,6 +12,9 @@ export default class Barang extends Component {
     limit: 5,
     pages: 0,
     rows: 0,
+    barangId: 0,
+    namaBarang: '',
+    kodeBarang: ''
   };
 
   componentDidMount() {
@@ -23,7 +27,7 @@ export default class Barang extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.search != this.state.search || prevState.page != this.state.page) {
+    if (prevState.search != this.state.search || prevState.page != this.state.page || prevState.barangId != this.state.barangId) {
       getSearchBarang(this.state.search, this.state.limit, this.state.page).then((data) => {
         this.setState({ barang: data.result });
         this.setState({ page: data.page });
@@ -35,10 +39,28 @@ export default class Barang extends Component {
 
   render() {
     const changePage = (selected) => {
-      this.setState({ page: selected });
+      this.setState({ page: selected.selected });
     };
 
-    console.log(this.state);
+    const edit = (id, namaBarang, kodeBarang) => {
+      this.setState({ barangId: id, kodeBarang, namaBarang })
+    }
+
+    const batal = () => {
+      this.setState({ barangId: 0, namaBarang: '', kodeBarang: '' })
+    }
+
+    const save = async () => {
+      try {
+        await axios.put(`/barang/${this.state.barangId}`, {
+          nama: this.state.namaBarang,
+          kodeBarang: this.state.kodeBarang
+        })
+        this.setState({ barangId: 0, namaBarang: '', kodeBarang: '' })
+      } catch (error) {
+        console.error(error)
+      }
+    }
 
     return (
       <main id="main" className="main">
@@ -63,7 +85,7 @@ export default class Barang extends Component {
                             title="Enter search keyword"
                             aria-label="Recipient's username"
                             aria-describedby="button-addon2"
-                            onChange={(e) => this.setState({ search: e.target.value })}
+                            onChange={ (e) => this.setState({ search: e.target.value }) }
                           />
                         </div>
                       </form>
@@ -71,58 +93,89 @@ export default class Barang extends Component {
                   </div>
                   <div className="col-md-1">
                     <Link to="/transPembelian">
-                      <img src={"assets/img/add.svg"} alt="" id="add" />
+                      <img src={ "assets/img/add.svg" } alt="" id="add" />
                     </Link>
                   </div>
                   <table className="table">
                     <thead>
                       <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nama Barang</th>
-                        <th scope="col">Kode Barang</th>
-                        <th scope="col">Supplier</th>
-                        <th scope="col">Satuan</th>
-                        <th scope="col">Jenis</th>
-                        <th scope="col">Harga Beli</th>
-                        <th scope="col">Harga Jual</th>
-                        <th scope="col">Jumlah</th>
+                        <th>Nama Barang</th>
+                        <th>Kode Barang</th>
+                        <th>Supplier</th>
+                        <th>Satuan</th>
+                        <th>Jenis</th>
+                        <th>Harga Beli</th>
+                        <th>Harga Jual</th>
+                        <th>Jumlah</th>
+                        <th>Aksi</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.barang.map((val, index) => (
-                        <tr key={index}>
-                          <th scope="row">{index + 1}</th>
-                          <td>{val.nama}</td>
-                          <td>{val.kodeBarang}</td>
-                          <td>{val.supplier.nama}</td>
-                          <td>{val.satuan}</td>
-                          <td>{val.jenisBarang}</td>
-                          <td>{val.hargaBeli}</td>
-                          <td>{val.hargaJual}</td>
-                          <td>{val.jumlah}</td>
+                      { this.state.barang.map((val, index) => (
+                        <tr key={ index }>
+                          <td>
+                            {
+                              this.state.barangId == val.id
+                                ?
+                                <input type="text" className="form-control" id="nama" onChange={ (e) => this.setState({ namaBarang: e.target.value }) } value={ this.state.namaBarang } />
+                                :
+                                val.nama
+                            }
+                          </td>
+                          <td>
+                            {
+                              this.state.barangId == val.id
+                                ?
+                                <input type="text" className="form-control" id="kode" onChange={ (e) => this.setState({ kodeBarang: e.target.value }) } value={ this.state.kodeBarang } />
+                                :
+                                val.kodeBarang
+                            }
+                          </td>
+                          <td>{ val.supplier.nama }</td>
+                          <td>{ val.satuan }</td>
+                          <td>{ val.jenisBarang }</td>
+                          <td>{ val.hargaBeli }</td>
+                          <td>{ val.hargaJual }</td>
+                          <td>{ val.jumlah }</td>
+                          <td>
+                            {
+                              this.state.barangId == val.id
+                                ?
+                                <>
+                                  <button className="btn btn-warning" onClick={ batal }>Batal</button>
+                                  <button className="btn btn-success" onClick={ save }>
+                                    Save
+                                  </button>
+                                </>
+                                :
+                                <button className="btn btn-warning" onClick={
+                                  () => edit(val.id, val.nama, val.kodeBarang) }
+                                >Edit</button>
+                            }
+                          </td>
                         </tr>
-                      ))}
+                      )) }
                     </tbody>
                   </table>
                   <div className="p-3">
                     <div className="d-flex justify-content-between">
                       <p className="text-center">
-                        Total Anggota: {this.state.rows} Page: {this.state.rows ? this.state.page + 1 : 0} of {this.state.pages}
+                        Total Barang: { this.state.rows } Page: { this.state.rows ? this.state.page + 1 : 0 } of { this.state.pages }
                       </p>
                       <nav aria-label="Page navigate example justify-content-end">
                         <ReactPaginate
-                          previousLabel={"< Prev"}
-                          nextLabel={"Next >"}
-                          pageCount={this.state.pages}
-                          onPageChange={changePage}
-                          containerClassName={"pagination"}
-                          pageLinkClassName={"page-link"}
-                          pageClassName={"page-item"}
-                          previousLinkClassName={"page-link"}
-                          previousClassName={"page-item"}
-                          nextClassName={"page-item"}
-                          nextLinkClassName={"page-link"}
-                          activeClassName={"active"}
+                          previousLabel={ "< Prev" }
+                          nextLabel={ "Next >" }
+                          pageCount={ this.state.pages }
+                          onPageChange={ changePage }
+                          containerClassName={ "pagination" }
+                          pageLinkClassName={ "page-link" }
+                          pageClassName={ "page-item" }
+                          previousLinkClassName={ "page-link" }
+                          previousClassName={ "page-item" }
+                          nextClassName={ "page-item" }
+                          nextLinkClassName={ "page-link" }
+                          activeClassName={ "active" }
                         />
                       </nav>
                     </div>

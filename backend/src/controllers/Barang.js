@@ -42,8 +42,7 @@ const getSearchBarang = async (req, res) => {
         const totalRows = await barangModel.count({
             include: [
                 {
-                    model: supplierModel,
-                    as: 'supplier'
+                    model: supplierModel
                 }
             ],
             where: {
@@ -70,8 +69,7 @@ const getSearchBarang = async (req, res) => {
         const result = await barangModel.findAll({
             include: [
                 {
-                    model: supplierModel,
-                    as: 'supplier'
+                    model: supplierModel
                 }
             ],
             where: {
@@ -106,6 +104,7 @@ const getSearchBarang = async (req, res) => {
             totalRows,
             limit
         })
+        // console.log(result)
     } catch (error) {
         console.error(error);
         res.status(400).json({ msg: "Gagal Mengambil Data! " + error })

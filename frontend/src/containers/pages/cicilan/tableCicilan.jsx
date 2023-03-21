@@ -58,7 +58,7 @@ const tableCicilan = (props) => {
                         <th>#</th>
                         <th>Nama Anggota</th>
                         <th>Faktur</th>
-                        <th>Jumlah Bayar(2%)</th>
+                        <th>Jumlah Bayar</th>
                         <th>Tanggal Transaksi</th>
                         <th>Aksi</th>
                     </tr>

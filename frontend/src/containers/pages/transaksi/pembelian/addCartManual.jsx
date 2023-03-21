@@ -105,6 +105,8 @@ const addCartManual = (props) => {
                 <select onChange={ (e) => props.handlejenisBarang(e.target.value) } className="form-select" >
                     <option value="">-- Pilih Jenis --</option>
                     <option name="Makanan" value={ 'Makanan' } selected={ props.jenis == 'Makanan' ? true : "" }>Makanan</option>
+                    <option name="Minuman" value={ 'Minuman' } selected={ props.jenis == 'Minuman' ? true : "" }>Minuman</option>
+                    <option name="Barang" value={ 'Barang' } selected={ props.jenis == 'Barang' ? true : "" }>Barang</option>
                 </select>
             </div>
             <div className="col-md-2">
@@ -114,6 +116,7 @@ const addCartManual = (props) => {
                 <select onChange={ (e) => props.handleSatuanBarang(e.target.value) } className="form-select" >
                     <option value="">-- Pilih Satuan --</option>
                     <option name="Pcs" value={ 'Pcs' } selected={ props.satuan == 'Pcs' ? true : '' }>Pcs</option>
+                    <option name="Box" value={ 'Box' } selected={ props.satuan == 'Box' ? true : '' }>Box</option>
                 </select>
             </div>
             <div className="col-md-6">

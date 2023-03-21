@@ -52,7 +52,7 @@ export class Anggota extends Component {
 
     // handle Pagination
     const changePage = ({ selected }) => {
-      this.setState({ page: selected });
+      this.setState({ page: selected.selected });
     };
 
     const handleDelete = (val) => {
@@ -109,7 +109,7 @@ export class Anggota extends Component {
                             title="Enter search keyword"
                             aria-label="Recipient's username"
                             aria-describedby="button-addon2"
-                            onChange={(e) => this.setState({ search: e.target.value })}
+                            onChange={ (e) => this.setState({ search: e.target.value }) }
                           />
                         </div>
                       </form>
@@ -117,7 +117,7 @@ export class Anggota extends Component {
                   </div>
                   <div className="col-1">
                     <Link to="/anggota/tambah">
-                      <img src={"assets/img/add.svg"} alt="" id="add" />
+                      <img src={ "assets/img/add.svg" } alt="" id="add" />
                     </Link>
                   </div>
                   <table className="table">
@@ -130,38 +130,38 @@ export class Anggota extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.anggota.map((val, index) => (
-                        <tr key={index}>
-                          <th>{index + 1}</th>
-                          <td>{val.nama}</td>
-                          <td>{val.noHP}</td>
+                      { this.state.anggota.map((val, index) => (
+                        <tr key={ index }>
+                          <th>{ index + 1 }</th>
+                          <td>{ val.nama }</td>
+                          <td>{ val.noHP }</td>
                           <td>
-                            <Link className="btn btn-warning bx bx-edit-alt text-black-50 me-2" to={`edit/${val.id}`} />
-                            <button className="bx bx-trash btn btn-danger " onClick={() => handleDelete(val.id)} />
+                            <Link className="btn btn-warning bx bx-edit-alt text-black-50 me-2" to={ `edit/${val.id}` } />
+                            <button className="bx bx-trash btn btn-danger " onClick={ () => handleDelete(val.id) } />
                           </td>
                         </tr>
-                      ))}
+                      )) }
                     </tbody>
                   </table>
                   <div className="p-3">
                     <div className="d-flex justify-content-between">
                       <p className="text-center">
-                        Total Anggota: {this.state.rows} Page: {this.state.rows ? this.state.page + 1 : 0} of {this.state.pages}
+                        Total Anggota: { this.state.rows } Page: { this.state.rows ? this.state.page + 1 : 0 } of { this.state.pages }
                       </p>
                       <nav aria-label="Page navigate example justify-content-end">
                         <ReactPaginate
-                          previousLabel={"< Prev"}
-                          nextLabel={"Next >"}
-                          pageCount={this.state.pages}
-                          onPageChange={changePage}
-                          containerClassName={"pagination"}
-                          pageLinkClassName={"page-link"}
-                          pageClassName={"page-item"}
-                          previousLinkClassName={"page-link"}
-                          previousClassName={"page-item"}
-                          nextClassName={"page-item"}
-                          nextLinkClassName={"page-link"}
-                          activeClassName={"active"}
+                          previousLabel={ "< Prev" }
+                          nextLabel={ "Next >" }
+                          pageCount={ this.state.pages }
+                          onPageChange={ changePage }
+                          containerClassName={ "pagination" }
+                          pageLinkClassName={ "page-link" }
+                          pageClassName={ "page-item" }
+                          previousLinkClassName={ "page-link" }
+                          previousClassName={ "page-item" }
+                          nextClassName={ "page-item" }
+                          nextLinkClassName={ "page-link" }
+                          activeClassName={ "active" }
                         />
                       </nav>
                     </div>

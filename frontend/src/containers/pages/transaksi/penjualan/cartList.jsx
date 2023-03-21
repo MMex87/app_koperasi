@@ -105,10 +105,11 @@ const CartList = (props) => {
     props.handleFakturPenjualan(val);
   };
 
-  const save = async () => {
+  const save = async (harga) => {
     const data = {
       jumlah: jumlah,
-      id: idEdit
+      id: idEdit,
+      harga: harga * jumlah
     }
     editTransaksiCartListPenjualan(data)
 
@@ -221,7 +222,7 @@ const CartList = (props) => {
                     (
                       <>
                         <button className="btn btn-warning" onClick={ batal }>Batal</button>
-                        <button className="btn btn-success" onClick={ save }>
+                        <button className="btn btn-success" onClick={ () => save(val.barang.hargaJual) }>
                           Save
                         </button>
                       </>

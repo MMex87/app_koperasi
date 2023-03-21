@@ -96,7 +96,6 @@ class Cicilan extends Component {
           });
         }
 
-
         this.props.handleCicilanId('')
         this.setState({ nominal: '' })
 

@@ -75,7 +75,7 @@ class TransaksiPembalian extends Component {
 
 
       try {
-        if (jumlah == '' || fakturLokal == '' || harga == '' || idSupplier == '' || hargaJual == '') {
+        if (jumlah == '' || fakturLokal == '' || harga == '' || idSupplier == undefined || hargaJual == '') {
           // ketika barang kurang lengkap di isinya
           Swal.fire(
             'Gagal menambahkan data!!',
