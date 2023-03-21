@@ -19,7 +19,7 @@ const tambahReturnPenjualan = async (req, res) => {
     try {
         const { jumlah, faktur, transPenjualanId, anggotaId, barangId } = req.body
         await returnPenjualanModel.create({
-            jumlah, faktur, transPenjualanId, typePembayaran, anggotaId, barangId
+            jumlah, faktur, transPenjualanId, anggotaId, barangId
         })
         res.status(200).json({ msg: 'Data Berhasil diTambahkan!' })
     } catch (error) {
@@ -32,7 +32,7 @@ const editReturnPenjualan = async (req, res) => {
     try {
         const { jumlah, faktur, transPenjualanId, anggotaId, barangId } = req.body
         await returnPenjualanModel.update({
-            jumlah, faktur, transPenjualanId, typePembayaran, anggotaId, barangId
+            jumlah, faktur, transPenjualanId, anggotaId, barangId
         }, {
             where: {
                 id: req.params.id

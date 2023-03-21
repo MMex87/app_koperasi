@@ -1,5 +1,7 @@
+const { Op } = require("sequelize")
 const anggotaModel = require("../model/AnggotaModel.js")
 const barangModel = require("../model/BarangModel.js")
+const supplierModel = require("../model/SupplierModel.js")
 const transPenjualanModel = require("../model/TransPenjualanModel.js")
 
 
@@ -22,7 +24,8 @@ const getJoinPenAnBarang = async (req, res) => {
         const penjualan = await transPenjualanModel.findAll({
             include: [
                 {
-                    model: barangModel
+                    model: barangModel,
+                    include: supplierModel
                 },
                 {
                     model: anggotaModel,
@@ -32,6 +35,107 @@ const getJoinPenAnBarang = async (req, res) => {
             attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPenjualan']
         })
         res.status(200).json(penjualan)
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    }
+}
+const getJoinPenAnBarangId = async (req, res) => {
+    try {
+        const penjualan = await transPenjualanModel.findOne({
+            include: [
+                {
+                    model: barangModel
+                },
+                {
+                    model: anggotaModel,
+                    as: 'anggota'
+                }
+            ],
+            where: {
+                id: req.params.id
+            },
+            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPenjualan']
+        })
+        res.status(200).json(penjualan)
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    }
+}
+
+const getJoinPenAnBarangSarch = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 0
+        const limit = parseInt(req.query.limit) || 10
+        const search = req.query.search || ''
+        const offset = page * limit
+
+        const totalRows = await transPenjualanModel.count({
+            include: [
+                {
+                    model: barangModel
+                },
+                {
+                    model: anggotaModel,
+                    as: 'anggota'
+                }
+            ],
+            where: {
+                [Op.or]: [{
+                    '$anggota.nama$': {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }, {
+                    faktur: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }],
+                statusPenjualan: {
+                    [Op.not]: ['onProcess']
+                }
+            }
+        })
+
+        const totalPage = Math.ceil(totalRows / limit)
+        const result = await transPenjualanModel.findAll({
+            include: [
+                {
+                    model: barangModel
+                },
+                {
+                    model: anggotaModel,
+                    as: 'anggota'
+                }
+            ],
+            where: {
+                [Op.or]: [{
+                    '$anggota.nama$': {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }, {
+                    faktur: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }],
+                statusPenjualan: {
+                    [Op.not]: ['onProcess']
+                }
+            },
+            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPenjualan'],
+            offset,
+            limit,
+            order: [
+                ['id', 'DESC']
+            ]
+        })
+        res.status(200).json({
+            page,
+            result,
+            totalPage,
+            totalRows,
+            limit
+        })
     } catch (error) {
         console.error(error)
         res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
@@ -112,6 +216,8 @@ const hapusPenjualan = async (req, res) => {
 module.exports = {
     getPenjualan,
     getJoinPenAnBarang,
+    getJoinPenAnBarangId,
+    getJoinPenAnBarangSarch,
     getTotalHarga,
     tambahPenjualan,
     editPenjualan,

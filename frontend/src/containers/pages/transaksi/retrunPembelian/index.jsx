@@ -5,7 +5,7 @@ class RPembelian extends Component {
     return (
       <main id="main">
         <div className="pagetitle text-center">
-          <h1 className="fw-bold fs-2">Retrun Pembelian</h1>
+          <h1 className="fw-bold fs-2">Retru Pembelian</h1>
         </div>
 
         <section className="section">
