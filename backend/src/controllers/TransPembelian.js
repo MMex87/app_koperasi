@@ -1,3 +1,4 @@
+const { Op } = require("sequelize")
 const barangModel = require("../model/BarangModel.js")
 const supplierModel = require("../model/SupplierModel.js")
 const transPembelianModel = require("../model/TransPembelianModel.js")
@@ -54,6 +55,84 @@ const getJoinPemBarang = async (req, res) => {
     }
 }
 
+const getJoinPemAnBarangSarch = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 0
+        const limit = parseInt(req.query.limit) || 10
+        const search = req.query.search || ''
+        const offset = page * limit
+
+        const totalRows = await transPembelianModel.count({
+            include: [
+                {
+                    model: barangModel,
+                },
+                {
+                    model: supplierModel,
+                    as: 'supplier'
+                }
+            ],
+            where: {
+                [Op.or]: [{
+                    '$supplier.nama$': {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }, {
+                    faktur: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }],
+                statusPembelian: {
+                    [Op.not]: ['onProcess']
+                }
+            }
+        })
+
+        const totalPage = Math.ceil(totalRows / limit)
+        const result = await transPembelianModel.findAll({
+            include: [
+                {
+                    model: barangModel
+                },
+                {
+                    model: supplierModel,
+                    as: 'supplier'
+                }
+            ],
+            where: {
+                [Op.or]: [{
+                    '$supplier.nama$': {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }, {
+                    faktur: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }],
+                statusPembelian: {
+                    [Op.not]: ['onProcess']
+                }
+            },
+            attributes: ['id', 'jumlah', 'faktur', 'harga', 'hargaJual', 'supplierId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPembelian'],
+            offset,
+            limit,
+            order: [
+                ['id', 'DESC']
+            ]
+        })
+        res.status(200).json({
+            page,
+            result,
+            totalPage,
+            totalRows,
+            limit
+        })
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    }
+}
+
 const tambahPembelian = async (req, res) => {
     try {
         const { jumlah, faktur, harga, hargaJual, supplierId, barangId, statusPembelian } = req.body
@@ -102,6 +181,7 @@ module.exports = {
     getPembelian,
     getPembelianId,
     getJoinPemBarang,
+    getJoinPemAnBarangSarch,
     tambahPembelian,
     editPembelian,
     hapusPembelian

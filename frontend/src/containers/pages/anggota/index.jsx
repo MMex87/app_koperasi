@@ -40,7 +40,6 @@ export class Anggota extends Component {
   }
 
   render() {
-    console.log(this.state.anggota);
 
     const Toast = Swal.mixin({
       customClass: {
@@ -52,7 +51,7 @@ export class Anggota extends Component {
 
     // handle Pagination
     const changePage = ({ selected }) => {
-      this.setState({ page: selected.selected });
+      this.setState({ page: selected });
     };
 
     const handleDelete = (val) => {

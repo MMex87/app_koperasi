@@ -19,7 +19,7 @@ const tambahReturnPembelian = async (req, res) => {
     try {
         const { jumlah, faktur, transPembelianId, supplierId, barangId } = req.body
         await returnPembelianModel.create({
-            jumlah, faktur, transPembelianId, typePembayaran, supplierId, barangId
+            jumlah, faktur, transPembelianId, supplierId, barangId
         })
         res.status(200).json({ msg: 'Data Berhasil diTambahkan!' })
     } catch (error) {
@@ -32,7 +32,7 @@ const editReturnPembelian = async (req, res) => {
     try {
         const { jumlah, faktur, transPembelianId, supplierId, barangId } = req.body
         await returnPembelianModel.update({
-            jumlah, faktur, transPembelianId, typePembayaran, supplierId, barangId
+            jumlah, faktur, transPembelianId, supplierId, barangId
         }, {
             where: {
                 id: req.params.id
