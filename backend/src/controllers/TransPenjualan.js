@@ -32,7 +32,7 @@ const getJoinPenAnBarang = async (req, res) => {
                     as: 'anggota'
                 }
             ],
-            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPenjualan']
+            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuJual'], 'statusPenjualan']
         })
         res.status(200).json(penjualan)
     } catch (error) {
@@ -55,7 +55,7 @@ const getJoinPenAnBarangId = async (req, res) => {
             where: {
                 id: req.params.id
             },
-            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPenjualan']
+            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuJual'], 'statusPenjualan']
         })
         res.status(200).json(penjualan)
     } catch (error) {
@@ -122,7 +122,7 @@ const getJoinPenAnBarangSarch = async (req, res) => {
                     [Op.not]: ['onProcess']
                 }
             },
-            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPenjualan'],
+            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuJual'], 'statusPenjualan'],
             offset,
             limit,
             order: [
