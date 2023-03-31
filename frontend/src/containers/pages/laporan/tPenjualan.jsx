@@ -48,7 +48,7 @@ class tPenjualan extends Component {
       }
     });
     this.setState({
-      search: moment().format("YYYY-MM-D")
+      search: moment().format("YYYY-MM-DD")
     })
   }
 
@@ -86,7 +86,7 @@ class tPenjualan extends Component {
           this.setState({
             dataTahun: arrayFilterTahunPenjualan,
             dataBulan: [],
-            search: moment().format("YYYY-MM-D")
+            search: moment().format("YYYY-MM-DD")
           })
         }
 

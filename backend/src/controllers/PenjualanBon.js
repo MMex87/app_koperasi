@@ -9,7 +9,7 @@ const getPenBon = async (req, res) => {
     try {
         const bon = await PenjualanBonModel.findAll({
             order: [
-                ['id', 'ASC']
+                ['id', 'DESC']
             ]
         })
         res.status(200).json(bon)
@@ -31,7 +31,10 @@ const getPenBonJoin = async (req, res) => {
                     model: transPenjualanModel
                 }
             ],
-            attributes: ['id', 'statusBon', 'totalBayar', 'anggotaId', 'transPenjualanId', ['createdAt', 'waktuBon']]
+            attributes: ['id', 'statusBon', 'totalBayar', 'anggotaId', 'transPenjualanId', ['createdAt', 'waktuBon']],
+            order: [
+                ['id', 'DESC']
+            ]
         })
         res.status(200).json(bon)
     } catch (error) {

@@ -73,16 +73,10 @@ class RPenjualan extends Component {
             barangId: trans.barangId
           })
           let jumlahRetur = trans.jumlah - this.state.jumlah
-          if ((trans.jumlah - this.state.jumlah) == 0) {
-            await axios.put(`/transPenjualan/${this.state.transaksiId}`, {
-              statusPenjualan: 'Retur',
-              jumlah: this.state.jumlah
-            })
-          } else {
-            await axios.put(`/transPenjualan/${this.state.transaksiId}`, {
-              jumlah: this.state.jumlah
-            })
-          }
+          await axios.put(`/transPenjualan/${this.state.transaksiId}`, {
+            statusPenjualan: 'Retur',
+            jumlah: trans.jumlah - this.state.jumlah
+          })
           barangTerbeli(trans.barangId, jumlahRetur)
 
           this.setState({ transaksiId: '' })

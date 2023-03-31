@@ -49,7 +49,7 @@ const ModalCheckout = (props) => {
 
                 if (props.typePembayaran == 'Bon') {
                     const anggotaId = props.transaksiProps.find(({ faktur }) => faktur == props.faktur).anggotaId
-                    const totalBayar = getTotal(props.faktur) + getTotal(props.faktur) * (2 / 100)
+                    const totalBayar = getTotal(props.faktur)
                     const transPenjualanId = props.transaksiProps.find(({ faktur }) => faktur == props.faktur).id
                     await axios.post(`/penjualanBon`, {
                         statusBon: 'Belum Lunas',

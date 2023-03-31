@@ -49,7 +49,7 @@ class tPembelian extends Component {
       }
     });
     this.setState({
-      search: moment().format("YYYY-MM-D"),
+      search: moment().format("YYYY-MM-DD"),
     })
   }
 
@@ -87,7 +87,7 @@ class tPembelian extends Component {
           this.setState({
             dataTahun: arrayFilterTahunPembelian,
             dataBulan: [],
-            search: moment().format("YYYY-MM-D")
+            search: moment().format("YYYY-MM-DD")
           })
         }
 

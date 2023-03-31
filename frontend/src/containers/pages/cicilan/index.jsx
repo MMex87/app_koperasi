@@ -62,6 +62,7 @@ class Cicilan extends Component {
             penjualanbonId: cicilan.id
           })
           await axios.put(`/penjualanBon/${cicilan.id}`, {
+            totalBayar: jumlahBon - parseInt(this.state.nominal),
             statusBon: 'Lunas'
           })
           for (let val of this.state.transaksiPenjualan) {
