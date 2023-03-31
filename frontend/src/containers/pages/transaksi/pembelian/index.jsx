@@ -126,10 +126,15 @@ class TransaksiPembalian extends Component {
                 barangId: barang.data.barangId,
                 statusPembelian: 'onProcess'
               })
-
             } else {
               // ketika barang sudah ada di db barang
               barangTerbeli(barangIdLokal, jumlah)
+              await axios.put(`/barang/${barangIdLokal}`, {
+                jenisBarang: this.props.jenis,
+                satuan: this.props.satuan,
+                hargaBeli: harga,
+                hargaJual,
+              })
               await axios.post(`/transPembelian`, {
                 jumlah,
                 faktur: fakturLokal,
@@ -143,6 +148,12 @@ class TransaksiPembalian extends Component {
           } else {
             // ketika barang sudah ada di keranjang dan menambahkan barang yang sama
             barangTerbeli(barangIdLokal, jumlah)
+            await axios.put(`/barang/${barangIdLokal}`, {
+              jenisBarang: this.props.jenis,
+              satuan: this.props.satuan,
+              hargaBeli: harga,
+              hargaJual,
+            })
             await axios.put(`/transPembelian/${trans.id}`, {
               jumlah: parseInt(trans.jumlah) + parseInt(jumlah)
             })
