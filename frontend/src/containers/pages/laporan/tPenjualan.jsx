@@ -53,7 +53,7 @@ class tPenjualan extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.bulan != prevState.bulan || this.state.search != prevState.search || this.state.tahun != prevState.tahun) {
+    if (this.state.bulan != prevState.bulan || this.state.tahun != prevState.tahun) {
       getTransPenjualanJoin().then((data) => {
         this.setState({ penjualan: data });
 
@@ -98,6 +98,7 @@ class tPenjualan extends Component {
     const simpan = () => {
       // Deklarasi Pdf
       const doc = new jsPDF("l", "pt", "a4")
+      doc.setFont("times")
 
       if (this.state.bulan == '') {
         doc.setFontSize(20)
@@ -120,16 +121,20 @@ class tPenjualan extends Component {
         const totalXLaporan = (pageWidth / 2) - (totalWidthLaporan / 2);
 
         const tanggal = "Bulan : " + moment(this.state.bulan).format("MMMM")
+        const tahun = "Tahun : " + moment(this.state.tahun).format("YYYY")
         const totalWidthTanggal = doc.getTextWidth(tanggal);
         const totalXTanggal = (pageWidth / 2) - ((totalWidthTanggal / 2) - 10)
+        const totalWidthTahun = doc.getTextWidth(tahun);
+        const totalXTahun = (pageWidth / 2) - ((totalWidthTahun / 2) - 10)
         doc.text("Laporan Bulanan Penjualan", totalXLaporan, 25)
         doc.setFontSize(16)
-        doc.text(tanggal, totalXTanggal, 45)
+        doc.text(tanggal, totalXTanggal - 40, 45)
+        doc.text(tahun, totalXTahun + 70, 45)
       }
 
       doc.autoTable(
         {
-          head: [['#', 'Faktur', 'Anggota', 'Pembayaran', 'Barang', 'Jumlah', 'Harga', 'Tanggal']],
+          head: [['#', 'Faktur', 'Anggota', 'Pembayaran', 'Barang', 'Jumlah', 'Total', 'Tanggal']],
           body: this.state.penjualan.filter(({ waktuJual }) =>
             (this.state.bulan != '')
               ?
@@ -151,6 +156,33 @@ class tPenjualan extends Component {
           margin: { left: 3, right: 3 },
         }
       )
+
+      // Total
+
+      let totalText
+
+      const trans = this.state.penjualan.filter(({ waktuJual }) =>
+        (this.state.bulan != '')
+          ?
+          moment(this.state.bulan).format("M") == moment(waktuJual).format("M")
+          :
+          moment(waktuJual).format("D-MM-YYYY") == moment(this.state.search).format("D-MM-YYYY")
+      )
+      let total = 0
+      for (let val of trans) {
+        total = total + val.harga
+      }
+
+      totalText = "Total: " + total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })
+
+      let heightTable = doc.lastAutoTable.finalY
+      const pageWidth = doc.internal.pageSize.getWidth();
+
+      const totalWidth = doc.getTextWidth(`${total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}`);
+      const totalX = pageWidth - totalWidth - 70;
+
+      doc.setFont("times", 'bold')
+      doc.text(totalText, totalX, heightTable + 50)
 
       // window.open(doc.output("bloburl"));
       if (this.state.bulan == '') {
@@ -209,7 +241,7 @@ class tPenjualan extends Component {
                         <th scope="col">Pembayaran</th>
                         <th scope="col">Barang</th>
                         <th scope="col">Jumlah</th>
-                        <th scope="col">Harga</th>
+                        <th scope="col">Total</th>
                         <th scope="col">Tanggal</th>
                       </tr>
                     </thead>

@@ -134,7 +134,7 @@ export default class Supplier extends Component {
                           <td>{ val.alamat }</td>
                           <td>
                             <Link className="btn btn-warning bx bx-edit-alt text-black-50 me-2" to={ `edit/${val.id}` } />
-                            <button className="bx bx-trash btn btn-danger " onClick={ () => handleHapus(val.id) } />
+                            {/* <button className="bx bx-trash btn btn-danger " onClick={ () => handleHapus(val.id) } /> */ }
                           </td>
                         </tr>
                       )) }

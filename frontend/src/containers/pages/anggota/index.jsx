@@ -136,7 +136,7 @@ export class Anggota extends Component {
                           <td>{ val.noHP }</td>
                           <td>
                             <Link className="btn btn-warning bx bx-edit-alt text-black-50 me-2" to={ `edit/${val.id}` } />
-                            <button className="bx bx-trash btn btn-danger " onClick={ () => handleDelete(val.id) } />
+                            {/* <button className="bx bx-trash btn btn-danger " onClick={ () => handleDelete(val.id) } /> */ }
                           </td>
                         </tr>
                       )) }

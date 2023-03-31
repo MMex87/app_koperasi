@@ -54,7 +54,7 @@ class tPembelian extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.bulan != prevState.bulan || this.state.search != prevState.search || this.state.tahun != prevState.tahun) {
+    if (this.state.bulan != prevState.bulan || this.state.tahun != prevState.tahun) {
       getTransPembelianJoin().then((data) => {
         this.setState({ transPembelian: data });
 
@@ -100,6 +100,7 @@ class tPembelian extends Component {
       // Deklarasi Pdf
       const doc = new jsPDF("l", "pt", "a4")
 
+      doc.setFont("times")
 
       if (this.state.bulan == '') {
         doc.setFontSize(20)
@@ -122,16 +123,20 @@ class tPembelian extends Component {
         const totalXLaporan = (pageWidth / 2) - (totalWidthLaporan / 2);
 
         const tanggal = "Bulan : " + moment(this.state.bulan).format("MMMM")
+        const tahun = "Tahun : " + moment(this.state.tahun).format("YYYY")
         const totalWidthTanggal = doc.getTextWidth(tanggal);
         const totalXTanggal = (pageWidth / 2) - ((totalWidthTanggal / 2) - 10)
+        const totalWidthTahun = doc.getTextWidth(tahun);
+        const totalXTahun = (pageWidth / 2) - ((totalWidthTahun / 2) - 10)
         doc.text("Laporan Bulanan Pembelian", totalXLaporan, 25)
         doc.setFontSize(16)
-        doc.text(tanggal, totalXTanggal, 45)
+        doc.text(tanggal, totalXTanggal - 40, 45)
+        doc.text(tahun, totalXTahun + 70, 45)
       }
 
       doc.autoTable(
         {
-          head: [['#', 'Faktur', 'Supplier', 'Barang', 'Jumlah', 'Harga Beli', 'Total Harga', 'Tanggal']],
+          head: [['#', 'Faktur', 'Supplier', 'Barang', 'Jumlah', 'Total', 'Tanggal']],
           body: this.state.transPembelian.filter(({ waktuBeli }) =>
             (this.state.bulan != '')
               ?
@@ -144,7 +149,6 @@ class tPembelian extends Component {
             val.supplier.nama,
             val.barang.nama,
             val.jumlah,
-            val.harga.toLocaleString("id-ID", { style: "currency", currency: "IDR" }),
             (val.jumlah * val.harga).toLocaleString("id-ID", { style: "currency", currency: "IDR" }),
             moment(val.waktuBeli).format("D MMM YYYY")
           ]),
@@ -153,6 +157,36 @@ class tPembelian extends Component {
           margin: { left: 3, right: 3 },
         }
       )
+
+
+      // Total
+
+      let totalText
+
+      const trans = this.state.transPembelian.filter(({ waktuBeli }) =>
+        (this.state.bulan != '')
+          ?
+          moment(this.state.bulan).format("M") == moment(waktuBeli).format("M")
+          :
+          moment(waktuBeli).format("D-MM-YYYY") == moment(this.state.search).format("D-MM-YYYY")
+      )
+      let total = 0
+      for (let val of trans) {
+        let totJumlah = 0
+        totJumlah = val.jumlah * val.harga
+        total = total + totJumlah
+      }
+
+      totalText = "Total: " + total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })
+
+      let heightTable = doc.lastAutoTable.finalY
+      const pageWidth = doc.internal.pageSize.getWidth();
+
+      const totalWidth = doc.getTextWidth(`${total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}`);
+      const totalX = pageWidth - totalWidth - 70;
+
+      doc.setFont("times", 'bold')
+      doc.text(totalText, totalX, heightTable + 50)
 
       // window.open(doc.output("bloburl"));
       if (this.state.bulan == '') {
@@ -211,8 +245,7 @@ class tPembelian extends Component {
                         <th>Supplier</th>
                         <th>Barang</th>
                         <th>Jumlah</th>
-                        <th>Harga Beli</th>
-                        <th>Total Harga</th>
+                        <th>Total</th>
                         <th>Tanggal</th>
                       </tr>
                     </thead>
@@ -230,7 +263,6 @@ class tPembelian extends Component {
                           <td>{ val.supplier.nama }</td>
                           <td>{ val.barang.nama }</td>
                           <td>{ val.jumlah }</td>
-                          <td>{ val.harga.toLocaleString("id-ID", { style: "currency", currency: "IDR" }) }</td>
                           <td>{ (val.jumlah * val.harga).toLocaleString("id-ID", { style: "currency", currency: "IDR" }) }</td>
                           <td>{ moment(val.waktuBeli).format("D MMM YYYY") }</td>
                         </tr>
