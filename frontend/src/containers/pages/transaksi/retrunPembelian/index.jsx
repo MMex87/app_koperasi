@@ -2,7 +2,7 @@ import axios from "../../../../api/axios";
 import moment from "moment";
 import { Component } from "react";
 import ReactPaginate from "react-paginate";
-import barangTerbeli from "../../../../utils/barang/barangTerbeli";
+import barangTerjual from "../../../../utils/barang/barangTerjual";
 import Swal from "sweetalert2";
 import getTransPembelianJoinSearch from "../../../../utils/transaksiPembelian/getTransPembelianJoinSearch";
 
@@ -72,13 +72,13 @@ class RPembelian extends Component {
             supplierId: trans.supplierId,
             barangId: trans.barangId
           })
-          let jumlahRetur = trans.jumlah - this.state.jumlah
+          let jumlahRetur = this.state.jumlah
           await axios.put(`/transPembelian/${this.state.transaksiId}`, {
             statusPembelian: 'Retur',
             jumlah: trans.jumlah - this.state.jumlah
           })
 
-          barangTerbeli(trans.barangId, jumlahRetur)
+          barangTerjual(trans.barangId, jumlahRetur)
 
           this.setState({ transaksiId: '' })
           Toast.fire({

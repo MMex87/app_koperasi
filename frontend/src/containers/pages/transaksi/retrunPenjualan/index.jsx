@@ -72,7 +72,7 @@ class RPenjualan extends Component {
             anggotaId: trans.anggotaId,
             barangId: trans.barangId
           })
-          let jumlahRetur = trans.jumlah - this.state.jumlah
+          let jumlahRetur = this.state.jumlah
           await axios.put(`/transPenjualan/${this.state.transaksiId}`, {
             statusPenjualan: 'Retur',
             jumlah: trans.jumlah - this.state.jumlah
