@@ -40,6 +40,37 @@ const getJoinPenAnBarang = async (req, res) => {
         res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
     }
 }
+
+const getJoinPenAnBarangLapor = async (req, res) => {
+    try {
+        const supplier = req.query.supplier || ''
+
+        const penjualan = await transPenjualanModel.findAll({
+            include: [
+                {
+                    model: barangModel,
+                    include: supplierModel
+                },
+                {
+                    model: anggotaModel,
+                    as: 'anggota'
+                }
+            ],
+            where: {
+                [Op.or]: [{
+                    '$barang.supplier.nama$': {
+                        [Op.like]: '%' + supplier + '%'
+                    }
+                }]
+            },
+            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuJual'], 'statusPenjualan']
+        })
+        res.status(200).json(penjualan)
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    }
+}
 const getJoinPenAnBarangId = async (req, res) => {
     try {
         const penjualan = await transPenjualanModel.findOne({
@@ -217,6 +248,7 @@ module.exports = {
     getPenjualan,
     getJoinPenAnBarang,
     getJoinPenAnBarangId,
+    getJoinPenAnBarangLapor,
     getJoinPenAnBarangSarch,
     getTotalHarga,
     tambahPenjualan,

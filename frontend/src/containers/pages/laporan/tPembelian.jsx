@@ -3,22 +3,26 @@ import moment from "moment";
 import { jsPDF } from "jspdf"
 import 'jspdf-autotable'
 import getTransPembelianJoin from "../../../utils/transaksiPembelian/getTransPembelianJoin";
+import getSupplier from "../../../utils/supplier/getSupplier";
+import getTransPembelianJoinLaporan from "../../../utils/transaksiPembelian/getTransPembelianJoinLaporan";
 
 class tPembelian extends Component {
   constructor(props) {
     super(props);
     this.state = {
       transPembelian: [],
+      dataSupplier: [],
       search: '',
       tahun: '',
       bulan: '',
+      supplier: '',
       dataTahun: [],
       dataBulan: [],
     };
   }
 
   componentDidMount() {
-    getTransPembelianJoin().then((data) => {
+    getTransPembelianJoinLaporan(this.state.supplier).then((data) => {
       this.setState({ transPembelian: data });
 
       let arrayFilterTahunPembelian = [];
@@ -48,14 +52,17 @@ class tPembelian extends Component {
         })
       }
     });
+    getSupplier().then((data) => {
+      this.setState({ dataSupplier: data })
+    })
     this.setState({
       search: moment().format("YYYY-MM-DD"),
     })
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.bulan != prevState.bulan || this.state.tahun != prevState.tahun) {
-      getTransPembelianJoin().then((data) => {
+    if (this.state.bulan != prevState.bulan || this.state.tahun != prevState.tahun || this.state.supplier != prevState.supplier) {
+      getTransPembelianJoinLaporan(this.state.supplier).then((data) => {
         this.setState({ transPembelian: data });
 
         let arrayFilterTahunPembelian = [];
@@ -207,8 +214,20 @@ class tPembelian extends Component {
             <div className="card-body">
               <div className="col-lg-12">
                 <div className="row">
-                  <div className="col-md-4"></div>
-                  <div className="text-end col-md-6 pt-3 d-flex justify-content-end">
+                  <div className="col-md-2"></div>
+                  <div className="text-end col-md-8 pt-3 d-flex justify-content-end">
+                    <select class="form-select" style={ { width: 150, marginRight: 20 } } aria-label="Default select example"
+                      onChange={ (e) => this.setState({ supplier: e.target.value }) }>
+                      <option value="" selected>Supplier</option>
+                      {
+                        this.state.dataSupplier.map((val, index) => (
+                          <option
+                            value={ val.nama }
+                            key={ index }
+                            selected={ val.nama == this.state.supplier ? true : false }> { val.nama }</option>
+                        ))
+                      }
+                    </select>
                     <select class="form-select" style={ { width: 150, marginRight: 20 } } aria-label="Default select example"
                       onChange={ (e) => this.setState({ tahun: e.target.value }) }>
                       <option value="" selected>Tahun</option>

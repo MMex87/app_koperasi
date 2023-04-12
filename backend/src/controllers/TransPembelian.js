@@ -55,6 +55,36 @@ const getJoinPemBarang = async (req, res) => {
     }
 }
 
+const getJoinPemBarangLapor = async (req, res) => {
+    try {
+        const supplier = req.query.supplier || ''
+        const pembelian = await transPembelianModel.findAll({
+            include: [
+                {
+                    model: barangModel
+                },
+                {
+                    model: supplierModel,
+                    as: 'supplier'
+                }
+            ],
+            where: {
+                [Op.or]: [{
+                    '$supplier.nama$': {
+                        [Op.like]: '%' + supplier + '%'
+                    }
+                }
+                ]
+            },
+            attributes: ['id', 'jumlah', 'faktur', 'harga', 'hargaJual', 'supplierId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPembelian']
+        })
+        res.status(200).json(pembelian)
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    }
+}
+
 const getJoinPemAnBarangSarch = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 0
@@ -181,6 +211,7 @@ module.exports = {
     getPembelian,
     getPembelianId,
     getJoinPemBarang,
+    getJoinPemBarangLapor,
     getJoinPemAnBarangSarch,
     tambahPembelian,
     editPembelian,
