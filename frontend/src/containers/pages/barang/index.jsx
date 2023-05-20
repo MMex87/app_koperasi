@@ -14,7 +14,9 @@ export default class Barang extends Component {
     rows: 0,
     barangId: 0,
     namaBarang: '',
-    kodeBarang: ''
+    kodeBarang: '',
+    hargaJual: 0,
+    hargaBeli: 0
   };
 
   componentDidMount() {
@@ -42,8 +44,8 @@ export default class Barang extends Component {
       this.setState({ page: selected.selected });
     };
 
-    const edit = (id, namaBarang, kodeBarang) => {
-      this.setState({ barangId: id, kodeBarang, namaBarang })
+    const edit = (id, namaBarang, kodeBarang, hargaBeli, hargaJual) => {
+      this.setState({ barangId: id, kodeBarang, namaBarang, hargaBeli, hargaJual })
     }
 
     const batal = () => {
@@ -54,7 +56,9 @@ export default class Barang extends Component {
       try {
         await axios.put(`/barang/${this.state.barangId}`, {
           nama: this.state.namaBarang,
-          kodeBarang: this.state.kodeBarang
+          kodeBarang: this.state.kodeBarang,
+          hargaBeli: this.state.hargaBeli,
+          hargaJual: this.state.hargaJual
         })
         this.setState({ barangId: 0, namaBarang: '', kodeBarang: '' })
       } catch (error) {
@@ -134,8 +138,24 @@ export default class Barang extends Component {
                           <td>{ val.supplier.nama }</td>
                           <td>{ val.satuan }</td>
                           <td>{ val.jenisBarang }</td>
-                          <td>{ val.hargaBeli }</td>
-                          <td>{ val.hargaJual }</td>
+                          <td>
+                            {
+                              this.state.barangId == val.id
+                                ?
+                                <input type="text" className="form-control" id="kode" onChange={ (e) => this.setState({ hargaBeli: e.target.value }) } value={ this.state.hargaBeli } />
+                                :
+                                val.hargaBeli
+                            }
+                          </td>
+                          <td>
+                            {
+                              this.state.barangId == val.id
+                                ?
+                                <input type="text" className="form-control" id="kode" onChange={ (e) => this.setState({ hargaJual: e.target.value }) } value={ this.state.hargaJual } />
+                                :
+                                val.hargaJual
+                            }
+                          </td>
                           <td>{ val.jumlah }</td>
                           <td>
                             {
@@ -149,7 +169,7 @@ export default class Barang extends Component {
                                 </>
                                 :
                                 <button className="btn btn-warning" onClick={
-                                  () => edit(val.id, val.nama, val.kodeBarang) }
+                                  () => edit(val.id, val.nama, val.kodeBarang, val.hargaBeli, val.hargaJual) }
                                 >Edit</button>
                             }
                           </td>
