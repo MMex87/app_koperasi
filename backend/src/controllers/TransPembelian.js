@@ -111,6 +111,10 @@ const getJoinPemAnBarangSarch = async (req, res) => {
                     faktur: {
                         [Op.like]: '%' + search + '%'
                     }
+                }, {
+                    '$barang.nama$': {
+                        [Op.like]: '%' + search + '%'
+                    }
                 }],
                 statusPembelian: {
                     [Op.not]: ['onProcess']
@@ -136,6 +140,10 @@ const getJoinPemAnBarangSarch = async (req, res) => {
                     }
                 }, {
                     faktur: {
+                        [Op.like]: '%' + search + '%'
+                    }
+                }, {
+                    '$barang.nama$': {
                         [Op.like]: '%' + search + '%'
                     }
                 }],

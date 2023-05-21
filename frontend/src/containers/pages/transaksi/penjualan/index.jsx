@@ -50,6 +50,7 @@ class TransPenjualan extends Component {
       let barang = this.state.barang.find(({ nama, supplierId }) => nama == this.props.namaBarang && supplierId == this.props.supplierId)
       let anggotaIdLokal
       let barangIdLokal
+      let jumlahScan
       let fakturLokal = this.props.faktur
       let jumlah = this.props.jumlah
       let typePembayaran = this.props.typePembayaran
@@ -89,9 +90,10 @@ class TransPenjualan extends Component {
                 statusPenjualan: 'onProcess'
               })
             } else {
+              jumlahScan = parseInt(trans.jumlah) + parseInt(jumlah)
               await axios.put(`/transPenjualan/${trans.id}`, {
-                jumlah: parseInt(trans.jumlah) + parseInt(jumlah),
-                harga: trans.harga * parseInt(jumlah)
+                jumlah: jumlahScan,
+                harga: trans.harga * parseInt(jumlahScan)
               })
             }
           }
