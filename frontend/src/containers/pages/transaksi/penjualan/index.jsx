@@ -43,7 +43,9 @@ class TransPenjualan extends Component {
     }
   }
 
+
   render() {
+    console.log(this.state.penjualan)
     const handlecart = async (e) => {
       e.preventDefault()
       let anggota = this.state.anggotas.find(({ nama }) => nama == this.props.anggota)
@@ -83,7 +85,7 @@ class TransPenjualan extends Component {
               await axios.post('/transPenjualan', {
                 jumlah,
                 faktur: fakturLokal,
-                harga: harga * parseInt(jumlah),
+                harga: parseInt(harga) * parseInt(jumlah),
                 typePembayaran,
                 anggotaId: anggotaIdLokal,
                 barangId: barangIdLokal,
@@ -93,7 +95,7 @@ class TransPenjualan extends Component {
               jumlahScan = parseInt(trans.jumlah) + parseInt(jumlah)
               await axios.put(`/transPenjualan/${trans.id}`, {
                 jumlah: jumlahScan,
-                harga: trans.harga * parseInt(jumlahScan)
+                harga: parseInt(harga) * parseInt(jumlahScan)
               })
             }
           }
