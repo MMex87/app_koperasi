@@ -1,9 +1,51 @@
+const { Op } = require("sequelize")
+const barangModel = require("../model/BarangModel.js")
 const returnPembelianModel = require("../model/ReturnPembelianModel.js")
+const supplierModel = require("../model/SupplierModel.js")
+const transPembelianModel = require("../model/TransPembelianModel.js")
 
 
 const getReturnPembelian = async (req, res) => {
     try {
         const pembelian = await returnPembelianModel.findAll({
+            order: [
+                ['id', 'ASC']
+            ]
+        })
+        res.status(200).json(pembelian)
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    }
+}
+
+const getReturnPembelianLaporan = async (req, res) => {
+    try {
+        const supplier = req.query.supplier || ''
+        console.log(supplier)
+        const pembelian = await returnPembelianModel.findAll({
+            include: [
+                {
+                    model: barangModel,
+                    as: 'barang'
+                },
+                {
+                    model: supplierModel,
+                    as: 'supplier'
+                },
+                {
+                    model: transPembelianModel,
+                    as: 'transPembelian'
+                }
+            ],
+            where: {
+                [Op.or]: [{
+                    '$supplier.nama$': {
+                        [Op.like]: '%' + supplier + '%'
+                    }
+                }]
+            },
+            attributes: ['id', 'jumlah', 'faktur', ['createdAt', 'waktuBeli'], 'barangId', 'supplierId', 'transPembelianId'],
             order: [
                 ['id', 'ASC']
             ]
@@ -61,6 +103,7 @@ const hapusReturnPembelian = async (req, res) => {
 
 module.exports = {
     getReturnPembelian,
+    getReturnPembelianLaporan,
     tambahReturnPembelian,
     editReturnPembelian,
     hapusReturnPembelian

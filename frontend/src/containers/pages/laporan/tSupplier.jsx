@@ -1,16 +1,19 @@
 import { Component } from "react";
-import getTransPenjualanJoin from "../../../utils/transaksiPenjualan/getTransPenjualanJoin";
 import moment from "moment";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import getReturLaporan from "../../../utils/laporan/getReturLaporan";
+import getSupplier from "../../../utils/supplier/getSupplier";
 
 class tSupplier extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      penjualan: [],
+      pembelian: [],
       search: "",
       tahun: '',
+      supplier: '',
+      dataSupplier: [],
       bulan: '',
       dataTahun: [],
       dataBulan: [],
@@ -18,72 +21,75 @@ class tSupplier extends Component {
   }
 
   componentDidMount() {
-    getTransPenjualanJoin(this.state.penjualan).then((data) => {
-      this.setState({ penjualan: data }); let arrayFilterTahunPenjualan = [];
-      let dataTahunPenjualan = [];
-      dataTahunPenjualan = data;
+    getReturLaporan(this.state.supplier).then((data) => {
+      this.setState({ pembelian: data }); let arrayFilterTahunPembelian = [];
+      let dataTahunPembelian = [];
+      dataTahunPembelian = data;
 
-      let arrayFilterBulanPenjualan = [];
-      let dataBulanPenjualan = [];
-      dataBulanPenjualan = data;
+      let arrayFilterBulanPembelian = [];
+      let dataBulanPembelian = [];
+      dataBulanPembelian = data;
 
       // sortir Data Double
-      const filteredTahunPenjualan = dataTahunPenjualan.filter((value, index, self) => index === self.findIndex((t) => moment(t.waktuJual).format("YYYY") === moment(value.waktuJual).format("YYYY")));
-      arrayFilterTahunPenjualan = filteredTahunPenjualan;
+      const filteredTahunPembelian = dataTahunPembelian.filter((value, index, self) => index === self.findIndex((t) => moment(t.waktuBeli).format("YYYY") === moment(value.waktuBeli).format("YYYY")));
+      arrayFilterTahunPembelian = filteredTahunPembelian;
 
 
-      const filteredBulanPenjualan = dataBulanPenjualan.filter((value, index, self) => index === self.findIndex((t) => moment(t.waktuJual).format("M") === moment(value.waktuJual).format("M")));
-      arrayFilterBulanPenjualan = filteredBulanPenjualan;
+      const filteredBulanPembelian = dataBulanPembelian.filter((value, index, self) => index === self.findIndex((t) => moment(t.waktuBeli).format("M") === moment(value.waktuBeli).format("M")));
+      arrayFilterBulanPembelian = filteredBulanPembelian;
 
       if (this.state.tahun != '') {
         this.setState({
-          dataTahun: arrayFilterTahunPenjualan,
-          dataBulan: arrayFilterBulanPenjualan
+          dataTahun: arrayFilterTahunPembelian,
+          dataBulan: arrayFilterBulanPembelian
         })
       } else {
         this.setState({
-          dataTahun: arrayFilterTahunPenjualan,
+          dataTahun: arrayFilterTahunPembelian,
         })
       }
     });
+    getSupplier().then((data) => {
+      this.setState({ dataSupplier: data })
+    })
     this.setState({
       search: moment().format("YYYY-MM-DD")
     })
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.bulan != prevState.bulan || this.state.tahun != prevState.tahun) {
-      getTransPenjualanJoin().then((data) => {
-        this.setState({ penjualan: data });
+    if (this.state.bulan != prevState.bulan || this.state.tahun != prevState.tahun || this.state.supplier != prevState.supplier) {
+      getReturLaporan(this.state.supplier).then((data) => {
+        this.setState({ pembelian: data });
 
-        let arrayFilterTahunPenjualan = [];
-        let dataTahunPenjualan = [];
-        dataTahunPenjualan = data;
+        let arrayFilterTahunPembelian = [];
+        let dataTahunPembelian = [];
+        dataTahunPembelian = data;
 
-        let arrayFilterBulanPenjualan = [];
-        let dataBulanPenjualan = [];
-        dataBulanPenjualan = data;
+        let arrayFilterBulanPembelian = [];
+        let dataBulanPembelian = [];
+        dataBulanPembelian = data;
 
         // sortir Data Double
-        const filteredTahunPenjualan = dataTahunPenjualan.filter((value, index, self) => index === self.findIndex((t) => moment(t.waktuJual).format("YYYY") === moment(value.waktuJual).format("YYYY")));
-        arrayFilterTahunPenjualan = filteredTahunPenjualan;
+        const filteredTahunPembelian = dataTahunPembelian.filter((value, index, self) => index === self.findIndex((t) => moment(t.waktuBeli).format("YYYY") === moment(value.waktuBeli).format("YYYY")));
+        arrayFilterTahunPembelian = filteredTahunPembelian;
 
 
-        const filteredBulanPenjualan = dataBulanPenjualan.filter((value, index, self) => index === self.findIndex((t) => moment(t.waktuJual).format("M") === moment(value.waktuJual).format("M")));
-        arrayFilterBulanPenjualan = filteredBulanPenjualan;
+        const filteredBulanPembelian = dataBulanPembelian.filter((value, index, self) => index === self.findIndex((t) => moment(t.waktuBeli).format("M") === moment(value.waktuBeli).format("M")));
+        arrayFilterBulanPembelian = filteredBulanPembelian;
 
         if (this.state.bulan != '') {
           this.setState({ search: '' })
         } else if (this.state.tahun != '') {
           this.setState({
-            dataTahun: arrayFilterTahunPenjualan,
-            dataBulan: arrayFilterBulanPenjualan,
+            dataTahun: arrayFilterTahunPembelian,
+            dataBulan: arrayFilterBulanPembelian,
             search: '',
             bulan: ''
           })
         } else {
           this.setState({
-            dataTahun: arrayFilterTahunPenjualan,
+            dataTahun: arrayFilterTahunPembelian,
             dataBulan: [],
             search: moment().format("YYYY-MM-DD")
           })
@@ -94,7 +100,6 @@ class tSupplier extends Component {
   }
 
   render() {
-    console.log(this.state.search)
     const simpan = () => {
       // Deklarasi Pdf
       const doc = new jsPDF("l", "pt", "a4");
@@ -109,26 +114,26 @@ class tSupplier extends Component {
       const totalWidthTanggal = doc.getTextWidth(tanggal);
       const totalXTanggal = pageWidth / 2 - (totalWidthTanggal / 2 - 10);
 
-      doc.text("Laporan Harian Penjualan", totalXLaporan, 25);
+      doc.text("Laporan Harian Pembelian", totalXLaporan, 25);
       doc.setFontSize(16);
       doc.text(tanggal, totalXTanggal, 45);
 
       doc.autoTable({
         head: [["#", "Faktur", "Supplier", "Barang", "Jumlah", "Harga", "Tanggal"]],
-        body: this.state.penjualan
-          .filter(({ waktuJual }) => (this.state.bulan != '')
+        body: this.state.pembelian
+          .filter(({ waktuBeli }) => (this.state.bulan != '')
             ?
-            moment(this.state.bulan).format("M") == moment(waktuJual).format("M")
+            moment(this.state.bulan).format("M") == moment(waktuBeli).format("M")
             :
-            moment(waktuJual).format("D-MM-YYYY") == moment(this.state.search).format("D-MM-YYYY")
-          ).map((val, index) => [index + 1, val.faktur, val.barang.supplier.nama, val.barang.nama, val.jumlah, val.barang.hargaJual.toLocaleString("id-ID", { style: "currency", currency: "IDR" }), moment(val.waktuBeli).format("D MMMM YYYY")]),
+            moment(waktuBeli).format("D-MM-YYYY") == moment(this.state.search).format("D-MM-YYYY")
+          ).map((val, index) => [index + 1, val.faktur, val.supplier.nama, val.barang.nama, val.jumlah, val.barang.hargaBeli.toLocaleString("id-ID", { style: "currency", currency: "IDR" }), moment(val.waktuBeli).format("D MMMM YYYY")]),
         styles: { fontSize: 12 },
         startY: 70,
         margin: { left: 3, right: 3 },
       });
 
       // window.open(doc.output("bloburl"));
-      doc.save("Laporan Harian Pemasok " + moment(this.state.search).format("D-MM-YYYY") + ".pdf");
+      doc.save("Laporan Retur Pemasok " + moment(this.state.search).format("D-MM-YYYY") + ".pdf");
     };
 
     return (
@@ -142,17 +147,29 @@ class tSupplier extends Component {
             <div className="card-body">
               <div className="col-lg-12">
                 <div className="row">
-                  <div className="col-md-4"></div>
-                  <div className="text-end col-md-6 pt-3 d-flex justify-content-end">
+                  <div className="col-md-2"></div>
+                  <div className="text-end col-md-8 pt-3 d-flex justify-content-end">
+                    <select class="form-select" style={ { width: 150, marginRight: 20 } } aria-label="Default select example"
+                      onChange={ (e) => this.setState({ supplier: e.target.value }) }>
+                      <option value="" selected>Supplier</option>
+                      {
+                        this.state.dataSupplier.map((val, index) => (
+                          <option
+                            value={ val.nama }
+                            key={ index }
+                            selected={ val.nama == this.state.supplier ? true : false }> { val.nama }</option>
+                        ))
+                      }
+                    </select>
                     <select class="form-select" style={ { width: 150, marginRight: 20 } } aria-label="Default select example"
                       onChange={ (e) => this.setState({ tahun: e.target.value }) }>
                       <option value="" selected>Tahun</option>
                       {
                         this.state.dataTahun.map((val, index) => (
                           <option
-                            value={ moment(val.waktuJual).format("YYYY") }
+                            value={ moment(val.waktuBeli).format("YYYY") }
                             key={ index }
-                            selected={ moment(val.waktuJual).format("YYYY") == this.state.tahun ? true : false }>{ moment(val.waktuJual).format('YYYY') }</option>
+                            selected={ moment(val.waktuBeli).format("YYYY") == this.state.tahun ? true : false }>{ moment(val.waktuBeli).format('YYYY') }</option>
                         ))
                       }
                     </select>
@@ -162,8 +179,8 @@ class tSupplier extends Component {
                       {
                         this.state.dataBulan.map((val, index) => (
                           <option
-                            value={ moment(val.waktuJual).format("M") } key={ index }
-                            selected={ moment(val.waktuJual).format("M") == this.state.bulan ? true : false } >{ moment(val.waktuJual).format("MMMM") }</option>
+                            value={ moment(val.waktuBeli).format("M") } key={ index }
+                            selected={ moment(val.waktuBeli).format("M") == this.state.bulan ? true : false } >{ moment(val.waktuBeli).format("MMMM") }</option>
                         ))
                       }
                     </select>
@@ -185,20 +202,20 @@ class tSupplier extends Component {
                       </tr>
                     </thead>
                     <tbody>
-                      { this.state.penjualan
-                        .filter(({ waktuJual }) => (this.state.bulan != '')
+                      { this.state.pembelian
+                        .filter(({ waktuBeli }) => (this.state.bulan != '')
                           ?
-                          moment(this.state.bulan).format("M") == moment(waktuJual).format("M")
+                          moment(this.state.bulan).format("M") == moment(waktuBeli).format("M")
                           :
-                          moment(waktuJual).format("D-MM-YYYY") == moment(this.state.search).format("D-MM-YYYY")
+                          moment(waktuBeli).format("D-MM-YYYY") == moment(this.state.search).format("D-MM-YYYY")
                         ).map((val, index) => (
                           <tr key={ index }>
                             <th>{ index + 1 }</th>
                             <td>{ val.faktur }</td>
-                            <td>{ val.barang.supplier.nama }</td>
+                            <td>{ val.supplier.nama }</td>
                             <td>{ val.barang.nama }</td>
                             <td>{ val.jumlah }</td>
-                            <td>{ val.barang.hargaJual.toLocaleString("id-ID", { style: "currency", currency: "IDR" }) }</td>
+                            <td>{ val.barang.hargaBeli.toLocaleString("id-ID", { style: "currency", currency: "IDR" }) }</td>
                             <td>{ moment(val.waktuBeli).format("D MMMM YYYY") }</td>
                           </tr>
                         )) }

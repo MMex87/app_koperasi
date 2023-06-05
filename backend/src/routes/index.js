@@ -1,6 +1,4 @@
 const express = require('express')
-
-
 const barang = require('../controllers/Barang.js')
 const anggota = require('../controllers/Anggota.js')
 const supplier = require('../controllers/Supplier.js')
@@ -64,6 +62,7 @@ router.delete('/transPenjualan/:id', transPenjualan.hapusPenjualan)
 
 // return Pembelian
 router.get('/returnPembelian', returnTransPembelian.getReturnPembelian)
+router.get('/returnPembelianLaporan', returnTransPembelian.getReturnPembelianLaporan)
 router.post('/returnPembelian', returnTransPembelian.tambahReturnPembelian)
 router.put('/returnPembelian/:id', returnTransPembelian.editReturnPembelian)
 router.delete('/returnPembelian/:id', returnTransPembelian.hapusReturnPembelian)
