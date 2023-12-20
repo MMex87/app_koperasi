@@ -1,0 +1,10 @@
+# despendencies
+.yarn
+.yarn/install-state.gz
+/node_modules
+
+# test
+request.rest
+
+# environtment
+.env
