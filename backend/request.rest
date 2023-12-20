@@ -1,7 +1,11 @@
 GET http://localhost:8800/transPembelianJoin
 
 ###
-GET http://localhost:8800/transPenjualanJoin
+GET http://localhost:8800/transPenjualanJoinLaporan`
+
+
+###
+GET http://localhost:8800/returnPembelianLaporan
 
 
 

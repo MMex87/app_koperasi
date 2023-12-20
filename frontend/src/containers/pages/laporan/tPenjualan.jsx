@@ -4,6 +4,7 @@ import { jsPDF } from "jspdf"
 import 'jspdf-autotable';
 import getTransPenjualanJoinLaporan from "../../../utils/transaksiPenjualan/getTransPenjualanJoinLaporan";
 import getSupplier from "../../../utils/supplier/getSupplier";
+import Swal from "sweetalert2";
 
 class tPenjualan extends Component {
   constructor(props) {
@@ -15,54 +16,25 @@ class tPenjualan extends Component {
       tahun: '',
       bulan: '',
       supplier: '',
+      loadinig: true,
       dataTahun: [],
       dataBulan: [],
     };
   }
 
-  componentDidMount() {
-    getTransPenjualanJoinLaporan(this.state.supplier).then((data) => {
-      this.setState({ penjualan: data });
-      let arrayFilterTahunPenjualan = [];
-      let dataTahunPenjualan = [];
-      dataTahunPenjualan = data;
+  async componentDidMount() {
+    try {
+      // Show loading screen
+      Swal.fire({
+        title: 'Loading...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
 
-      let arrayFilterBulanPenjualan = [];
-      let dataBulanPenjualan = [];
-      dataBulanPenjualan = data;
-
-      // sortir Data Double
-      const filteredTahunPenjualan = dataTahunPenjualan.filter((value, index, self) => index === self.findIndex((t) => moment(t.waktuJual).format("YYYY") === moment(value.waktuJual).format("YYYY")));
-      arrayFilterTahunPenjualan = filteredTahunPenjualan;
-
-
-      const filteredBulanPenjualan = dataBulanPenjualan.filter((value, index, self) => index === self.findIndex((t) => moment(t.waktuJual).format("M") === moment(value.waktuJual).format("M")));
-      arrayFilterBulanPenjualan = filteredBulanPenjualan;
-
-      if (this.state.tahun != '') {
-        this.setState({
-          dataTahun: arrayFilterTahunPenjualan,
-          dataBulan: arrayFilterBulanPenjualan
-        })
-      } else {
-        this.setState({
-          dataTahun: arrayFilterTahunPenjualan,
-        })
-      }
-    });
-    getSupplier().then((data) => {
-      this.setState({ dataSupplier: data })
-    })
-    this.setState({
-      search: moment().format("YYYY-MM-DD")
-    })
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.bulan != prevState.bulan || this.state.tahun != prevState.tahun || this.state.supplier != prevState.supplier) {
-      getTransPenjualanJoinLaporan(this.state.supplier).then((data) => {
+      await getTransPenjualanJoinLaporan(this.state.supplier, 500).then((data) => {
         this.setState({ penjualan: data });
-
         let arrayFilterTahunPenjualan = [];
         let dataTahunPenjualan = [];
         dataTahunPenjualan = data;
@@ -79,24 +51,117 @@ class tPenjualan extends Component {
         const filteredBulanPenjualan = dataBulanPenjualan.filter((value, index, self) => index === self.findIndex((t) => moment(t.waktuJual).format("M") === moment(value.waktuJual).format("M")));
         arrayFilterBulanPenjualan = filteredBulanPenjualan;
 
-        if (this.state.bulan != '') {
-          this.setState({ search: '' })
-        } else if (this.state.tahun != '') {
+        if (this.state.tahun != '') {
           this.setState({
             dataTahun: arrayFilterTahunPenjualan,
-            dataBulan: arrayFilterBulanPenjualan,
-            search: '',
-            bulan: ''
+            dataBulan: arrayFilterBulanPenjualan
           })
         } else {
           this.setState({
             dataTahun: arrayFilterTahunPenjualan,
-            dataBulan: [],
-            search: moment().format("YYYY-MM-DD")
           })
         }
+      });
 
+      // Dismiss loading screen and show success message
+      Swal.fire({
+        icon: 'success',
+        title: 'Data loaded successfully!',
+        showConfirmButton: false,
+        timer: 1500
+      });
+
+      await getSupplier().then((data) => {
+        this.setState({ dataSupplier: data })
       })
+
+      this.setState({
+        search: moment().format("YYYY-MM-DD")
+      })
+
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong!',
+        footer: error.message
+      });
+    }
+
+  }
+
+  async componentDidUpdate(prevProps, prevState) {
+    try {
+      if (this.state.bulan != prevState.bulan || this.state.tahun != prevState.tahun || this.state.supplier != prevState.supplier) {
+
+        // Show loading screen
+        Swal.fire({
+          title: 'Loading...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        let limit
+        if (this.state.bulan != prevState.bulan || this.state.supplier != prevState.supplier) {
+          limit = 2000
+        } else {
+          limit = 500
+        }
+        await getTransPenjualanJoinLaporan(this.state.supplier, limit).then((data) => {
+          this.setState({ penjualan: data });
+
+          let arrayFilterTahunPenjualan = [];
+          let dataTahunPenjualan = [];
+          dataTahunPenjualan = data;
+
+          let arrayFilterBulanPenjualan = [];
+          let dataBulanPenjualan = [];
+          dataBulanPenjualan = data;
+
+          // sortir Data Double
+          const filteredTahunPenjualan = dataTahunPenjualan.filter((value, index, self) => index === self.findIndex((t) => moment(t.waktuJual).format("YYYY") === moment(value.waktuJual).format("YYYY")));
+          arrayFilterTahunPenjualan = filteredTahunPenjualan;
+
+
+          const filteredBulanPenjualan = dataBulanPenjualan.filter((value, index, self) => index === self.findIndex((t) => moment(t.waktuJual).format("M") === moment(value.waktuJual).format("M")));
+          arrayFilterBulanPenjualan = filteredBulanPenjualan;
+
+          if (this.state.bulan != '') {
+            this.setState({ search: '' })
+          } else if (this.state.tahun != '') {
+            this.setState({
+              dataTahun: arrayFilterTahunPenjualan,
+              dataBulan: arrayFilterBulanPenjualan,
+              search: '',
+              bulan: ''
+            })
+          } else {
+            this.setState({
+              dataTahun: arrayFilterTahunPenjualan,
+              dataBulan: [],
+              search: moment().format("YYYY-MM-DD")
+            })
+          }
+
+        })
+      }
+
+      // Dismiss loading screen and show success message
+      Swal.fire({
+        icon: 'success',
+        title: 'Data loaded successfully!',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong!',
+        footer: error.message
+      });
     }
   }
 
