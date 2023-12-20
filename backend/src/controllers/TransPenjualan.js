@@ -9,7 +9,7 @@ const getPenjualan = async (req, res) => {
     try {
         const penjualan = await transPenjualanModel.findAll({
             order: [
-                ['id', 'ASC']
+                ['id', 'DESC']
             ]
         })
         res.status(200).json(penjualan)
@@ -44,6 +44,7 @@ const getJoinPenAnBarang = async (req, res) => {
 const getJoinPenAnBarangLapor = async (req, res) => {
     try {
         const supplier = req.query.supplier || ''
+        const limit = parseInt(req.query.limit) || 2000 // Batasan jumlah data per halaman
 
         const penjualan = await transPenjualanModel.findAll({
             include: [
@@ -63,20 +64,28 @@ const getJoinPenAnBarangLapor = async (req, res) => {
                     }
                 }]
             },
-            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuJual'], 'statusPenjualan']
+            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuJual'], 'statusPenjualan'],
+            limit: limit,
+            order: [
+                ['id', 'DESC']
+            ]
         })
+
         res.status(200).json(penjualan)
     } catch (error) {
         console.error(error)
         res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
     }
 }
+
+
 const getJoinPenAnBarangId = async (req, res) => {
     try {
-        const penjualan = await transPenjualanModel.findOne({
+        const penjualan = await transPenjualanModel.findAll({
             include: [
                 {
-                    model: barangModel
+                    model: barangModel,
+                    include: supplierModel
                 },
                 {
                     model: anggotaModel,
@@ -84,10 +93,19 @@ const getJoinPenAnBarangId = async (req, res) => {
                 }
             ],
             where: {
-                id: req.params.id
+                [Op.or]: [{
+                    '$barang.supplier.nama$': {
+                        [Op.like]: '%' + supplier + '%'
+                    }
+                }]
             },
-            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuJual'], 'statusPenjualan']
-        })
+            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuJual'], 'statusPenjualan'],
+            order: [
+                [sequelize.literal('DATE_TRUNC(\'week\', "createdAt")'), 'DESC']
+            ]
+        });
+
+
         res.status(200).json(penjualan)
     } catch (error) {
         console.error(error)
