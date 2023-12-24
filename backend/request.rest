@@ -11,7 +11,7 @@ GET http://localhost:8800/returnPembelianLaporan
 
 
 ###
-GET http://localhost:8800/barangJoin
+GET http://localhost:8800/lapBarangDownload
 
 
 ###

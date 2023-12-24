@@ -11,7 +11,7 @@ class tPenjualan extends Component {
     this.state = {
       penjualan: [],
       dataSupplier: [],
-      search: '',
+      search: '', 
       tahun: '',
       bulan: '',
       supplier: '',
