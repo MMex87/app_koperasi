@@ -18,7 +18,7 @@
     "react-paginate": "^8.1.4",
     "react-redux": "^8.0.5",
     "react-router": "^6.8.0",
-    "react-router-dom": "^6.8.0",
+    "react-router-dom": "^6.20.0",
     "react-scripts": "5.0.1",
     "redux": "^4.2.1",
     "sweetalert2": "^11.7.1",
