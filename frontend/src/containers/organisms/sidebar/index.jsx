@@ -158,6 +158,12 @@ const SideBar = () => {
                 <span>Supplier</span>{ " " }
               </Link>
             </li>
+            <li>
+              <Link to="/reportBarang">
+                <i className="bx bx-store" />
+                <span>Barang</span>
+              </Link>
+            </li>
           </ul>
         </li>
       </ul>

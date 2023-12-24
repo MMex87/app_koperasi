@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.2.1",
     "axios": "^1.6.2",
     "bootstrap": "^5.2.3",
+    "convert-rupiah": "^1.0.1",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.28",
     "moment": "^2.29.4",
@@ -21,11 +22,12 @@
     "react-router-dom": "^6.8.0",
     "react-scripts": "5.0.1",
     "redux": "^4.2.1",
+    "rupiah-format": "^1.0.0",
     "sweetalert2": "^11.7.1",
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "start": " PORT=7700 react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

@@ -7,7 +7,7 @@ const getBarang = async (req, res) => {
     try {
         const barang = await barangModel.findAll({
             order: [
-                ['id', 'DESC']
+                ['jumlah', 'DESC']
             ]
         })
         res.status(200).json(barang)
@@ -16,6 +16,57 @@ const getBarang = async (req, res) => {
         res.status(400).json({ msg: "Gagal Mengambil Data! " + error })
     }
 }
+
+const getLapBarang = async (req, res) => {
+    try {
+        const barang = await barangModel.findAll({
+            where: {
+                supplierId : "1"
+            },
+            order: [
+                ['jumlah', 'DESC']
+            ]
+        })
+        const dataArray = barang.map(result => result.toJSON());
+
+        res.status(200).json(dataArray)
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ msg: "Gagal Mengambil Data! " + error })
+    }
+}
+
+const lapBarang = async (req, res) => {
+    const page = parseInt(req.query.page) || 0
+    const limit = parseInt(req.query.limit) || 10
+    const offset = limit * page
+    const totalRows = await barangModel.count({
+        where:{
+            supplierId : "1"
+        }
+      })
+      const totalPage = Math.ceil(totalRows / limit)
+      
+      const results = await barangModel.findAll({
+        offset : offset,
+        limit : limit,
+        order : [
+          ['jumlah','DESC']
+        ]
+      })
+
+      const dataArray = results.map(result => result.get({ plain: true }));
+
+      res.json({
+        result: dataArray,
+        page: page,
+        limit: limit,
+        totalRows: totalRows,
+        totalPage: totalPage
+      })
+}
+
+
 const getBarangId = async (req, res) => {
     try {
         const barang = await barangModel.findOne({
@@ -224,5 +275,7 @@ module.exports = {
     getBarangId,
     tambahBarang,
     editBarang,
-    hapusBarang
+    hapusBarang,
+    lapBarang, 
+    getLapBarang
 }

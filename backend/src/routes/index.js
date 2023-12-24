@@ -22,6 +22,9 @@ router.put('/barangTerjual/:id', barang.barangTerjual)
 router.put('/barangTerbeli/:id', barang.barangTerbeli)
 router.put('/barang/:id', barang.editBarang)
 router.delete('/barang/:id', barang.hapusBarang)
+router.get('/lapBarang', barang.lapBarang)
+router.get('/lapBarangDownload', barang.getLapBarang)
+
 
 // supplier
 router.get('/supplier', supplier.getSupplier)
