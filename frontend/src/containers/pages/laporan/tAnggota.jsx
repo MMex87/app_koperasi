@@ -107,6 +107,8 @@ class tAnggota extends Component {
 
       this.setState({ refresh: true })
     };
+
+    console.log(this.state.anggota)
     return (
       <main id="main">
         <div className="text-center pagetitle">
@@ -144,7 +146,7 @@ class tAnggota extends Component {
                             <td>{
                               getTotal(val.anggota.nama).toLocaleString("id-ID", { style: "currency", currency: "IDR" })
                             }</td>
-                            <td>{ moment(val.transPenjualan.createdAt).format("D MMMM YYYY") }</td>
+                            <td>{ moment(val.createdAt).format("D MMMM YYYY") }</td>
                           </tr>
                         )) }
                     </tbody>

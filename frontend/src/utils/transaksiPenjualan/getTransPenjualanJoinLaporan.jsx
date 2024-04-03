@@ -1,9 +1,9 @@
 import axios from "../../api/axios";
 
-const getTransPenjualanJoinLaporan = async (supplier, limit) => {
-    const response = await axios.get(`/transPenjualanJoinLaporan?supplier=${supplier}&limit=${limit}`);
+const getTransPenjualanJoin = async () => {
+  const response = await axios.get("/transPenjualanJoin");
 
-    return response.data;
-}
+  return response.data;
+};
 
-export default getTransPenjualanJoinLaporan
+export default getTransPenjualanJoin;

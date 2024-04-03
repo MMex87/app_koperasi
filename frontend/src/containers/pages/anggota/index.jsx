@@ -13,7 +13,7 @@ export class Anggota extends Component {
       anggota: [],
       search: "",
       page: 0,
-      limit: 5,
+      limit: 10,
       pages: 0,
       rows: 0,
     };

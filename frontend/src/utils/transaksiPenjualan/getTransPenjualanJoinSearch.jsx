@@ -1,7 +1,7 @@
 import axios from "../../api/axios";
 
-const getTransPenjualanJoinSearch = async (search, limit, page) => {
-    const response = await axios.get(`/transPenjualanJoinSearch?search=${search}&limit=${limit}&page=${page}`);
+const getTransPenjualanJoinSearch = async (tanggal, limit, page) => {
+    const response = await axios.get(`/transPenjualanJoinSearch?tanggal=${tanggal}&limit=${limit}&page=${page}`);
 
     return response.data;
 };
