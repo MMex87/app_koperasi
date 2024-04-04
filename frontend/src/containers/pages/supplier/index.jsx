@@ -10,7 +10,7 @@ export default class Supplier extends Component {
     supplier: [],
     page: 0,
     search: "",
-    limit: 5,
+    limit: 10,
     pages: 0,
     rows: 0,
   };

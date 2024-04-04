@@ -3,7 +3,6 @@ import axios from "axios";
 import convertRupiah from "rupiah-format";
 import ReactPaginate from "react-paginate";
 import jsPDF from "jspdf";
-import moment from "moment";
 
 const tBarang = () => {
   const [dataBarang, setDataBarang] = useState([]);
@@ -26,15 +25,13 @@ const tBarang = () => {
     setRows(response.data.totalRows);
 
     const p = await axios.get("http://localhost:8800/lapBarangDownload");
-    setDataDownload(p.data);
+    setDataDownload(p.data.dataArray);
 
-    const total = p.data.reduce((e, item) => {
-      return e + item.hargaJual
-    },0)
-    setTotalHarga(total)
+    const Qty = p.data.total.reduce((e, item) => {
+      return e + parseInt(item.total, 10);
+    }, 0);
+    setTotalHarga(Qty);
   };
-
-  console.log(totalHarga)
 
   const changePage = ({ selected }) => {
     setPage(selected);
@@ -43,13 +40,9 @@ const tBarang = () => {
   const currentDate = new Date();
 
   // Dapatkan nama bulan dari tanggal saat ini
-  const monthNames = [
-    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-  ];
+  const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
   const currentMonth = monthNames[currentDate.getMonth()];
   const currentYear = currentDate.getFullYear();
-
 
   const download = async () => {
     const pdf = new jsPDF();
@@ -60,12 +53,12 @@ const tBarang = () => {
 
     /// Tanggal & Tahun
     pdf.setFontSize(12);
-    pdf.text( `${currentMonth} ${currentYear}`, 105, 20, { align: "center" });
+    pdf.text(`${currentMonth} ${currentYear}`, 105, 20, { align: "center" });
     pdf.setFont("helvetica", "normal");
 
     /// Total Barang
     pdf.setFontSize(12);
-    pdf.text( `Total Barang : ${rows}`, 30, 25, { align: "center" });
+    pdf.text(`Total Barang : ${rows}`, 30, 25, { align: "center" });
     pdf.setFont("helvetica", "normal");
 
     /// Total Harga
@@ -78,7 +71,7 @@ const tBarang = () => {
     });
 
     // Tabel (Contoh)
-    const totalRows = ["", "", "",convertRupiah.convert(totalHarga)];
+    const totalRows = ["", "", "", convertRupiah.convert(totalHarga)];
     const headers = [["Nama", "Jumlah", "Harga", "Total"]];
     pdf.autoTable({
       startY: 30,
@@ -89,7 +82,7 @@ const tBarang = () => {
     });
 
     // Simpan File PDF
-    pdf.save("Laporan Barang");
+    pdf.save(`Laporan Barang ${currentMonth}`);
   };
 
   return (
@@ -102,66 +95,61 @@ const tBarang = () => {
         <div className="card">
           <div className="card-body">
             <div className="col-lg-12">
-              <div className="row">
+              <div class="row">
                 <div className="col-md-8"></div>
-                <div className="text-end col-md-10 pt-3">{/* <input type="text" className=" form-control" placeholder="Cari Anggota" value={this.state.search} onChange={(e) => this.setState({ search: e.target.value })} /> */}</div>
                 <div class="container text-center">
-                  <div class="row align-items-center">
-                    <div class="col-lg-10"></div>
-                    <div class="col-lg-2">
-                      <div className="text-end col-md-2">
-                        <button className="btn btn-success me-3" onClick={download}>
-                          Simpan
-                        </button>
-                      </div>
-                    </div>
+                  <div class="col-lg-10"></div>
+                  <div className="text-end mt-3 me-3">
+                    <button className="btn btn-success" onClick={download}>
+                      Simpan
+                    </button>
                   </div>
                 </div>
+              </div>
 
-                <table className="table mt-2">
-                  <thead>
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">Barang</th>
-                      <th scope="col">Jumlah</th>
-                      <th scope="col">Harga</th>
-                      <th scope="col">Total</th>
+              <table className="table mt-2">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Barang</th>
+                    <th scope="col">Jumlah</th>
+                    <th scope="col">Harga</th>
+                    <th scope="col">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataBarang.map((data, index) => (
+                    <tr key={data.id}>
+                      <th>{index + 1}</th>
+                      <td>{data.nama}</td>
+                      <td>{data.jumlah}</td>
+                      <td>{convertRupiah.convert(data.hargaJual)}</td>
+                      <td>{convertRupiah.convert(data.hargaJual * data.jumlah)}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {dataBarang.map((data, index) => (
-                      <tr key={data.id}>
-                        <td>{index + 1}</td>
-                        <td>{data.nama}</td>
-                        <td>{data.jumlah}</td>
-                        <td>{convertRupiah.convert(data.hargaJual)}</td>
-                        <td>{convertRupiah.convert(data.hargaJual * data.jumlah)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <div className="p-3">
-                  <div className="d-flex justify-content-between">
-                    <p className="text-center">
-                      Total Rows : {rows} Page: {rows ? page + 1 : 0} of {pages}
-                    </p>
-                    <nav aria-label="Page navigate example justify-content-end">
-                      <ReactPaginate
-                        previousLabel={"< Prev"}
-                        nextLabel={"Next >"}
-                        pageCount={pages}
-                        onPageChange={changePage}
-                        containerClassName={"pagination"}
-                        pageLinkClassName={"page-link"}
-                        pageClassName={"page-item"}
-                        previousLinkClassName={"page-link"}
-                        previousClassName={"page-item"}
-                        nextClassName={"page-item"}
-                        nextLinkClassName={"page-link"}
-                        activeClassName={"active"}
-                      />
-                    </nav>
-                  </div>
+                  ))}
+                </tbody>
+              </table>
+              <div className="p-3">
+                <div className="d-flex justify-content-between">
+                  <p className="text-center">
+                    Total Rows : {rows} Page: {rows ? page + 1 : 0} of {pages}
+                  </p>
+                  <nav aria-label="Page navigate example justify-content-end">
+                    <ReactPaginate
+                      previousLabel={"< Prev"}
+                      nextLabel={"Next >"}
+                      pageCount={pages}
+                      onPageChange={changePage}
+                      containerClassName={"pagination"}
+                      pageLinkClassName={"page-link"}
+                      pageClassName={"page-item"}
+                      previousLinkClassName={"page-link"}
+                      previousClassName={"page-item"}
+                      nextClassName={"page-item"}
+                      nextLinkClassName={"page-link"}
+                      activeClassName={"active"}
+                    />
+                  </nav>
                 </div>
               </div>
             </div>

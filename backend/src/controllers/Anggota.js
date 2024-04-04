@@ -1,4 +1,4 @@
-const { Op } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 const anggotaModel = require("../model/AnggotaModel.js");
 
 
@@ -9,7 +9,15 @@ const getAnggota = async (req, res) => {
                 ['nama', 'ASC']
             ]
         })
-        res.status(200).json(anggota)
+
+        const count = await anggotaModel.count({
+            where : {
+                [Sequelize.Op.or]: [
+                    { nama: { [Sequelize.Op.not]: null } },
+                ]
+            }
+        })
+        res.status(200).json({anggota, count})
     } catch (error) {
         console.error(error);
         res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })

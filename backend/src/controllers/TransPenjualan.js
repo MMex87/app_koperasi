@@ -117,13 +117,14 @@ const getJoinPenAnBarangSarch = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 0
         const limit = parseInt(req.query.limit) || 10
-        const search = req.query.search || ''
+        const search = req.query.date || ""
         const offset = page * limit
 
         const totalRows = await transPenjualanModel.count({
             include: [
                 {
-                    model: barangModel
+                    model: barangModel,
+                    as: 'barang'
                 },
                 {
                     model: anggotaModel,
@@ -131,30 +132,21 @@ const getJoinPenAnBarangSarch = async (req, res) => {
                 }
             ],
             where: {
-                [Op.or]: [{
-                    '$anggota.nama$': {
-                        [Op.like]: '%' + search + '%'
-                    }
-                }, {
-                    faktur: {
-                        [Op.like]: '%' + search + '%'
-                    }
-                }, {
-                    '$barang.nama$': {
-                        [Op.like]: '%' + search + '%'
-                    }
-                }],
-                statusPenjualan: {
-                    [Op.not]: ['onProcess']
+                createdAt: {
+                    [Op.like]: '%' + search + '%'
                 }
             }
         })
+
+        console.log(search)
+        console.log(totalRows)
 
         const totalPage = Math.ceil(totalRows / limit)
         const result = await transPenjualanModel.findAll({
             include: [
                 {
-                    model: barangModel
+                    model: barangModel,
+                    as : 'barang'
                 },
                 {
                     model: anggotaModel,
@@ -162,30 +154,18 @@ const getJoinPenAnBarangSarch = async (req, res) => {
                 }
             ],
             where: {
-                [Op.or]: [{
-                    '$anggota.nama$': {
-                        [Op.like]: '%' + search + '%'
-                    }
-                }, {
-                    faktur: {
-                        [Op.like]: '%' + search + '%'
-                    }
-                }, {
-                    '$barang.nama$': {
-                        [Op.like]: '%' + search + '%'
-                    }
-                }],
-                statusPenjualan: {
-                    [Op.not]: ['onProcess']
+                createdAt: {
+                    [Op.eq]: search
                 }
             },
-            attributes: ['id', 'jumlah', 'faktur', 'harga', 'typePembayaran', 'anggotaId', 'barangId', ['createdAt', 'waktuJual'], 'statusPenjualan'],
             offset,
             limit,
             order: [
                 ['id', 'DESC']
             ]
         })
+
+        console.log(result)
         res.status(200).json({
             page,
             result,

@@ -23,7 +23,8 @@ GET http://localhost:8800/penjualanBonJoin
 
 
 ###
-GET http://localhost:8800/penjualanBonSearch?search=anton
+GET http://localhost:8800/transPenjualanJoinSearch?tanggal=2023-12-20&page=1&limit=10
+
 
 
 

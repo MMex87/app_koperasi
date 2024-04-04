@@ -1,4 +1,4 @@
-const { Op } = require('sequelize');
+const { Op, Sequelize } = require('sequelize');
 const barangModel = require('../model/BarangModel.js');
 const supplierModel = require('../model/SupplierModel.js');
 
@@ -10,7 +10,17 @@ const getBarang = async (req, res) => {
                 ['jumlah', 'DESC']
             ]
         })
-        res.status(200).json(barang)
+
+        const count = await barangModel.count({
+            where: {
+                [Sequelize.Op.or]: [
+                    { nama: { [Sequelize.Op.not]: null } },
+                    { kodeBarang: { [Sequelize.Op.not]: null } },
+                ]
+            }
+        });
+
+        res.status(200).json({barang, count})
     } catch (error) {
         console.error(error);
         res.status(400).json({ msg: "Gagal Mengambil Data! " + error })
@@ -21,15 +31,36 @@ const getLapBarang = async (req, res) => {
     try {
         const barang = await barangModel.findAll({
             where: {
-                supplierId : "1"
+                supplierId : "1",
+                jumlah : {
+                    [Op.gt]: 0
+                },
+                nama: {
+                    [Op.ne]: null
+                }
             },
             order: [
                 ['jumlah', 'DESC']
             ]
         })
-        const dataArray = barang.map(result => result.toJSON());
 
-        res.status(200).json(dataArray)
+        const dataArray = barang.map(result => result.get({ plain: true }));
+        
+        const total = barang.map(result => {
+            const harga_jual_string = result.hargaJual.toString();
+            const jumlah_string = result.jumlah.toString();
+            const totalString = (parseInt(harga_jual_string) * parseInt(jumlah_string)).toString();
+        
+            return {
+              ...result.get({ plain: true }),
+              total: totalString
+            };
+          });
+
+        res.json({
+            dataArray : dataArray,
+            total: total })
+
     } catch (error) {
         console.error(error);
         res.status(400).json({ msg: "Gagal Mengambil Data! " + error })
@@ -40,10 +71,17 @@ const lapBarang = async (req, res) => {
     const page = parseInt(req.query.page) || 0
     const limit = parseInt(req.query.limit) || 10
     const offset = limit * page
+
     const totalRows = await barangModel.count({
-        where:{
-            supplierId : "1"
-        }
+        where: {
+            supplierId : "1",
+            jumlah : {
+                [Op.gt]: 0
+            },
+            nama: {
+                [Op.ne]: null
+            }
+        },
       })
       const totalPage = Math.ceil(totalRows / limit)
       
@@ -62,7 +100,7 @@ const lapBarang = async (req, res) => {
         page: page,
         limit: limit,
         totalRows: totalRows,
-        totalPage: totalPage
+        totalPage: totalPage,
       })
 }
 
@@ -145,7 +183,7 @@ const getSearchBarang = async (req, res) => {
             offset,
             limit,
             order: [
-                ['id', 'DESC']
+                ['updatedAt', 'DESC']
             ]
         })
         res.status(200).json({

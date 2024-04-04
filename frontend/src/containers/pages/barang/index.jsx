@@ -3,13 +3,14 @@ import React, { Component } from "react";
 import ReactPaginate from "react-paginate";
 import { Link } from "react-router-dom";
 import getSearchBarang from "../../../utils/barang/getSearchBarang.jsx";
+import convertRupiah from "rupiah-format";
 
 export default class Barang extends Component {
   state = {
     barang: [],
     search: "",
     page: 0,
-    limit: 5,
+    limit: 10,
     pages: 0,
     rows: 0,
     barangId: 0,
@@ -103,6 +104,7 @@ export default class Barang extends Component {
                   <table className="table">
                     <thead>
                       <tr>
+                        <th>#</th>
                         <th>Nama Barang</th>
                         <th>Kode Barang</th>
                         <th>Supplier</th>
@@ -117,6 +119,7 @@ export default class Barang extends Component {
                     <tbody>
                       { this.state.barang.map((val, index) => (
                         <tr key={ index }>
+                          <th>{index + 1}</th>
                           <td>
                             {
                               this.state.barangId == val.id
@@ -144,7 +147,7 @@ export default class Barang extends Component {
                                 ?
                                 <input type="text" className="form-control" id="kode" onChange={ (e) => this.setState({ hargaBeli: e.target.value }) } value={ this.state.hargaBeli } />
                                 :
-                                val.hargaBeli
+                                convertRupiah.convert(val.hargaBeli)
                             }
                           </td>
                           <td>
@@ -153,7 +156,7 @@ export default class Barang extends Component {
                                 ?
                                 <input type="text" className="form-control" id="kode" onChange={ (e) => this.setState({ hargaJual: e.target.value }) } value={ this.state.hargaJual } />
                                 :
-                                val.hargaJual
+                                convertRupiah.convert(val.hargaJual)
                             }
                           </td>
                           <td>{ val.jumlah }</td>

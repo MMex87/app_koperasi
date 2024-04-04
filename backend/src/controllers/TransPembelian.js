@@ -155,7 +155,7 @@ const getJoinPemAnBarangSarch = async (req, res) => {
             offset,
             limit,
             order: [
-                ['id', 'DESC']
+                ['waktuBeli', 'DESC']
             ]
         })
         res.status(200).json({
