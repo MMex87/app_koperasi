@@ -3,6 +3,7 @@ const anggotaModel = require("../model/AnggotaModel.js")
 const barangModel = require("../model/BarangModel.js")
 const supplierModel = require("../model/SupplierModel.js")
 const transPenjualanModel = require("../model/TransPenjualanModel.js")
+const moment = require('moment');
 
 
 const getPenjualan = async (req, res) => {
@@ -117,8 +118,11 @@ const getJoinPenAnBarangSarch = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 0
         const limit = parseInt(req.query.limit) || 10
-        const search = req.query.date || ""
+        const search = req.query.date
         const offset = page * limit
+
+        const startOfDay = moment(search).startOf('day').toDate(); // Mulai hari pada tanggal tertentu
+        const endOfDay = moment(search).endOf('day').toDate(); // Akhir hari pada tanggal tertentu
 
         const totalRows = await transPenjualanModel.count({
             include: [
@@ -133,13 +137,11 @@ const getJoinPenAnBarangSarch = async (req, res) => {
             ],
             where: {
                 createdAt: {
-                    [Op.like]: '%' + search + '%'
+                    [Op.gte]: startOfDay,
+                    [Op.lte]: endOfDay
                 }
             }
         })
-
-        console.log(search)
-        console.log(totalRows)
 
         const totalPage = Math.ceil(totalRows / limit)
         const result = await transPenjualanModel.findAll({
@@ -155,7 +157,8 @@ const getJoinPenAnBarangSarch = async (req, res) => {
             ],
             where: {
                 createdAt: {
-                    [Op.eq]: search
+                    [Op.gte]: startOfDay,
+                    [Op.lte]: endOfDay
                 }
             },
             offset,
@@ -164,8 +167,6 @@ const getJoinPenAnBarangSarch = async (req, res) => {
                 ['id', 'DESC']
             ]
         })
-
-        console.log(result)
         res.status(200).json({
             page,
             result,

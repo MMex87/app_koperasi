@@ -11,13 +11,14 @@ const tPembelian = () => {
   const [limit, setLimit] = useState(10);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
+  const [tanggal, setTanggal] = useState(moment().format("YYYY-MM-DD"))
 
   useEffect(() => {
     getData();
-  }, [page]);
+  }, [page,tanggal]);
 
   const getData = async () => {
-    const response = await axios.get(`http://localhost:8800/transPembelianJoinSearch?page=${page}&limit=${limit}`);
+    const response = await axios.get(`http://localhost:8800/transPembelianJoinSearch?date=${tanggal}&page=${page}&limit=${limit}`);
     setDataBarang(response.data.result);
     setPage(response.data.page);
     setPages(response.data.totalPage);
@@ -28,7 +29,10 @@ const tPembelian = () => {
     setPage(selected);
   };
 
-  console.log(dataBarang)
+  const changeTanggal = async (e) => {
+    setTanggal(e.target.value)
+  }
+
 
   return (
     <main id="main">
@@ -42,24 +46,7 @@ const tPembelian = () => {
               <div className="row">
                 <div className="col-md-2"></div>
                 <div className="text-end col-md-8 pt-3 d-flex justify-content-end">
-                  <select class="form-select" style={{ width: 150, marginRight: 20 }} aria-label="Default select example" >
-                    <option value="" selected>
-                      Supplier
-                    </option>
-                    
-                  </select>
-                  <select class="form-select" style={{ width: 150, marginRight: 20 }} aria-label="Default select example" >
-                    <option value="" selected>
-                      Tahun
-                    </option>
-                    
-                  </select>
-                  <select class="form-select" style={{ width: 150, marginRight: 20 }} aria-label="Default select example">
-                    <option value="" selected>
-                      Bulan
-                    </option>
-                  </select>
-                  <input type="date" className=" form-control" style={{ width: 180 }}  />
+                  <input type="date" className=" form-control" onChange={changeTanggal} value={tanggal} style={{ width: 180 }} />
                 </div>
                 <div className="text-end col-md-2 pt-3">
                   <button className="btn btn-success me-3" >

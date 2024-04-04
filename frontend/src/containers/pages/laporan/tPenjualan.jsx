@@ -11,7 +11,7 @@ const tPenjualan = () => {
   const [limit, setLimit] = useState(10);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
-  const [tanggal, setTanggal] = useState("")
+  const [tanggal, setTanggal] = useState(moment().format("YYYY-MM-DD"))
 
   useEffect(() => {
     getData();
@@ -24,7 +24,6 @@ const tPenjualan = () => {
     setPages(response.data.totalPage);
     setRows(response.data.totalRows);
 
-    console.log(response.data)
   };
 
   const changePage = ({ selected }) => {
@@ -33,11 +32,7 @@ const tPenjualan = () => {
 
   const changeTanggal = async (e) => {
     setTanggal(e.target.value)
-    getData()
   }
-
-  console.log(dataPenjualan);
-  console.log(tanggal);
 
   return (
     <main id="main">

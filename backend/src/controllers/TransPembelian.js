@@ -2,6 +2,7 @@ const { Op } = require("sequelize")
 const barangModel = require("../model/BarangModel.js")
 const supplierModel = require("../model/SupplierModel.js")
 const transPembelianModel = require("../model/TransPembelianModel.js")
+const moment = require('moment');
 
 
 const getPembelian = async (req, res) => {
@@ -89,8 +90,11 @@ const getJoinPemAnBarangSarch = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 0
         const limit = parseInt(req.query.limit) || 10
-        const search = req.query.search || ''
+        const search = req.query.date
         const offset = page * limit
+
+        const startOfDay = moment(search).startOf('day').toDate(); // Mulai hari pada tanggal tertentu
+        const endOfDay = moment(search).endOf('day').toDate(); // Akhir hari pada tanggal tertentu
 
         const totalRows = await transPembelianModel.count({
             include: [
@@ -103,21 +107,9 @@ const getJoinPemAnBarangSarch = async (req, res) => {
                 }
             ],
             where: {
-                [Op.or]: [{
-                    '$supplier.nama$': {
-                        [Op.like]: '%' + search + '%'
-                    }
-                }, {
-                    faktur: {
-                        [Op.like]: '%' + search + '%'
-                    }
-                }, {
-                    '$barang.nama$': {
-                        [Op.like]: '%' + search + '%'
-                    }
-                }],
-                statusPembelian: {
-                    [Op.not]: ['onProcess']
+                createdAt: {
+                    [Op.gte]: startOfDay,
+                    [Op.lte]: endOfDay
                 }
             }
         })
@@ -134,21 +126,9 @@ const getJoinPemAnBarangSarch = async (req, res) => {
                 }
             ],
             where: {
-                [Op.or]: [{
-                    '$supplier.nama$': {
-                        [Op.like]: '%' + search + '%'
-                    }
-                }, {
-                    faktur: {
-                        [Op.like]: '%' + search + '%'
-                    }
-                }, {
-                    '$barang.nama$': {
-                        [Op.like]: '%' + search + '%'
-                    }
-                }],
-                statusPembelian: {
-                    [Op.not]: ['onProcess']
+                createdAt: {
+                    [Op.gte]: startOfDay,
+                    [Op.lte]: endOfDay
                 }
             },
             attributes: ['id', 'jumlah', 'faktur', 'harga', 'hargaJual', 'supplierId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPembelian'],
