@@ -3,27 +3,34 @@ import axios from "axios";
 import convertRupiah from "rupiah-format";
 import ReactPaginate from "react-paginate";
 import moment from "moment";
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf"
+import 'jspdf-autotable';
 
 const tPenjualan = () => {
   const [dataPenjualan, setDataPenjualan] = useState([]);
+  const [dataPenjualanPdf, setDataPenjualanPdf] = useState([]);
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(10);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [tanggal, setTanggal] = useState(moment().format("YYYY-MM-DD"))
 
   useEffect(() => {
     getData();
+    getDataPDF();
   }, [page,tanggal]);
 
   const getData = async () => {
-    const response = await axios.get(`http://localhost:8800/transPenjualanJoinSearch?date=${tanggal}&page=${page}&limit=${limit}`);
+    const response = await axios.get(`http://localhost:8800/transPenjualanJoinSearch?date=${tanggal}&page=${page}&limit=10`);
     setDataPenjualan(response.data.result);
     setPage(response.data.page);
     setPages(response.data.totalPage);
     setRows(response.data.totalRows);
 
+  };
+
+  const getDataPDF = async () => {
+    const response = await axios.get(`http://localhost:8800/transPenjualanJoinSearch?date=${tanggal}&page=${page}&limit=0`);
+    setDataPenjualanPdf(response.data.result);
   };
 
   const changePage = ({ selected }) => {
@@ -33,6 +40,62 @@ const tPenjualan = () => {
   const changeTanggal = async (e) => {
     setTanggal(e.target.value)
   }
+
+  const simpan = () => {
+      // Deklarasi Pdf
+      const doc = new jsPDF("l", "pt", "a4")
+      doc.setFont("times")
+
+      doc.setFontSize(20)
+      const pageWidthpdf = doc.internal.pageSize.getWidth();
+
+      const totalWidthLaporan = doc.getTextWidth(`Laporan Harian Penjualan`);
+      const totalXLaporan = (pageWidthpdf / 2) - (totalWidthLaporan / 2);
+
+      doc.text("Laporan Harian Penjualan", totalXLaporan, 25)
+      doc.setFontSize(16)
+
+      doc.autoTable(
+        {
+          head: [['#', 'Faktur', 'Anggota', 'Pembayaran', 'Barang', 'Jumlah', 'Total', 'Tanggal']],
+          body: dataPenjualanPdf.map((val, index) => [
+            index + 1,
+            val.faktur,
+            val.anggota.nama,
+            val.typePembayaran,
+            val.barang.nama,
+            val.jumlah,
+            val.harga.toLocaleString("id-ID", { style: "currency", currency: "IDR" }),
+            moment(val.waktuJual).format("D MMMM YYYY")
+          ]),
+          styles: { fontSize: 12 },
+          startY: 70,
+          margin: { left: 3, right: 3 },
+        }
+      )
+
+      let totalText
+
+      let total = 0
+      for (let val of dataPenjualanPdf) {
+        total = total + val.harga
+      }
+
+      totalText = "Total: " + total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })
+
+      let heightTable = doc.lastAutoTable.finalY
+      const pageWidth = doc.internal.pageSize.getWidth();
+
+      const totalWidth = doc.getTextWidth(`${total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}`);
+      const totalX = pageWidth - totalWidth - 70;
+
+      doc.setFont("times", 'bold')
+      doc.text(totalText, totalX, heightTable + 50)
+
+      // window.open(doc.output("bloburl"));
+      
+        doc.save('Laporan Bulanan Penjualan Per ' + moment(tanggal).format("DD-MM-YYYY") + '.pdf')
+    }
 
   return (
     <main id="main">
@@ -49,7 +112,7 @@ const tPenjualan = () => {
                   <input type="date" className=" form-control" onChange={changeTanggal} value={tanggal} style={{ width: 180 }} />
                 </div>
                 <div className="text-end col-md-2 pt-3">
-                  <button className="btn btn-success me-3"> Simpan</button>
+                  <button className="btn btn-success me-3" onClick={ simpan }> Simpan</button>
                 </div>
                 <table className="table mt-2">
                   <thead>

@@ -117,56 +117,86 @@ const getJoinPenAnBarangId = async (req, res) => {
 const getJoinPenAnBarangSarch = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 0
-        const limit = parseInt(req.query.limit) || 10
+        const limit = parseInt(req.query.limit)
         const search = req.query.date
         const offset = page * limit
 
         const startOfDay = moment(search).startOf('day').toDate(); // Mulai hari pada tanggal tertentu
         const endOfDay = moment(search).endOf('day').toDate(); // Akhir hari pada tanggal tertentu
 
-        const totalRows = await transPenjualanModel.count({
-            include: [
-                {
-                    model: barangModel,
-                    as: 'barang'
-                },
-                {
-                    model: anggotaModel,
-                    as: 'anggota'
-                }
-            ],
-            where: {
-                createdAt: {
-                    [Op.gte]: startOfDay,
-                    [Op.lte]: endOfDay
-                }
-            }
-        })
+        let totalPage = 0;
+        let result = [];
+        let totalRows = 0;
 
-        const totalPage = Math.ceil(totalRows / limit)
-        const result = await transPenjualanModel.findAll({
-            include: [
-                {
-                    model: barangModel,
-                    as : 'barang'
+        if(limit == 0){
+            result = await transPenjualanModel.findAll({
+                include: [
+                    {
+                        model: barangModel,
+                        as : 'barang'
+                    },
+                    {
+                        model: anggotaModel,
+                        as: 'anggota'
+                    }
+                ],
+                where: {
+                    createdAt: {
+                        [Op.gte]: startOfDay,
+                        [Op.lte]: endOfDay
+                    }
                 },
-                {
-                    model: anggotaModel,
-                    as: 'anggota'
+                order: [
+                    ['id', 'DESC']
+                ]
+            })
+
+        }else{
+            totalRows = await transPenjualanModel.count({
+                include: [
+                    {
+                        model: barangModel,
+                        as: 'barang'
+                    },
+                    {
+                        model: anggotaModel,
+                        as: 'anggota'
+                    }
+                ],
+                where: {
+                    createdAt: {
+                        [Op.gte]: startOfDay,
+                        [Op.lte]: endOfDay
+                    }
                 }
-            ],
-            where: {
-                createdAt: {
-                    [Op.gte]: startOfDay,
-                    [Op.lte]: endOfDay
-                }
-            },
-            offset,
-            limit,
-            order: [
-                ['id', 'DESC']
-            ]
-        })
+            })
+    
+            totalPage = Math.ceil(totalRows / limit)
+            result = await transPenjualanModel.findAll({
+                include: [
+                    {
+                        model: barangModel,
+                        as : 'barang'
+                    },
+                    {
+                        model: anggotaModel,
+                        as: 'anggota'
+                    }
+                ],
+                where: {
+                    createdAt: {
+                        [Op.gte]: startOfDay,
+                        [Op.lte]: endOfDay
+                    }
+                },
+                offset,
+                limit,
+                order: [
+                    ['id', 'DESC']
+                ]
+            })
+        }
+
         res.status(200).json({
             page,
             result,

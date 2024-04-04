@@ -89,55 +89,85 @@ const getJoinPemBarangLapor = async (req, res) => {
 const getJoinPemAnBarangSarch = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 0
-        const limit = parseInt(req.query.limit) || 10
+        const limit = parseInt(req.query.limit)
         const search = req.query.date
         const offset = page * limit
 
         const startOfDay = moment(search).startOf('day').toDate(); // Mulai hari pada tanggal tertentu
         const endOfDay = moment(search).endOf('day').toDate(); // Akhir hari pada tanggal tertentu
 
-        const totalRows = await transPembelianModel.count({
-            include: [
-                {
-                    model: barangModel,
-                },
-                {
-                    model: supplierModel,
-                    as: 'supplier'
-                }
-            ],
-            where: {
-                createdAt: {
-                    [Op.gte]: startOfDay,
-                    [Op.lte]: endOfDay
-                }
-            }
-        })
+        let totalPage = 0;
+        let result = [];
+        let totalRows = 0;
 
-        const totalPage = Math.ceil(totalRows / limit)
-        const result = await transPembelianModel.findAll({
-            include: [
-                {
-                    model: barangModel
+        if(limit == 0){
+            result = await transPembelianModel.findAll({
+                include: [
+                    {
+                        model: barangModel
+                    },
+                    {
+                        model: supplierModel,
+                        as: 'supplier'
+                    }
+                ],
+                where: {
+                    createdAt: {
+                        [Op.gte]: startOfDay,
+                        [Op.lte]: endOfDay
+                    }
                 },
-                {
-                    model: supplierModel,
-                    as: 'supplier'
+                attributes: ['id', 'jumlah', 'faktur', 'harga', 'hargaJual', 'supplierId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPembelian'],
+                order: [
+                    ['waktuBeli', 'DESC']
+                ]
+            })
+        }else{
+
+            totalRows = await transPembelianModel.count({
+                include: [
+                    {
+                        model: barangModel,
+                    },
+                    {
+                        model: supplierModel,
+                        as: 'supplier'
+                    }
+                ],
+                where: {
+                    createdAt: {
+                        [Op.gte]: startOfDay,
+                        [Op.lte]: endOfDay
+                    }
                 }
-            ],
-            where: {
-                createdAt: {
-                    [Op.gte]: startOfDay,
-                    [Op.lte]: endOfDay
-                }
-            },
-            attributes: ['id', 'jumlah', 'faktur', 'harga', 'hargaJual', 'supplierId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPembelian'],
-            offset,
-            limit,
-            order: [
-                ['waktuBeli', 'DESC']
-            ]
-        })
+            })
+    
+            totalPage = Math.ceil(totalRows / limit)
+            result = await transPembelianModel.findAll({
+                include: [
+                    {
+                        model: barangModel
+                    },
+                    {
+                        model: supplierModel,
+                        as: 'supplier'
+                    }
+                ],
+                where: {
+                    createdAt: {
+                        [Op.gte]: startOfDay,
+                        [Op.lte]: endOfDay
+                    }
+                },
+                attributes: ['id', 'jumlah', 'faktur', 'harga', 'hargaJual', 'supplierId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPembelian'],
+                offset,
+                limit,
+                order: [
+                    ['waktuBeli', 'DESC']
+                ]
+            })
+        }
+
         res.status(200).json({
             page,
             result,
