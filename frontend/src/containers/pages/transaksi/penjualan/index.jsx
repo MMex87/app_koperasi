@@ -6,10 +6,10 @@ import ActionType from "../../../../redux/reducer/globalActionType";
 import AddCartManual from "./addCartManual";
 import AddCartScan from "./addCartScan";
 import CartList from "./cartList";
-import getAnggota from "../../../../utils/anggota/getAnggota";
+import getAnggotaAutoComplate from "../../../../utils/anggota/getAnggotaAutoComplate";
 import getTransPenjualan from "../../../../utils/transaksiPenjualan/getTransPenjualan";
 import Swal from "sweetalert2";
-import getBarangJoin from "../../../../utils/barang/getBarangJoin";
+import getBarangJoinAutoComplate from "../../../../utils/barang/getBarangJoinAutoComplate";
 
 class TransPenjualan extends Component {
   state = {
@@ -24,12 +24,19 @@ class TransPenjualan extends Component {
     if (this.props.faktur == "") {
       this.props.handleFakturPenjualan(generateFaktur("FKJ"));
     }
-    getAnggota().then((data) => {
+    getAnggotaAutoComplate(this.props.anggota).then((data) => {
       this.setState({ anggotas: data });
     });
-    getBarangJoin().then((data) => {
-      this.setState({ barang: data });
-    });
+    if(this.props.namaBarang == ""){
+      getBarangJoinAutoComplate(this.props.kodeBarang).then((data) => {
+        this.setState({ barang: data });
+      });
+    }else{
+      getBarangJoinAutoComplate(this.props.namaBarang).then((data) => {
+        this.setState({ barang: data });
+      });
+
+    }
     getTransPenjualan().then((data) => {
       this.setState({ penjualan: data });
     });
@@ -37,15 +44,26 @@ class TransPenjualan extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.namaBarang != this.props.namaBarang) {
-      getTransPenjualan().then((data) => {
-        this.setState({ penjualan: data });
+      getBarangJoinAutoComplate(this.props.namaBarang).then((data) => {
+        this.setState({ barang: data });
+      });
+    }
+
+    if (prevProps.kodeBarang != this.props.kodeBarang) {
+      getBarangJoinAutoComplate(this.props.kodeBarang).then((data) => {
+        this.setState({ barang: data });
+      });
+    }
+
+    if(prevProps.anggota != this.props.anggota){
+       getAnggotaAutoComplate(this.props.anggota).then((data) => {
+        this.setState({ anggotas: data });
       });
     }
   }
 
 
   render() {
-    console.log(this.state.penjualan)
     const handlecart = async (e) => {
       e.preventDefault()
       let anggota = this.state.anggotas.find(({ nama }) => nama == this.props.anggota)
@@ -64,6 +82,13 @@ class TransPenjualan extends Component {
         barangIdLokal = this.state.barang.find(({ nama, supplierId }) => nama == this.props.namaBarang && supplierId == this.props.supplierId).id
       }
       let trans = this.state.penjualan.find(({ faktur, barangId, anggotaId }) => faktur == fakturLokal && barangId == barangIdLokal && anggotaId == anggotaIdLokal)
+      console.log(anggota)
+      console.log(barang)
+      console.log(typePembayaran)
+      console.log(harga)
+      console.log(fakturLokal)
+      console.log(jumlah)
+
       try {
         if (jumlah == '' || fakturLokal == '' || harga == '' || typePembayaran == '' || anggota == undefined || barang == undefined) {
           // ketika barang kurang lengkap di isinya

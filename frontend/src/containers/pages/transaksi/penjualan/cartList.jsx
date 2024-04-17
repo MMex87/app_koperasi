@@ -69,7 +69,6 @@ const CartList = (props) => {
         setDisplaySearch(false);
         let fakturLama = dataFaktur.find(({ statusPenjualan }) => statusPenjualan == "onProcess");
         let dataPenjualan = arrayFilterPenjualan.find(({ faktur }) => faktur == fakturLama.faktur);
-
         getTotalHarga(dataPenjualan.faktur).then((data) => {
           setHargaJual(data);
         });
@@ -79,9 +78,12 @@ const CartList = (props) => {
         props.handleTypeBayar(dataPenjualan.typePembayaran);
       }
 
-      getTotalHarga(props.faktur).then((data) => {
-        setHargaJual(data);
-      });
+      if(props.faktur){
+        getTotalHarga(props.faktur).then((data) => {
+          setHargaJual(data);
+        });
+      }
+
 
       setDataFilterFaktur(filteredSearchFaktur);
     });

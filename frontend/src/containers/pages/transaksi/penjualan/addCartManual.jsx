@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import ActionType from "../../../../redux/reducer/globalActionType";
-import getBarangJoin from "../../../../utils/barang/getBarangJoin";
+import getBarangJoinAutoComplate from "../../../../utils/barang/getBarangJoinAutoComplate";
 
 const addCartManual = (props) => {
   const [barang, setBarang] = useState([]);
@@ -67,10 +67,16 @@ const addCartManual = (props) => {
   };
 
   useEffect(() => {
-    getBarangJoin().then((data) => {
-      setBarang(data);
-    });
-  }, []);
+      getBarangJoinAutoComplate(props.namaBarang).then((data) => {
+        setBarang(data);
+      });
+  }, [props.namaBarang]);
+
+  useEffect(() => {
+      getBarangJoinAutoComplate(props.kodeBarang).then((data) => {
+        setBarang(data);
+      });
+  }, [props.kodeBarang]);
 
   return (
     <>
