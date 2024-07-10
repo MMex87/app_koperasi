@@ -5,6 +5,7 @@ import getBarangJoinAutoComplate from "../../../../utils/barang/getBarangJoinAut
 
 const addCartManual = (props) => {
   const [barang, setBarang] = useState([]);
+  const [barangKode, setBarangKode] = useState([]);
   const [displayKode, setDisplayKode] = useState(false);
   const [displayNama, setDisplayNama] = useState(false);
 
@@ -60,13 +61,26 @@ const addCartManual = (props) => {
   };
 
   useEffect(() => {
-    getBarangJoinAutoComplate(props.namaBarang).then((data) => {
-      setBarang(data);
-    });
-    getBarangJoinAutoComplate(props.kodeBarang).then((data) => {
-      setBarang(data);
-    });
-  }, [props.namaBarang]);
+    if (props.namaBarang.length > 2) {
+      getBarangJoinAutoComplate(props.namaBarang).then((data) => {
+        setBarang(data);
+      });
+    }
+
+    if (props.kodeBarang.length > 2) {
+      getBarangJoinAutoComplate(props.kodeBarang).then((data) => {
+        setBarangKode(data);
+      });
+    }
+
+    if (props.namaBarang.length < 2) {
+      setBarang([]);
+    }
+
+    if (props.kodeBarang.length < 2) {
+      setBarangKode([]);
+    }
+  }, [props.namaBarang, props.kodeBarang]);
 
   return (
     <>
@@ -85,7 +99,7 @@ const addCartManual = (props) => {
         {displayKode && (
           <div className="flex-container flex-column pos-rel bodyAutoComplate">
             <ul className="list-group list-group-flush">
-              {barang
+              {barangKode
                 .filter(
                   ({ kodeBarang }) => kodeBarang.indexOf(props.kodeBarang) > -1
                 )

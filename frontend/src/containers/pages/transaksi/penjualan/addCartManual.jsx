@@ -67,13 +67,20 @@ const addCartManual = (props) => {
   };
 
   useEffect(() => {
-    getBarangJoinAutoComplate(props.namaBarang).then((data) => {
-      setBarang(data);
-    });
-    getBarangJoinAutoComplate(props.kodeBarang).then((data) => {
-      setBarang(data);
-    });
-  }, [props.namaBarang]);
+    if (props.namaBarang.length > 2 || props.kodeBarang.length > 2) {
+      if (props.namaBarang) {
+        getBarangJoinAutoComplate(props.namaBarang).then((data) => {
+          setBarang(data);
+        });
+      } else {
+        getBarangJoinAutoComplate(props.kodeBarang).then((data) => {
+          setBarang(data);
+        });
+      }
+    } else {
+      setBarang([]);
+    }
+  }, [props.namaBarang, props.kodeBarang]);
 
   return (
     <>
