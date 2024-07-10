@@ -10,7 +10,7 @@ const addCartManual = (props) => {
 
   const handleAutoKodeBarang = (val, val2) => {
     setDisplayKode(false);
-    props.handleSupplierIdPenjualan(val2)
+    props.handleSupplierIdPenjualan(val2);
     props.handleKodeBarang(val);
     const barangs = barang.find(({ kodeBarang }) => kodeBarang == val);
     if (barangs != undefined) {
@@ -22,7 +22,7 @@ const addCartManual = (props) => {
 
   const handleAutoNamaBarang = (val, val2) => {
     setDisplayNama(false);
-    props.handleSupplierIdPenjualan(val2)
+    props.handleSupplierIdPenjualan(val2);
     props.handleNamaBarang(val);
     const barangs = barang.find(({ nama }) => nama == val);
     if (barangs != undefined) {
@@ -40,9 +40,9 @@ const addCartManual = (props) => {
       props.handleNamaBarang(barangs.nama);
       props.handlejenisBarang(barangs.jenisBarang);
       props.handleHargaBarang(barangs.hargaJual);
-      props.handleSupplierIdPenjualan(barangs.supplierId)
+      props.handleSupplierIdPenjualan(barangs.supplierId);
     } else {
-      props.handleSupplierIdPenjualan("")
+      props.handleSupplierIdPenjualan("");
       props.handleNamaBarang("");
       props.handlejenisBarang("");
       props.handleHargaBarang("");
@@ -57,9 +57,9 @@ const addCartManual = (props) => {
       props.handleKodeBarang(barangs.kodeBarang);
       props.handlejenisBarang(barangs.jenisBarang);
       props.handleHargaBarang(barangs.hargaJual);
-      props.handleSupplierIdPenjualan(barangs.supplierId)
+      props.handleSupplierIdPenjualan(barangs.supplierId);
     } else {
-      props.handleSupplierIdPenjualan("")
+      props.handleSupplierIdPenjualan("");
       props.handleKodeBarang("");
       props.handlejenisBarang("");
       props.handleHargaBarang("");
@@ -67,16 +67,13 @@ const addCartManual = (props) => {
   };
 
   useEffect(() => {
-      getBarangJoinAutoComplate(props.namaBarang).then((data) => {
-        setBarang(data);
-      });
+    getBarangJoinAutoComplate(props.namaBarang).then((data) => {
+      setBarang(data);
+    });
+    getBarangJoinAutoComplate(props.kodeBarang).then((data) => {
+      setBarang(data);
+    });
   }, [props.namaBarang]);
-
-  useEffect(() => {
-      getBarangJoinAutoComplate(props.kodeBarang).then((data) => {
-        setBarang(data);
-      });
-  }, [props.kodeBarang]);
 
   return (
     <>
@@ -84,63 +81,92 @@ const addCartManual = (props) => {
         <label htmlFor="kodeBarang" className="form-label">
           Kode Barang
         </label>
-        <input type="text" className="form-control" id="kodeBarang" value={ props.kodeBarang } onChange={ handleChangeKodeBarang } onClick={ () => setDisplayKode(!displayKode) } />
-        { displayKode && (
+        <input
+          type="text"
+          className="form-control"
+          id="kodeBarang"
+          value={props.kodeBarang}
+          onChange={handleChangeKodeBarang}
+          onClick={() => setDisplayKode(!displayKode)}
+        />
+        {displayKode && (
           <div className="flex-container flex-column pos-rel bodyAutoComplate">
             <ul className="list-group list-group-flush">
-              { barang
-                .filter(({ kodeBarang }) => kodeBarang.indexOf(props.kodeBarang) > -1)
+              {barang
+                .filter(
+                  ({ kodeBarang }) => kodeBarang.indexOf(props.kodeBarang) > -1
+                )
                 .map((v, i) => (
                   <li
-                    key={ i }
-                    onClick={ () => {
+                    key={i}
+                    onClick={() => {
                       handleAutoKodeBarang(v.kodeBarang, v.supplierId);
-                    } }
+                    }}
                     className="list-group-item listAutoComplate"
                   >
-                    { v.kodeBarang + ' ( ' + v.supplier.nama + ' )' }
+                    {v.kodeBarang + " ( " + v.supplier.nama + " )"}
                   </li>
-                )) }
+                ))}
             </ul>
           </div>
-        ) }
+        )}
       </div>
       <div className="col-md-3">
         <label htmlFor="namabarang" className="form-label">
           Nama Barang
         </label>
-        <input type="text" className="form-control" id="namabarang" value={ props.namaBarang } onChange={ handleChangeNamaBarang } onClick={ () => setDisplayNama(!displayNama) } />
-        { displayNama && (
+        <input
+          type="text"
+          className="form-control"
+          id="namabarang"
+          value={props.namaBarang}
+          onChange={handleChangeNamaBarang}
+          onClick={() => setDisplayNama(!displayNama)}
+        />
+        {displayNama && (
           <div className="flex-container flex-column pos-rel bodyAutoComplate">
             <ul className="list-group list-group-flush">
-              { barang
+              {barang
                 .filter(({ nama }) => nama.indexOf(props.namaBarang) > -1)
                 .map((v, i) => (
                   <li
-                    key={ i }
-                    onClick={ () => {
+                    key={i}
+                    onClick={() => {
                       handleAutoNamaBarang(v.nama, v.supplierId);
-                    } }
+                    }}
                     className="list-group-item listAutoComplate"
                   >
-                    { v.nama + ' ( ' + v.supplier.nama + ' )' }
+                    {v.nama + " ( " + v.supplier.nama + " )"}
                   </li>
-                )) }
+                ))}
             </ul>
           </div>
-        ) }
+        )}
       </div>
       <div className="col-3">
         <label htmlFor="jumlah" className="form-label">
           Jumlah
         </label>
-        <input type="text" className="form-control" id="jumlah" value={ props.jumlah } onChange={ (e) => props.handleJumlah(e.target.value) } />
+        <input
+          type="text"
+          className="form-control"
+          id="jumlah"
+          value={props.jumlah}
+          onChange={(e) => props.handleJumlah(e.target.value)}
+        />
       </div>
       <div className="col-md-3">
         <label htmlFor="harga" className="form-label">
           Harga
         </label>
-        <input type="text" className="form-control" disabled id="harga" value={ props.harga } onChange={ (e) => props.handleHargaBarang(e.target.value) } />
+        <input
+          type="text"
+          className="form-control"
+          disabled
+          id="harga"
+          value={props.harga}
+          onChange={(e) => props.handleHargaBarang(e.target.value)}
+        />
       </div>
     </>
   );
@@ -156,21 +182,36 @@ const mapStateToProps = (state) => {
     jenis: state.jenis,
     harga: state.harga,
     faktur: state.faktur,
-    supplierId: state.supplierId
+    supplierId: state.supplierId,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    handleAnggota: (anggota) => dispatch({ type: ActionType.SET_ANGGOTA_PENJUALAN, index: anggota }),
-    handleTypeBayar: (typeBayar) => dispatch({ type: ActionType.SET_TYPE_BAYAR_PENJUALAN, index: typeBayar }),
-    handleKodeBarang: (kodeBarang) => dispatch({ type: ActionType.SET_KODE_BARANG_PENJUALAN, index: kodeBarang }),
-    handleNamaBarang: (namaBarang) => dispatch({ type: ActionType.SET_NAMA_BARANG_PENJUALAN, index: namaBarang }),
-    handleJumlah: (jumlah) => dispatch({ type: ActionType.SET_JUMLAH_PENJUALAN, index: jumlah }),
-    handlejenisBarang: (jenisBarang) => dispatch({ type: ActionType.SET_JENIS_PENJUALAN, index: jenisBarang }),
-    handleHargaBarang: (hargaBarang) => dispatch({ type: ActionType.SET_HARGA_PENJUALAN, index: hargaBarang }),
-    handleFakturPenjualan: (faktur) => dispatch({ type: ActionType.SET_FAKTUR_PENJUALAN, index: faktur }),
-    handleSupplierIdPenjualan: (supplier) => dispatch({ type: ActionType.SET_ID_SUPPLIER_PENJUALAN, index: supplier }),
+    handleAnggota: (anggota) =>
+      dispatch({ type: ActionType.SET_ANGGOTA_PENJUALAN, index: anggota }),
+    handleTypeBayar: (typeBayar) =>
+      dispatch({ type: ActionType.SET_TYPE_BAYAR_PENJUALAN, index: typeBayar }),
+    handleKodeBarang: (kodeBarang) =>
+      dispatch({
+        type: ActionType.SET_KODE_BARANG_PENJUALAN,
+        index: kodeBarang,
+      }),
+    handleNamaBarang: (namaBarang) =>
+      dispatch({
+        type: ActionType.SET_NAMA_BARANG_PENJUALAN,
+        index: namaBarang,
+      }),
+    handleJumlah: (jumlah) =>
+      dispatch({ type: ActionType.SET_JUMLAH_PENJUALAN, index: jumlah }),
+    handlejenisBarang: (jenisBarang) =>
+      dispatch({ type: ActionType.SET_JENIS_PENJUALAN, index: jenisBarang }),
+    handleHargaBarang: (hargaBarang) =>
+      dispatch({ type: ActionType.SET_HARGA_PENJUALAN, index: hargaBarang }),
+    handleFakturPenjualan: (faktur) =>
+      dispatch({ type: ActionType.SET_FAKTUR_PENJUALAN, index: faktur }),
+    handleSupplierIdPenjualan: (supplier) =>
+      dispatch({ type: ActionType.SET_ID_SUPPLIER_PENJUALAN, index: supplier }),
   };
 };
 
