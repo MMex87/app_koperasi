@@ -15,6 +15,7 @@ const addCartManual = (props) => {
     const barangs = barang.find(({ kodeBarang }) => kodeBarang == val);
     if (barangs != undefined) {
       props.handleNamaBarang(barangs.nama);
+      props.handleBarangId(barangs.id);
       props.handlejenisBarang(barangs.jenisBarang);
       props.handleSatuanBarang(barangs.satuan);
       props.handleHargaBarang(barangs.hargaBeli);
@@ -28,6 +29,7 @@ const addCartManual = (props) => {
     const barangs = barang.find(({ nama }) => nama == val);
     if (barangs != undefined) {
       props.handleKodeBarang(barangs.kodeBarang);
+      props.handleBarangId(barangs.id);
       props.handlejenisBarang(barangs.jenisBarang);
       props.handleSatuanBarang(barangs.satuan);
       props.handleHargaBarang(barangs.hargaBeli);
@@ -41,6 +43,7 @@ const addCartManual = (props) => {
     props.handleKodeBarang(kode);
     if (barangs != undefined) {
       props.handleNamaBarang(barangs.nama);
+      props.handleBarangId(barangs.id);
       props.handlejenisBarang(barangs.jenisBarang);
       props.handleSatuanBarang(barangs.satuan);
       props.handleHargaBarang(barangs.hargaJual);
@@ -54,6 +57,7 @@ const addCartManual = (props) => {
     props.handleNamaBarang(namaBarang);
     if (barangs != undefined) {
       props.handlejenisBarang(barangs.jenisBarang);
+      props.handleBarangId(barangs.id);
       props.handleSatuanBarang(barangs.satuan);
       props.handleHargaBarang(barangs.hargaJual);
       props.handleHargaJualBarang(barangs.hargaBeli);
@@ -259,6 +263,7 @@ const mapStateToProps = (state) => {
     harga: state.harga_beli,
     harga_jual: state.harga_jual,
     faktur: state.faktur_beli,
+    barangId: state.barangId,
   };
 };
 
@@ -291,6 +296,8 @@ const mapDispatchToProps = (dispatch) => {
       }),
     handleFakturPenjualan: (faktur) =>
       dispatch({ type: ActionType.SET_FAKTUR_PEMBELIAN, index: faktur }),
+    handleBarangId: (barangId) =>
+      dispatch({ type: ActionType.SET_BARANG_ID, index: barangId }),
   };
 };
 

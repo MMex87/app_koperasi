@@ -100,7 +100,7 @@ const getJoinPemAnBarangSarch = async (req, res) => {
         let result = [];
         let totalRows = 0;
 
-        if(limit == 0){
+        if (limit == 0) {
             result = await transPembelianModel.findAll({
                 include: [
                     {
@@ -122,7 +122,7 @@ const getJoinPemAnBarangSarch = async (req, res) => {
                     ['waktuBeli', 'DESC']
                 ]
             })
-        }else{
+        } else {
 
             totalRows = await transPembelianModel.count({
                 include: [
@@ -141,7 +141,7 @@ const getJoinPemAnBarangSarch = async (req, res) => {
                     }
                 }
             })
-    
+
             totalPage = Math.ceil(totalRows / limit)
             result = await transPembelianModel.findAll({
                 include: [
@@ -177,6 +177,31 @@ const getJoinPemAnBarangSarch = async (req, res) => {
         })
     } catch (error) {
         console.error(error)
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    }
+}
+
+const findTransaksi = async (req, res) => {
+    let { faktur, barangId } = req.query;
+
+    console.log("ini Faktur cok:" + faktur)
+    console.log("ini barang id cok:" + barangId)
+
+    try {
+        let trans = await transPembelianModel.findOne({
+            include: [
+                {
+                    model: barangModel,
+                }
+            ],
+            where: {
+                [Op.and]: {
+                    faktur, barangId
+                }
+            }
+        })
+        res.status(200).json(trans)
+    } catch (error) {
         res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
     }
 }
@@ -233,5 +258,6 @@ module.exports = {
     getJoinPemAnBarangSarch,
     tambahPembelian,
     editPembelian,
-    hapusPembelian
+    hapusPembelian,
+    findTransaksi
 }
