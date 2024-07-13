@@ -148,8 +148,10 @@ const CartList = (props) => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         await hapusTransaksiPembelian(val);
-        let res = await axios.put(`/barangTerjual/${val2}/${val3}`);
-        console.log(res);
+        const resBarang = await axios.get(`/barang/${val2}`);
+        await axios.put(`/barang/${val2}`, {
+          jumlah: resBarang.data.jumlah - val3,
+        });
         setRefresh(!refresh);
         Toast.fire("Terhapus!", "Data Pembelian Sudah Terhapus.", "success");
       } else if (
