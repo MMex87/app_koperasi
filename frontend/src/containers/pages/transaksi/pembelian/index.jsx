@@ -11,6 +11,8 @@ import getTransPembelian from "../../../../utils/transaksiPembelian/getTransaksi
 import Swal from "sweetalert2";
 import getBarangJoin from "../../../../utils/barang/getBarangJoin";
 import barangTerbeli from "../../../../utils/barang/barangTerbeli";
+import { findBarang } from "../../../../utils/barang/getBarang";
+import { cariTransaksi } from "../../../../utils/transaksiPembelian/getTransaksiPembelian";
 
 class TransaksiPembalian extends Component {
   state = {
@@ -81,17 +83,10 @@ class TransaksiPembalian extends Component {
             supplier.nama == this.props.supplier
         ).id;
       }
-      let trans = this.state.transaksi.find(
-        ({ faktur, barangId }) =>
-          faktur == fakturLokal && barangId == barangIdLokal
-      );
-      let cariBarang = this.state.barang.find(
-        ({ kodeBarang, supplier }) =>
-          kodeBarang == this.props.kodeBarang &&
-          supplier.nama == this.props.supplier
-      );
 
-      console.log(this.props.namaBarang.length);
+      let cariBarang = await findBarang(this.props.kodeBarang, idSupplier);
+
+      let trans = await cariTransaksi(fakturLokal, this.props.barangId);
 
       try {
         if (
@@ -112,8 +107,8 @@ class TransaksiPembalian extends Component {
             this.props.namaBarang.length > 2 &&
             this.props.kodeBarang.length > 2
           ) {
-            if (trans == undefined) {
-              if (cariBarang == undefined) {
+            if (trans == null) {
+              if (cariBarang == null) {
                 // ketika barang tidak ada sama sekali di db barang
                 const barang = await axios.post("/barang", {
                   nama: this.props.namaBarang,
@@ -157,8 +152,9 @@ class TransaksiPembalian extends Component {
                 });
               } else {
                 // ketika barang sudah ada di db barang
-                barangTerbeli(barangIdLokal, jumlah);
-                await axios.put(`/barang/${barangIdLokal}`, {
+
+                barangTerbeli(this.props.barangId, jumlah);
+                await axios.put(`/barang/${this.props.barangId}`, {
                   jenisBarang: this.props.jenis,
                   satuan: this.props.satuan,
                   hargaBeli: harga,
@@ -170,14 +166,14 @@ class TransaksiPembalian extends Component {
                   harga,
                   hargaJual,
                   supplierId: idSupplier,
-                  barangId: barangIdLokal,
+                  barangId: this.props.barangId,
                   statusPembelian: "onProcess",
                 });
               }
             } else {
               // ketika barang sudah ada di keranjang dan menambahkan barang yang sama
-              barangTerbeli(barangIdLokal, jumlah);
-              await axios.put(`/barang/${barangIdLokal}`, {
+              barangTerbeli(this.props.barangId, jumlah);
+              await axios.put(`/barang/${this.props.barangId}`, {
                 jenisBarang: this.props.jenis,
                 satuan: this.props.satuan,
                 hargaBeli: harga,
@@ -382,6 +378,7 @@ const mapStateToProps = (state) => {
     satuan: state.satuan_beli,
     harga_jual: state.harga_jual,
     faktur: state.faktur_beli,
+    barangId: state.barangId,
   };
 };
 
@@ -414,6 +411,8 @@ const mapDispatchToProps = (dispatch) => {
       }),
     handleFakturPembelian: (faktur) =>
       dispatch({ type: ActionType.SET_FAKTUR_PEMBELIAN, index: faktur }),
+    Id: (barangId) =>
+      dispatch({ type: ActionType.SET_BARANG_ID, index: barangId }),
   };
 };
 

@@ -1,96 +1,40 @@
 import axios from "../../../../api/axios";
+import {useState, useEffect} from "react";
 import moment from "moment";
-import { Component } from "react";
 import ReactPaginate from "react-paginate";
-import barangTerjual from "../../../../utils/barang/barangTerjual";
-import Swal from "sweetalert2";
-import getTransPembelianJoinSearch from "../../../../utils/transaksiPembelian/getTransPembelianJoinSearch";
+import convertRupiah from "rupiah-format";
+import { Link } from "react-router-dom";
 
-class RPembelian extends Component {
-  state = {
-    pembelian: [],
-    search: "",
-    page: 0,
-    limit: 10,
-    pages: 0,
-    rows: 0,
-    transaksiId: '',
-    jumlah: ''
+const RPembelian = () => {
+  const [dataPembelian, setDataPembelian] = useState([]);
+  const [page, setPage] = useState(0);
+  const [pages, setPages] = useState(0);
+  const [rows, setRows] = useState(0);
+  const [nama, setNama] = useState("");
+
+
+  useEffect(() => {
+    getData();
+  },[page,nama]);
+
+  const changePage = ({ selected }) => {
+    setPage(selected);
+  };
+
+  const getData = async () => {
+    const response = await axios.get(`http://localhost:8800/transPembelianJoinRetur?&page=${page}&namaBarang=${nama}`);
+    setDataPembelian(response.data.result);
+    setPage(response.data.page);
+    setPages(response.data.totalPage);
+    setRows(response.data.totalRows);
+  };
+
+  const search = (e) => {
+    setNama(e.target.value)
   }
 
-  componentDidMount() {
-    getTransPembelianJoinSearch(this.state.search, this.state.limit, this.state.page).then((data) => {
-      this.setState({ pembelian: data.result });
-      this.setState({ page: data.page });
-      this.setState({ rows: data.totalRows });
-      this.setState({ pages: data.totalPage });
-    })
-  }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.search != this.state.search || prevState.page != this.state.page || prevState.barangId != this.state.barangId || prevState.transaksiId != this.state.transaksiId) {
-      getTransPembelianJoinSearch(this.state.search, this.state.limit, this.state.page).then((data) => {
-        this.setState({ pembelian: data.result });
-        this.setState({ page: data.page });
-        this.setState({ rows: data.totalRows });
-        this.setState({ pages: data.totalPage });
-      });
-    }
-  }
-
-  render() {
-    // alert
-    const Toast = Swal.mixin({
-      toast: true,
-      position: "top-end",
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-    });
-
-
-    const changePage = (selected) => {
-      this.setState({ page: selected.selected });
-    };
-
-    const save = async (e) => {
-      e.preventDefault()
-      const response = await axios.get(`/transPembelian/${this.state.transaksiId}`)
-      const trans = response.data
-      try {
-        if ((trans.jumlah - this.state.jumlah) < 0) {
-          return Swal.fire(
-            'Retur Gagal!!',
-            'Retur yang dikembalikan terlalu besar!!',
-            'warning'
-          )
-        } else {
-          await axios.post('/returnPembelian', {
-            jumlah: this.state.jumlah,
-            faktur: trans.faktur,
-            transPembelianId: trans.id,
-            supplierId: trans.supplierId,
-            barangId: trans.barangId
-          })
-          let jumlahRetur = this.state.jumlah
-          await axios.put(`/transPembelian/${this.state.transaksiId}`, {
-            statusPembelian: 'Retur',
-            jumlah: trans.jumlah - this.state.jumlah
-          })
-
-          barangTerjual(trans.barangId, jumlahRetur)
-
-          this.setState({ transaksiId: '' })
-          Toast.fire({
-            icon: "success",
-            title: "Retur Berhasil!",
-          });
-
-        }
-      } catch (error) {
-        console.error(error)
-      }
-    }
+  // console.log(dataPembelian)
 
     return (
       <main id="main">
@@ -102,9 +46,8 @@ class RPembelian extends Component {
           <div className="card p-3">
             <div className="col-lg-12">
               <div className="col-md-12">
-                {
-                  this.state.transaksiId == ''
-                  &&
+                <div className="">
+                  <>
                   <div className="row">
                     <div className="col-md-9"></div>
                     <div className="col-md-3 text-end">
@@ -116,53 +59,16 @@ class RPembelian extends Component {
                         title="Enter search keyword"
                         aria-label="Recipient's username"
                         aria-describedby="button-addon2"
-                        onChange={ (e) => this.setState({ search: e.target.value }) }
+                        value={nama}
+                        onChange={search}
                       />
                     </div>
                   </div>
-                }
-                <div className="mt-3">
-                  {
-                    this.state.transaksiId != ''
-                      ?
-                      <>
-                        <form onSubmit={ save }>
-                          <div className="row pt-4">
-                            <div className="row col-md-12 pt-3">
-                              <div className="col-md-2">
-                                <label className="col-form-label">Jumah Barang</label>
-                              </div>
-                              <div className="col-md-10">
-                                <h4>
-                                  {
-                                    <p>{
-                                      this.state.pembelian.find(({ id }) => id == this.state.transaksiId).jumlah
-                                    }</p>
-                                  }
-                                </h4>
-                              </div>
-                              <div className="col-md-2">
-                                <label className="col-form-label">Retur</label>
-                              </div>
-                              <div className="col-md-10">
-                                <input className="form-control" type="text" onChange={ (e) => this.setState({ jumlah: e.target.value }) } value={ this.state.jumlah } />
-                              </div>
-                            </div>
-                          </div>
-                          <div className="d-flex justify-content-end mt-3 me-4">
-                            <button className="btn btn-warning me-3" type="button" onClick={ () => this.setState({ transaksiId: '' }) }>Batal</button>
-                            <button className="btn btn-success" type="submit">Retur</button>
-                          </div>
-                        </form>
-                      </>
-                      :
-                      <>
                         <table className="table ">
                           <thead>
                             <tr>
                               <th>#</th>
                               <th>Faktur</th>
-                              <th>Supplier</th>
                               <th>Barang</th>
                               <th>Jumlah</th>
                               <th>Total</th>
@@ -172,36 +78,32 @@ class RPembelian extends Component {
                             </tr>
                           </thead>
                           <tbody>
-                            {
-                              this.state.pembelian
-                                .map((val, index) => (
-                                  <tr key={ index }>
-                                    <th>{ index + 1 }</th>
-                                    <td>{ val.faktur }</td>
-                                    <td>{ val.supplier.nama }</td>
-                                    <td>{ val.barang.nama }</td>
-                                    <td>{ val.jumlah }</td>
-                                    <td>{ val.harga }</td>
-                                    <td>{ moment(val.waktuBeli).format("D MMM YYYY") }</td>
-                                    <td>{ val.statusPembelian }</td>
-                                    <td>
-                                      <button className="btn btn-warning" onClick={ () => this.setState({ transaksiId: val.id }) }>Edit</button>
-                                    </td>
-                                  </tr>
-                                ))
-                            }
+                            {dataPembelian.map((data, index) => (
+                              <tr key={data.id}>
+                                <th>{index + 1}</th>
+                                <td>{data.faktur}</td>
+                                <td>{data.barang.nama}</td>
+                                <td>{data.jumlah}</td>
+                                <td>{convertRupiah.convert(data.barang.hargaJual * data.jumlah)}</td>
+                                <td>{moment(data.createdAt).format("D MMMM YYYY")}</td>
+                                <td>{data.statusPembelian}</td>
+                                <Link to={`/retrunPembelian/${data.id}`} className="btn btn-warning me-3">
+                                    Retur
+                                </Link>
+                              </tr>
+                            ))}
                           </tbody>
                         </table>
                         <div className="p-3">
                           <div className="d-flex justify-content-between">
                             <p className="text-center">
-                              Total Transaksi: { this.state.rows } Page: { this.state.rows ? this.state.page + 1 : 0 } of { this.state.pages }
+                            Total Rows : {rows} Page: {rows ? page + 1 : 0} of {pages}
                             </p>
                             <nav aria-label="Page navigate example justify-content-end">
                               <ReactPaginate
                                 previousLabel={ "< Prev" }
                                 nextLabel={ "Next >" }
-                                pageCount={ this.state.pages }
+                                pageCount={ pages }
                                 onPageChange={ changePage }
                                 containerClassName={ "pagination" }
                                 pageLinkClassName={ "page-link" }
@@ -216,7 +118,6 @@ class RPembelian extends Component {
                           </div>
                         </div>
                       </>
-                  }
                 </div>
               </div>
             </div>
@@ -225,6 +126,5 @@ class RPembelian extends Component {
       </main>
     );
   }
-}
 
 export default RPembelian;
