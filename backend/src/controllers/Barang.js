@@ -299,6 +299,29 @@ const getBarangJoinAutoComplate = async (req, res) => {
   }
 };
 
+const findBarang = async (req, res) => {
+  const { kodeBarang, supplierId } = req.query
+  try {
+    const barang = await barangModel.findOne({
+      include: [
+        {
+          model: supplierModel,
+          as: "supplier",
+        },
+      ],
+      where: {
+        [Op.and]: {
+          kodeBarang,
+          supplierId
+        }
+      }
+    })
+    res.status(200).json(barang);
+  } catch (error) {
+    res.status(400).json({ msg: "Gagal Mengambil Data: " + error });
+  }
+}
+
 const barangTerjual = async (req, res) => {
   const { jumlah } = req.body;
   try {
@@ -429,5 +452,6 @@ module.exports = {
   hapusBarang,
   lapBarang,
   getLapBarang,
+  findBarang,
   getBarangJoinAutoComplate,
 };

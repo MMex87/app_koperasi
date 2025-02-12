@@ -5,6 +5,7 @@ import getBarangJoinAutoComplate from "../../../../utils/barang/getBarangJoinAut
 
 const addCartManual = (props) => {
   const [barang, setBarang] = useState([]);
+  const [barangKode, setBarangKode] = useState([]);
   const [displayKode, setDisplayKode] = useState(false);
   const [displayNama, setDisplayNama] = useState(false);
 
@@ -14,6 +15,7 @@ const addCartManual = (props) => {
     const barangs = barang.find(({ kodeBarang }) => kodeBarang == val);
     if (barangs != undefined) {
       props.handleNamaBarang(barangs.nama);
+      props.handleBarangId(barangs.id);
       props.handlejenisBarang(barangs.jenisBarang);
       props.handleSatuanBarang(barangs.satuan);
       props.handleHargaBarang(barangs.hargaBeli);
@@ -27,6 +29,7 @@ const addCartManual = (props) => {
     const barangs = barang.find(({ nama }) => nama == val);
     if (barangs != undefined) {
       props.handleKodeBarang(barangs.kodeBarang);
+      props.handleBarangId(barangs.id);
       props.handlejenisBarang(barangs.jenisBarang);
       props.handleSatuanBarang(barangs.satuan);
       props.handleHargaBarang(barangs.hargaBeli);
@@ -40,6 +43,7 @@ const addCartManual = (props) => {
     props.handleKodeBarang(kode);
     if (barangs != undefined) {
       props.handleNamaBarang(barangs.nama);
+      props.handleBarangId(barangs.id);
       props.handlejenisBarang(barangs.jenisBarang);
       props.handleSatuanBarang(barangs.satuan);
       props.handleHargaBarang(barangs.hargaJual);
@@ -53,6 +57,7 @@ const addCartManual = (props) => {
     props.handleNamaBarang(namaBarang);
     if (barangs != undefined) {
       props.handlejenisBarang(barangs.jenisBarang);
+      props.handleBarangId(barangs.id);
       props.handleSatuanBarang(barangs.satuan);
       props.handleHargaBarang(barangs.hargaJual);
       props.handleHargaJualBarang(barangs.hargaBeli);
@@ -60,13 +65,26 @@ const addCartManual = (props) => {
   };
 
   useEffect(() => {
-    getBarangJoinAutoComplate(props.namaBarang).then((data) => {
-      setBarang(data);
-    });
-    getBarangJoinAutoComplate(props.kodeBarang).then((data) => {
-      setBarang(data);
-    });
-  }, [props.namaBarang]);
+    if (props.namaBarang.length > 2) {
+      getBarangJoinAutoComplate(props.namaBarang).then((data) => {
+        setBarang(data);
+      });
+    }
+
+    if (props.kodeBarang.length > 2) {
+      getBarangJoinAutoComplate(props.kodeBarang).then((data) => {
+        setBarangKode(data);
+      });
+    }
+
+    if (props.namaBarang.length < 2) {
+      setBarang([]);
+    }
+
+    if (props.kodeBarang.length < 2) {
+      setBarangKode([]);
+    }
+  }, [props.namaBarang, props.kodeBarang]);
 
   return (
     <>
@@ -85,7 +103,7 @@ const addCartManual = (props) => {
         {displayKode && (
           <div className="flex-container flex-column pos-rel bodyAutoComplate">
             <ul className="list-group list-group-flush">
-              {barang
+              {barangKode
                 .filter(
                   ({ kodeBarang }) => kodeBarang.indexOf(props.kodeBarang) > -1
                 )
@@ -245,6 +263,7 @@ const mapStateToProps = (state) => {
     harga: state.harga_beli,
     harga_jual: state.harga_jual,
     faktur: state.faktur_beli,
+    barangId: state.barangId,
   };
 };
 
@@ -277,6 +296,8 @@ const mapDispatchToProps = (dispatch) => {
       }),
     handleFakturPenjualan: (faktur) =>
       dispatch({ type: ActionType.SET_FAKTUR_PEMBELIAN, index: faktur }),
+    handleBarangId: (barangId) =>
+      dispatch({ type: ActionType.SET_BARANG_ID, index: barangId }),
   };
 };
 

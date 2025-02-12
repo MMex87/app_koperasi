@@ -23,10 +23,7 @@ const getPembelianId = async (req, res) => {
         const pembelian = await transPembelianModel.findOne({
             order: [
                 ['id', 'ASC']
-            ],
-            where: {
-                id: req.params.id
-            }
+            ]
         })
         res.status(200).json(pembelian)
     } catch (error) {
@@ -91,6 +88,7 @@ const getJoinPemAnBarangSarch = async (req, res) => {
         const page = parseInt(req.query.page) || 0
         const limit = parseInt(req.query.limit)
         const search = req.query.date
+        const IdSupplier = req.query.supplier
         const offset = page * limit
 
         const startOfDay = moment(search).startOf('day').toDate(); // Mulai hari pada tanggal tertentu
@@ -100,7 +98,7 @@ const getJoinPemAnBarangSarch = async (req, res) => {
         let result = [];
         let totalRows = 0;
 
-        if(limit == 0){
+        if (limit == 0) {
             result = await transPembelianModel.findAll({
                 include: [
                     {
@@ -115,15 +113,15 @@ const getJoinPemAnBarangSarch = async (req, res) => {
                     createdAt: {
                         [Op.gte]: startOfDay,
                         [Op.lte]: endOfDay
-                    }
+                    },
+                    supplierId : IdSupplier
                 },
                 attributes: ['id', 'jumlah', 'faktur', 'harga', 'hargaJual', 'supplierId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPembelian'],
                 order: [
                     ['waktuBeli', 'DESC']
                 ]
             })
-        }else{
-
+        } else {
             totalRows = await transPembelianModel.count({
                 include: [
                     {
@@ -138,10 +136,11 @@ const getJoinPemAnBarangSarch = async (req, res) => {
                     createdAt: {
                         [Op.gte]: startOfDay,
                         [Op.lte]: endOfDay
-                    }
+                    },
+                    supplierId : IdSupplier
                 }
             })
-    
+
             totalPage = Math.ceil(totalRows / limit)
             result = await transPembelianModel.findAll({
                 include: [
@@ -157,7 +156,8 @@ const getJoinPemAnBarangSarch = async (req, res) => {
                     createdAt: {
                         [Op.gte]: startOfDay,
                         [Op.lte]: endOfDay
-                    }
+                    },
+                    supplierId : IdSupplier
                 },
                 attributes: ['id', 'jumlah', 'faktur', 'harga', 'hargaJual', 'supplierId', 'barangId', ['createdAt', 'waktuBeli'], 'statusPembelian'],
                 offset,
@@ -180,6 +180,257 @@ const getJoinPemAnBarangSarch = async (req, res) => {
         res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
     }
 }
+
+const getJoinPemBulan = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 0;
+        const limit = parseInt(req.query.limit);
+        const search = req.query.bulan; // Input hanya berupa bulan, misalnya "01"
+        const IdSupplier = req.query.supplier;
+        const offset = page * limit;
+
+        // Ambil tahun saat ini jika tidak dikirim dari frontend
+        const currentYear = new Date().getFullYear();
+
+        // Gabungkan tahun saat ini dengan bulan dari frontend untuk membuat format YYYY-MM
+        const monthYearFormat = `${currentYear}-${search}`;
+
+        // Konversi ke rentang tanggal awal dan akhir bulan
+        const startOfMonth = moment(monthYearFormat, 'YYYY-MM').startOf('month').toDate(); // Awal bulan
+        const endOfMonth = moment(monthYearFormat, 'YYYY-MM').endOf('month').toDate(); // Akhir bulan
+
+        let totalPage = 0;
+        let result = [];
+        let totalRows = 0;
+
+        if (limit == 0) {
+            result = await transPembelianModel.findAll({
+                include: [
+                    {
+                        model: barangModel,
+                    },
+                    {
+                        model: supplierModel,
+                        as: 'supplier',
+                    },
+                ],
+                where: {
+                    createdAt: {
+                        [Op.gte]: startOfMonth,
+                        [Op.lte]: endOfMonth,
+                    },
+                    supplierId: IdSupplier,
+                },
+                attributes: [
+                    'id',
+                    'jumlah',
+                    'faktur',
+                    'harga',
+                    'hargaJual',
+                    'supplierId',
+                    'barangId',
+                    ['createdAt', 'waktuBeli'],
+                    'statusPembelian',
+                ],
+                order: [['waktuBeli', 'DESC']],
+            });
+        } else {
+            totalRows = await transPembelianModel.count({
+                include: [
+                    {
+                        model: barangModel,
+                    },
+                    {
+                        model: supplierModel,
+                        as: 'supplier',
+                    },
+                ],
+                where: {
+                    createdAt: {
+                        [Op.gte]: startOfMonth,
+                        [Op.lte]: endOfMonth,
+                    },
+                    supplierId: IdSupplier,
+                },
+            });
+
+            totalPage = Math.ceil(totalRows / limit);
+            result = await transPembelianModel.findAll({
+                include: [
+                    {
+                        model: barangModel,
+                    },
+                    {
+                        model: supplierModel,
+                        as: 'supplier',
+                    },
+                ],
+                where: {
+                    createdAt: {
+                        [Op.gte]: startOfMonth,
+                        [Op.lte]: endOfMonth,
+                    },
+                    supplierId: IdSupplier,
+                },
+                attributes: [
+                    'id',
+                    'jumlah',
+                    'faktur',
+                    'harga',
+                    'hargaJual',
+                    'supplierId',
+                    'barangId',
+                    ['createdAt', 'waktuBeli'],
+                    'statusPembelian',
+                ],
+                offset,
+                limit,
+                order: [['waktuBeli', 'DESC']],
+            });
+        }
+
+        res.status(200).json({
+            page,
+            result,
+            totalPage,
+            totalRows,
+            limit,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error });
+    }
+};
+const getJoinPenAnBarangRetur = async (req, res) => {
+    try {
+      const page = parseInt(req.query.page) || 0
+      const limit = parseInt(req.query.limit) || 10
+      const offset = page * limit
+      const nama_barang = req.query.namaBarang || ""
+
+  
+      let totalPage = 0;
+      let result = [];
+      let totalRows = 0;
+  
+      if (limit == 0) {
+          result = await transPembelianModel.findAll({
+              include: [
+                  {
+                      model: barangModel,
+                      where: {
+                        nama : {
+                            [Op.like] : `%${nama_barang}%`
+                        }
+                      },
+                      include : [{
+                        model : supplierModel
+                      }]
+                  },
+              ],
+              order: [
+                  ['createdAt', 'DESC']
+              ]
+          })
+      } else {
+          totalRows = await transPembelianModel.count({
+              include: [
+                {
+                  model: barangModel,
+                  where: {
+                    nama : {
+                        [Op.like] : `%${nama_barang}%`
+                    }
+                  },
+                  include : [{
+                    model : supplierModel
+                  }]
+              },
+              ],
+          })
+  
+          totalPage = Math.ceil(totalRows / limit)
+          result = await transPembelianModel.findAll({
+              include: [
+                {
+                  model: barangModel,
+                  where: {
+                    nama : {
+                        [Op.like] : `%${nama_barang}%`
+                    }
+                  },
+                  include : [{
+                    model : supplierModel
+                  }]
+              },
+              ],
+              offset,
+              limit,
+              order: [
+                  ['createdAt', 'DESC']
+              ]
+          })
+      }
+  
+      res.status(200).json({
+          page,
+          result,
+          totalPage,
+          totalRows,
+          limit
+      })
+    } catch (error) {
+        console.error(error)
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    }
+  }
+
+const findTransaksi = async (req, res) => {
+    let { faktur, barangId } = req.query;
+
+    console.log("ini Faktur cok:" + faktur)
+    console.log("ini barang id cok:" + barangId)
+
+    try {
+        let trans = await transPembelianModel.findOne({
+            include: [
+                {
+                    model: barangModel,
+                }
+            ],
+            where: {
+                [Op.and]: {
+                    faktur, barangId
+                }
+            }
+        })
+        res.status(200).json(trans)
+    } catch (error) {
+        res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    }
+}
+
+const getPembelianById = async (req, res) => {
+    try {
+      const pembelian = await transPembelianModel.findOne({
+        where:{
+          id: req.params.id
+      },
+        include: [
+          {
+            model: barangModel, as : "barang",
+            include : [{
+              model: supplierModel, as : "supplier"
+            }],
+          },
+        ]
+      });
+      res.status(200).json(pembelian);
+    } catch (error) {
+      console.error(error);
+      res.status(400).json({ msg: "Gagal Mengambil Data: " + error });
+    }
+  };
 
 const tambahPembelian = async (req, res) => {
     try {
@@ -228,10 +479,14 @@ const hapusPembelian = async (req, res) => {
 module.exports = {
     getPembelian,
     getPembelianId,
+    getPembelianById,
     getJoinPemBarang,
     getJoinPemBarangLapor,
     getJoinPemAnBarangSarch,
+    getJoinPemBulan,
+    getJoinPenAnBarangRetur,
     tambahPembelian,
     editPembelian,
-    hapusPembelian
+    hapusPembelian,
+    findTransaksi
 }
