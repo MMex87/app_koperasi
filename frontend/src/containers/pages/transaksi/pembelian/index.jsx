@@ -152,6 +152,7 @@ class TransaksiPembalian extends Component {
                 });
               } else {
                 // ketika barang sudah ada di db barang
+                
                 barangTerbeli(this.props.barangId, jumlah);
                 await axios.put(`/barang/${this.props.barangId}`, {
                   jenisBarang: this.props.jenis,
@@ -410,7 +411,7 @@ const mapDispatchToProps = (dispatch) => {
       }),
     handleFakturPembelian: (faktur) =>
       dispatch({ type: ActionType.SET_FAKTUR_PEMBELIAN, index: faktur }),
-    handleBarangId: (barangId) =>
+    Id: (barangId) =>
       dispatch({ type: ActionType.SET_BARANG_ID, index: barangId }),
   };
 };

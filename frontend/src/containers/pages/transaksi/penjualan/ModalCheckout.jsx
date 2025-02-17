@@ -190,25 +190,24 @@ const ModalCheckout = (props) => {
         doc.autoPrint();
         // window.open(doc.output("bloburl"));
 
-        // Menghasilkan dokumen PDF dalam bentuk data URL
-        const pdf = doc.output("datauristring");
+        const pdf = doc.output("bloburl"); // Menghasilkan PDF sebagai blob URL
 
-        // Membuat elemen iframe untuk memuat dokumen PDF
         const iframe = document.createElement("iframe");
         iframe.style.display = "none";
-        iframe.src = pdf;
-
-        // Memasukkan elemen iframe ke dalam dokumen
         document.body.appendChild(iframe);
 
-        // Mengatur waktu tunda agar iframe selesai dimuat
-        setTimeout(function () {
-          // Memanggil fungsi print pada elemen iframe
-          iframe.contentWindow.print();
+        // Tunggu hingga iframe selesai dimuat sebelum mencetak
+        iframe.onload = function () {
+          try {
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print();
+          } catch (error) {
+            console.error("Gagal mencetak PDF:", error);
+          }
+        };
 
-          // Menghapus elemen iframe setelah selesai mencetak
-          document.body.removeChild(iframe);
-        }, 100);
+        // Atur sumber iframe ke blob URL
+        iframe.src = pdf;
       }
     } catch (error) {
       console.error(error);

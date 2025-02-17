@@ -5,31 +5,43 @@ import ReactPaginate from "react-paginate";
 import moment from "moment";
 import { jsPDF } from "jspdf"
 import 'jspdf-autotable';
+import { Link } from "react-router-dom";
 
 const tPenjualan = () => {
   const [dataPenjualan, setDataPenjualan] = useState([]);
   const [dataPenjualanPdf, setDataPenjualanPdf] = useState([]);
+  const [dataSupplier, setDataSupllier] = useState([]);
   const [page, setPage] = useState(0);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [tanggal, setTanggal] = useState(moment().format("YYYY-MM-DD"))
+  const [supplier, setSupplier] = useState("")
+  const [supplierName, setSupplierName] = useState("")
 
   useEffect(() => {
+    getDataSupplier();
     getData();
     getDataPDF();
-  }, [page,tanggal]);
+  }, [page,tanggal,supplier]);
 
   const getData = async () => {
-    const response = await axios.get(`http://localhost:8800/transPenjualanJoinSearch?date=${tanggal}&page=${page}&limit=10`);
+    const response = await axios.get(`http://localhost:8800/transPenjualanJoinSearch?supplier=${supplier}&date=${tanggal}&page=${page}&limit=10`);
     setDataPenjualan(response.data.result);
     setPage(response.data.page);
     setPages(response.data.totalPage);
     setRows(response.data.totalRows);
 
+    const r = await axios.get(`http://localhost:8800/supplier/${supplier}`)
+    setSupplierName(r.data.nama)
   };
 
+  const getDataSupplier = async () => {
+    const dataSupplier = await axios.get("http://localhost:8800/supplier")
+    setDataSupllier(dataSupplier.data) 
+  }
+
   const getDataPDF = async () => {
-    const response = await axios.get(`http://localhost:8800/transPenjualanJoinSearch?date=${tanggal}&page=${page}&limit=0`);
+    const response = await axios.get(`http://localhost:8800/transPenjualanJoinSearch?supplier=${supplier}&date=${tanggal}&page=${page}&limit=0`);
     setDataPenjualanPdf(response.data.result);
   };
 
@@ -52,21 +64,25 @@ const tPenjualan = () => {
       const totalWidthLaporan = doc.getTextWidth(`Laporan Harian Penjualan`);
       const totalXLaporan = (pageWidthpdf / 2) - (totalWidthLaporan / 2);
 
-      doc.text("Laporan Harian Penjualan", totalXLaporan, 25)
+      doc.text(`Laporan Harian Penjualan`, totalXLaporan, 25)
       doc.setFontSize(16)
+      doc.setFont("times")
+      doc.text( `Tanggal :`, 30, 40)
+      doc.text( moment(tanggal).format("D MMMM YYYY"), 100, 40)
+      doc.text( `Supplier :`, 30, 60)
+      doc.text( supplierName, 100, 60)
 
       doc.autoTable(
         {
-          head: [['#', 'Faktur', 'Anggota', 'Pembayaran', 'Barang', 'Jumlah', 'Total', 'Tanggal']],
+          head: [['#', 'Faktur', 'Anggota', 'Barang', 'Jumlah', 'Total', 'Tanggal']],
           body: dataPenjualanPdf.map((val, index) => [
             index + 1,
             val.faktur,
             val.anggota.nama,
-            val.typePembayaran,
             val.barang.nama,
             val.jumlah,
-            val.harga.toLocaleString("id-ID", { style: "currency", currency: "IDR" }),
-            moment(val.waktuJual).format("D MMMM YYYY")
+            convertRupiah.convert(val.jumlah * val.barang.hargaJual),
+            moment(val.createdAt).format("D MMMM YYYY")
           ]),
           styles: { fontSize: 12 },
           startY: 70,
@@ -78,7 +94,7 @@ const tPenjualan = () => {
 
       let total = 0
       for (let val of dataPenjualanPdf) {
-        total = total + val.harga
+        total = total + (val.barang.hargaJual * val.jumlah)
       }
 
       totalText = "Total: " + total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })
@@ -94,21 +110,33 @@ const tPenjualan = () => {
 
       // window.open(doc.output("bloburl"));
       
-        doc.save('Laporan Bulanan Penjualan Per ' + moment(tanggal).format("DD-MM-YYYY") + '.pdf')
+        doc.save('Laporan Penjualan Per ' + moment(tanggal).format("DD-MM-YYYY") + '.pdf')
     }
+
+    console.log(supplier)
 
   return (
     <main id="main">
       <div className="text-center pagetitle">
-        <h1 className="fs-2 fw-bold"> Laporan Penjualan </h1>
+        <h1 className="fs-2 fw-bold"> Laporan Penjualan Harian</h1>
       </div>
       <section className="section">
         <div className="card">
           <div className="card-body">
             <div className="col-lg-12">
               <div className="row">
-                <div className="col-md-2"></div>
+              <div className="col-md-2">
+              <div className="text-end col-md-2 pt-3">
+                  <Link to={"/reportPenjualanBulan"} className="btn btn-info me-3" > Bulan</Link>
+              </div>
+              </div>
                 <div className="text-end col-md-8 pt-3 d-flex justify-content-end">
+                  <select class="form-select" value={supplier}  style={{ width: 180,  marginRight: 20}} onChange={(e) => setSupplier(e.target.value)}>
+                    <option value="" >- - Pilih Supplier --</option>
+                      {dataSupplier.map((supplier) => (
+                        <option value={supplier.id}>{supplier.nama}</option>
+                      ))}
+                  </select>
                   <input type="date" className=" form-control" onChange={changeTanggal} value={tanggal} style={{ width: 180 }} />
                 </div>
                 <div className="text-end col-md-2 pt-3">
@@ -134,8 +162,8 @@ const tPenjualan = () => {
                         <td>{data.anggota.nama}</td>
                         <td>{data.barang.nama}</td>
                         <td>{data.jumlah}</td>
-                        <td>{convertRupiah.convert(data.harga * data.jumlah)}</td>
-                        <td>{moment(data.waktuJual).format("D MMMM YYYY")}</td>
+                        <td>{convertRupiah.convert(data.barang.hargaJual * data.jumlah)}</td>
+                        <td>{moment(data.createdAt).format("D MMMM YYYY")}</td>
                       </tr>
                     ))}
                   </tbody>

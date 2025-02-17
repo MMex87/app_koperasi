@@ -8,36 +8,56 @@ import 'jspdf-autotable';
 import { Link } from "react-router-dom";
 
 
-const tPembelian = () => {
+const tPembelianBulan = () => {
   const [dataBarangPdf, setDataBarangPdf] = useState([]);
   const [dataBarang, setDataBarang] = useState([]);
   const [dataSupplier, setDataSupllier] = useState([]);
   const [page, setPage] = useState(0);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
-  const [tanggal, setTanggal] = useState(moment().format("YYYY-MM-DD"))
+  const [bulan, setBulan] = useState("")
   const [supplier, setSupplier] = useState("")
+  const [supplierName, setSupplierName] = useState("")
+
+  const months = [
+    { name: "Januari", value: 1 },
+    { name: "Februari", value: 2 },
+    { name: "Maret", value: 3 },
+    { name: "April", value: 4 },
+    { name: "Mei", value: 5 },
+    { name: "Juni", value: 6 },
+    { name: "Juli", value: 7 },
+    { name: "Agustus", value: 8 },
+    { name: "September", value: 9 },
+    { name: "Oktober", value: 10 },
+    { name: "November", value: 11 },
+    { name: "Desember", value: 12 },
+  ];
+
 
   useEffect(() => {
     getData();
     getDataPdf();
     getDataSupplier();
-  }, [page,tanggal,supplier]);
+  }, [page,bulan,supplier]);
 
   const getDataSupplier = async () => {
     const dataSupplier = await axios.get("http://localhost:8800/supplier")
     setDataSupllier(dataSupplier.data) 
+
+    const r = await axios.get(`http://localhost:8800/supplier/${supplier}`)
+    setSupplierName(r.data.nama)
   }
 
   const getData = async () => {
-    const response = await axios.get(`http://localhost:8800/transPembelianJoinSearch?supplier=${supplier}&date=${tanggal}&page=${page}&limit=10`);
+    const response = await axios.get(`http://localhost:8800/transPembelianJoinSearchBulan?supplier=${supplier}&bulan=${bulan}&page=${page}&limit=10`);
     setDataBarang(response.data.result);
     setPage(response.data.page);
     setPages(response.data.totalPage);
     setRows(response.data.totalRows);
   };
   const getDataPdf = async () => {
-    const response = await axios.get(`http://localhost:8800/transPembelianJoinSearch?supplier=${supplier}&date=${tanggal}&page=${page}&limit=0`);
+    const response = await axios.get(`http://localhost:8800/transPembelianJoinSearchBulan?supplier=${supplier}&bulan=${bulan}&page=${page}&limit=0`);
     setDataBarangPdf(response.data.result);
   };
 
@@ -45,8 +65,8 @@ const tPembelian = () => {
     setPage(selected);
   };
 
-  const changeTanggal = async (e) => {
-    setTanggal(e.target.value)
+  const changeBulan = async (e) => {
+    setBulan(e.target.value)
   }
 
 
@@ -61,8 +81,13 @@ const tPembelian = () => {
       const totalWidthLaporan = doc.getTextWidth(`Laporan Harian Pembelian`);
       const totalXLaporan = (pageWidthpdf / 2) - (totalWidthLaporan / 2);
 
-      doc.text("Laporan Harian Pembelian", totalXLaporan, 25)
+      doc.text(`Laporan Bulanan Pembelian`, totalXLaporan, 25)
       doc.setFontSize(16)
+      doc.setFont("times")
+      doc.text( `Bulan :`, 30, 40)
+      doc.text( moment(bulan).format("MMMM"), 100, 40)
+      doc.text( `Supplier :`, 30, 60)
+      doc.text( supplierName, 100, 60)
 
       doc.autoTable(
         {
@@ -102,16 +127,16 @@ const tPembelian = () => {
 
       // window.open(doc.output("bloburl"));
       
-        doc.save('Laporan Pembelian Per ' + moment(tanggal).format("DD-MM-YYYY") + '.pdf')
+        doc.save('Laporan Pembelian Bulan ' + moment(bulan).format("MMMM") + '.pdf')
     }
 
-    console.log(supplier)
+    console.log(bulan)
     console.log(dataBarang)
 
   return (
     <main id="main">
       <div className="text-center pagetitle">
-        <h1 className="fs-2 fw-bold"> Laporan Pembelian Harian </h1>
+        <h1 className="fs-2 fw-bold"> Laporan Pembelian Bulan </h1>
       </div>
       <section className="section">
         <div className="card">
@@ -120,7 +145,7 @@ const tPembelian = () => {
               <div className="row">
                 <div className="col-md-2">
                 <div className="text-end col-md-2 pt-3">
-                  <Link to={"/reportPembelianBulan"} className="btn btn-info me-3" > Bulan</Link>
+                  <Link to={"/reportPembelian"} className="btn btn-info me-3" > Harian </Link>
                 </div>
                 </div>
                 <div className="text-end col-md-8 pt-3 d-flex justify-content-end">
@@ -130,7 +155,14 @@ const tPembelian = () => {
                         <option value={supplier.id}>{supplier.nama}</option>
                       ))}
                   </select>
-                  <input type="date" className=" form-control" onChange={changeTanggal} value={tanggal} style={{ width: 180 }} />
+                  <select class="form-select"  style={{ width: 180,  marginRight: 20}} value={bulan} onChange={changeBulan}>
+                      <option value="">Pilih Bulan</option>
+                      {months.map((month) => (
+                        <option key={month.value} value={month.value}>
+                          {month.name}
+                        </option>
+                      ))}
+                  </select>
                 </div>
                 <div className="text-end col-md-2 pt-3">
                   <button className="btn btn-success me-3" onClick={simpan}>
@@ -195,4 +227,4 @@ const tPembelian = () => {
   );
 };
 
-export default tPembelian;
+export default tPembelianBulan;
