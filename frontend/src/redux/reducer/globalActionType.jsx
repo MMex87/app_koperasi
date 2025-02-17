@@ -25,5 +25,5 @@ const ActionType = {
     // Cicilan
     SET_ID_CICILAN: "SET_ID_CICILAN",
   };
-  
-  export default ActionType;
+
+export default ActionType;

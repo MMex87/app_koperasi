@@ -409,7 +409,6 @@ const findTransaksi = async (req, res) => {
         res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
     }
 }
-
 const getPembelianById = async (req, res) => {
     try {
       const pembelian = await transPembelianModel.findOne({

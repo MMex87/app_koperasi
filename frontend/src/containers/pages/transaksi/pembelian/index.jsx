@@ -152,7 +152,7 @@ class TransaksiPembalian extends Component {
                 });
               } else {
                 // ketika barang sudah ada di db barang
-
+                
                 barangTerbeli(this.props.barangId, jumlah);
                 await axios.put(`/barang/${this.props.barangId}`, {
                   jenisBarang: this.props.jenis,
