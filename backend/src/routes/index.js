@@ -49,6 +49,8 @@ router.get("/transPembelian/:id", transPembelian.getPembelianId);
 router.get("/transPembelianJoin", transPembelian.getJoinPemBarang);
 router.get("/transPembelianJoinSearch", transPembelian.getJoinPemAnBarangSarch);
 router.get("/transPembelianJoinLaporan", transPembelian.getJoinPemBarangLapor);
+router.get("/transPembelianJoinRetur", transPembelian.getJoinPenAnBarangRetur); /// Data Retur
+router.get("/transPembelianJoinSearchBulan", transPembelian.getJoinPemBulan); /// Laporan Pembelian Bulanan
 router.get("/cariPembelian", transPembelian.findTransaksi);
 router.post("/transPembelian", transPembelian.tambahPembelian);
 router.put("/transPembelian/:id", transPembelian.editPembelian);
@@ -59,10 +61,10 @@ router.get("/transPenjualan", transPenjualan.getPenjualan);
 router.get("/transPenjualan/:id", transPenjualan.getJoinPenAnBarangId);
 router.get("/totalHargaPenjualan/:faktur", transPenjualan.getTotalHarga);
 router.get("/transPenjualanJoin", transPenjualan.getJoinPenAnBarang);
-router.get(
-  "/transPenjualanJoinLaporan",
-  transPenjualan.getJoinPenAnBarangLapor
-); /// Laporan Penjualan
+router.get("/transPenjualanJoinRetur", transPenjualan.getJoinPenAnBarangRetur); /// Data Retur
+router.get("/transPenjualanJoinLaporan",transPenjualan.getJoinPenAnBarangLapor); /// Laporan Penjualan
+router.get("/transPenjualanJoinSearchBulan", transPenjualan.getJoinPenjualannBulanan); /// Laporan Penjualan Bulanan
+router.get("/transPenjualanJoinSearchAnggota", transPenjualan.getJoinPembelianAnggota); /// Laporan Penjualan Bulanan Anggota
 router.get("/transPenjualanJoinSearch", transPenjualan.getJoinPenAnBarangSarch);
 router.post("/transPenjualan", transPenjualan.tambahPenjualan);
 router.put("/transPenjualan/:id", transPenjualan.editPenjualan);
@@ -70,6 +72,7 @@ router.delete("/transPenjualan/:id", transPenjualan.hapusPenjualan);
 
 // return Pembelian
 router.get("/returnPembelian", returnTransPembelian.getReturnPembelian);
+router.get("/returnPembelian/:id", transPembelian.getPembelianById);
 router.get(
   "/returnPembelianLaporan",
   returnTransPembelian.getReturnPembelianLaporan
@@ -83,6 +86,7 @@ router.delete(
 
 // return Penjualan
 router.get("/returnPenjualan", returnTransPenjualan.getReturnPenjualan);
+router.get("/returnPenjualan/:id", transPenjualan.getPenjualanById);
 router.post("/returnPenjualan", returnTransPenjualan.tambahReturnPenjualan);
 router.put("/returnPenjualan/:id", returnTransPenjualan.editReturnPenjualan);
 router.delete(
