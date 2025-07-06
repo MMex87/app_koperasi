@@ -30,8 +30,8 @@ const addCartScan = (props) => {
         <>
             <div className="col-12">
                 <label htmlFor="kodeBarangScan" className="form-label">Kode Barang</label>
-                <input type="text" className="form-control" id="kodeBarangScan" value={ props.kodeBarang } autoFocus={ true }
-                    onChange={ handleScan } />
+                <input type="text" className="form-control" id="kodeBarangScan" value={props.kodeBarang} autoFocus={true}
+                    onChange={handleScan} />
             </div>
         </>
     )

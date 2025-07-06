@@ -18,6 +18,7 @@ class TransPenjualan extends Component {
     displayAnggota: false,
     anggotas: [],
     barang: [],
+    typeInput: '',
   };
 
   componentDidMount() {
@@ -89,6 +90,34 @@ class TransPenjualan extends Component {
             nama == this.props.namaBarang && supplierId == this.props.supplierId
         ).id;
       }
+
+      if (this.state.typeInput == 'scan' && this.props.kodeBarang != '') {
+        barang = this.state.barang.find(
+          ({ kodeBarang }) =>
+            kodeBarang == this.props.kodeBarang
+        );
+        this.props.handleJumlah(1)
+        this.props.handleNamaBarang(barang.nama)
+        this.props.handlejenisBarang(barang.jenisBarang)
+        this.props.handleHargaBarang(barang.hargaJual)
+        this.props.handleSupplierIdPenjualan(barang.supplierId)
+        jumlah = 1;
+        harga = barang.hargaJual
+        if (barang != undefined) {
+          barangIdLokal = this.state.barang.find(
+            ({ nama, supplierId }) =>
+              nama == barang.nama && supplierId == barang.supplierId
+          ).id;
+        }
+      } else {
+        if (barang != undefined) {
+          barangIdLokal = this.state.barang.find(
+            ({ nama, supplierId }) =>
+              nama == this.props.namaBarang && supplierId == this.props.supplierId
+          ).id;
+        }
+      }
+
       let trans = this.state.penjualan.find(
         ({ faktur, barangId, anggotaId }) =>
           faktur == fakturLokal &&
@@ -151,6 +180,7 @@ class TransPenjualan extends Component {
 
     const handleVisiInput = (e) => {
       let handle = e.target.value;
+      this.setState({ typeInput: handle });
       if (handle == "scan") {
         this.setState({ visiJenisInput: true });
       } else {
