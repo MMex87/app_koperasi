@@ -1,0 +1,56 @@
+const Service = require('node-windows').Service;
+
+// Definisikan service
+const svc = new Service({
+    name: 'BackendKoperasi', // sebaiknya tanpa spasi
+    description: 'Express + Sequelize backend running as a Windows service',
+    script: 'D:\\project-freelance\\app_koperasi\\backend\\app.js', // ubah sesuai lokasi server.js
+    nodeOptions: [
+        '--harmony',
+        '--max_old_space_size=4096'
+    ]
+});
+
+// Ambil argumen dari command line
+const action = process.argv[2]; // install | uninstall | start | stop
+
+if (!action) {
+    console.log('Gunakan: node service.js [install|uninstall|start|stop]');
+    process.exit(0);
+}
+
+// Event listeners
+svc.on('install', () => {
+    console.log('Service installed!');
+    svc.start();
+});
+
+svc.on('uninstall', () => {
+    console.log('Service uninstalled!');
+});
+
+svc.on('start', () => {
+    console.log('Service started!');
+});
+
+svc.on('stop', () => {
+    console.log('Service stopped!');
+});
+
+// Eksekusi sesuai argumen
+switch (action) {
+    case 'install':
+        svc.install();
+        break;
+    case 'uninstall':
+        svc.uninstall();
+        break;
+    case 'start':
+        svc.start();
+        break;
+    case 'stop':
+        svc.stop();
+        break;
+    default:
+        console.log('Perintah tidak dikenal. Gunakan: install | uninstall | start | stop');
+}

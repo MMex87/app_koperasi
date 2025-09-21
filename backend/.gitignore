@@ -8,3 +8,8 @@ yarn.lock
 
 # test
 request.rest
+req.rest
+
+# service
+/daemon
+service.js
