@@ -14,7 +14,7 @@ const getPenjualan = async (req, res) => {
           include: supplierModel,
         },
         {
-          model: anggotaModel, as: "anggota"
+          model: anggotaModel,
         },
       ],
       order: [["id", "DESC"]],
@@ -179,6 +179,7 @@ const getJoinPenAnBarangSarch = async (req, res) => {
     const limit = parseInt(req.query.limit);
     const search = req.query.date;
     const IdSupplier = req.query.supplier;
+    const pembayaran = req.query.pembayaran;
     const offset = page * limit;
 
     const startOfDay = moment(search).startOf("day").toDate();
@@ -213,6 +214,7 @@ const getJoinPenAnBarangSarch = async (req, res) => {
             [Op.gte]: startOfDay,
             [Op.lte]: endOfDay
           },
+          typePembayaran: pembayaran
         },
         order: [["id", "DESC"]],
       });
@@ -241,6 +243,7 @@ const getJoinPenAnBarangSarch = async (req, res) => {
             [Op.gte]: startOfDay,
             [Op.lte]: endOfDay
           },
+          typePembayaran: pembayaran
         },
       });
 
@@ -269,6 +272,7 @@ const getJoinPenAnBarangSarch = async (req, res) => {
             [Op.gte]: startOfDay,
             [Op.lte]: endOfDay
           },
+          typePembayaran: pembayaran
         },
         offset,
         limit,
@@ -412,13 +416,15 @@ const getJoinPenjualannBulanan = async (req, res) => {
   }
 };
 
-const getJoinPenAnBarangRetur = async (req, res) => {
+const getJoinPembelianAnggota = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 0
-    const limit = parseInt(req.query.limit) || 10
-    const offset = page * limit
-    const nama_barang = req.query.namaBarang || ""
+    const page = parseInt(req.query.page) || 0;
+    const limit = parseInt(req.query.limit);
+    const search = req.query.date; // Input hanya berupa bulan, misalnya "01"
+    const offset = page * limit;
 
+    const startOfDay = moment(search).startOf('day').toDate(); // Mulai hari pada tanggal tertentu
+    const endOfDay = moment(search).endOf('day').toDate(); // Akhir hari pada tanggal tertentu
 
     let totalPage = 0;
     let result = [];
@@ -429,11 +435,124 @@ const getJoinPenAnBarangRetur = async (req, res) => {
         include: [
           {
             model: barangModel,
+            as: "barang",
+            include: [
+              {
+                model: supplierModel,
+              },
+            ],
+          },
+          {
+            model: anggotaModel,
+            as: "anggota",
             where: {
-              nama: {
-                [Op.like]: `%${nama_barang}%`
-              }
+              id: { [Op.ne]: "354" }, // Nama anggota bukan "customer"
             },
+          },
+        ],
+        where: {
+          createdAt: {
+            [Op.gte]: startOfDay,
+            [Op.lte]: endOfDay,
+          },
+        },
+        order: [["createdAt", "DESC"]],
+      });
+    } else {
+      totalRows = await transPenjualanModel.count({
+        include: [
+          {
+            model: barangModel,
+            as: "barang",
+            // where: {
+            //   supplierid: IdSupplier,
+            // },
+            include: [
+              {
+                model: supplierModel,
+              },
+            ],
+          },
+          {
+            model: anggotaModel,
+            as: "anggota",
+            where: {
+              id: { [Op.ne]: "354" }, // Nama anggota bukan "customer"
+            },
+          },
+        ],
+        where: {
+          createdAt: {
+            [Op.gte]: startOfDay,
+            [Op.lte]: endOfDay,
+          },
+        },
+      });
+
+      totalPage = Math.ceil(totalRows / limit);
+      result = await transPenjualanModel.findAll({
+        include: [
+          {
+            model: barangModel,
+            as: "barang",
+            // where: {
+            //   supplierid: IdSupplier,
+            // },
+            include: [
+              {
+                model: supplierModel,
+              },
+            ],
+          },
+          {
+            model: anggotaModel,
+            as: "anggota",
+            where: {
+              id: { [Op.ne]: "354" }, // Nama anggota bukan "customer"
+            },
+          },
+        ],
+        where: {
+          createdAt: {
+            [Op.gte]: startOfDay,
+            [Op.lte]: endOfDay,
+          },
+        },
+        offset,
+        limit,
+        order: [["createdAt", "DESC"]],
+      });
+    }
+
+    res.status(200).json({
+      page,
+      result,
+      totalPage,
+      totalRows,
+      limit,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ msg: "Gagal Mengambil Data: " + error });
+  }
+};
+
+const getJoinPenAnBarangRetur = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 0
+    const limit = parseInt(req.query.limit) || 10
+    const offset = page * limit
+    const nama_barang = req.query.namaBarang || ""
+
+    let totalPage = 0;
+    let result = [];
+    let totalRows = 0;
+
+    if (limit == 0) {
+      result = await transPenjualanModel.findAll({
+        include: [
+          {
+            model: barangModel,
             include: [{
               model: supplierModel
             }]
@@ -550,135 +669,6 @@ const tambahPenjualan = async (req, res) => {
   }
 };
 
-const getJoinPembelianAnggota = async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 0;
-    const limit = parseInt(req.query.limit);
-    const search = req.query.bulan; // Input hanya berupa bulan, misalnya "01"
-    const IdSupplier = 1;
-    const offset = page * limit;
-
-    // Ambil tahun saat ini jika tidak dikirim dari frontend
-    const currentYear = new Date().getFullYear();
-
-    // Gabungkan tahun saat ini dengan bulan dari frontend untuk membuat format YYYY-MM
-    const monthYearFormat = `${currentYear}-${search}`;
-
-    // Konversi ke rentang tanggal awal dan akhir bulan
-    const startOfMonth = moment(monthYearFormat, 'YYYY-MM').startOf('month').toDate(); // Awal bulan
-    const endOfMonth = moment(monthYearFormat, 'YYYY-MM').endOf('month').toDate(); // Akhir bulan
-
-    let totalPage = 0;
-    let result = [];
-    let totalRows = 0;
-
-    if (limit == 0) {
-      result = await transPenjualanModel.findAll({
-        include: [
-          {
-            model: barangModel,
-            as: "barang",
-            include: [
-              {
-                model: supplierModel,
-              },
-            ],
-          },
-          {
-            model: anggotaModel,
-            as: "anggota",
-            where: {
-              id: { [Op.ne]: "354" }, // Nama anggota bukan "customer"
-            },
-          },
-        ],
-        where: {
-          createdAt: {
-            [Op.gte]: startOfMonth,
-            [Op.lte]: endOfMonth,
-          },
-        },
-        order: [["createdAt", "DESC"]],
-      });
-    } else {
-      totalRows = await transPenjualanModel.count({
-        include: [
-          {
-            model: barangModel,
-            as: "barang",
-            // where: {
-            //   supplierid: IdSupplier,
-            // },
-            include: [
-              {
-                model: supplierModel,
-              },
-            ],
-          },
-          {
-            model: anggotaModel,
-            as: "anggota",
-            where: {
-              id: { [Op.ne]: "354" }, // Nama anggota bukan "customer"
-            },
-          },
-        ],
-        where: {
-          createdAt: {
-            [Op.gte]: startOfMonth,
-            [Op.lte]: endOfMonth,
-          },
-        },
-      });
-
-      totalPage = Math.ceil(totalRows / limit);
-      result = await transPenjualanModel.findAll({
-        include: [
-          {
-            model: barangModel,
-            as: "barang",
-            // where: {
-            //   supplierid: IdSupplier,
-            // },
-            include: [
-              {
-                model: supplierModel,
-              },
-            ],
-          },
-          {
-            model: anggotaModel,
-            as: "anggota",
-            where: {
-              id: { [Op.ne]: "354" }, // Nama anggota bukan "customer"
-            },
-          },
-        ],
-        where: {
-          createdAt: {
-            [Op.gte]: startOfMonth,
-            [Op.lte]: endOfMonth,
-          },
-        },
-        offset,
-        limit,
-        order: [["createdAt", "DESC"]],
-      });
-    }
-
-    res.status(200).json({
-      page,
-      result,
-      totalPage,
-      totalRows,
-      limit,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(400).json({ msg: "Gagal Mengambil Data: " + error });
-  }
-};
-
 const editPenjualan = async (req, res) => {
   try {
     const {
@@ -733,10 +723,10 @@ module.exports = {
   getJoinPenAnBarang,
   getJoinPenAnBarangId,
   getJoinPenAnBarangLapor,
-  getJoinPenAnBarangSarch,
   getJoinPenjualannBulanan,
-  getJoinPenAnBarangRetur,
   getJoinPembelianAnggota,
+  getJoinPenAnBarangSarch,
+  getJoinPenAnBarangRetur,
   getTotalHarga,
   tambahPenjualan,
   editPenjualan,

@@ -145,6 +145,8 @@ const CartList = (props) => {
       }
     });
   };
+  console.log(transaksi)
+
 
   return (
     <>

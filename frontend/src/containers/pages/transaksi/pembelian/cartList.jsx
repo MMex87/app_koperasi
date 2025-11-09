@@ -226,7 +226,7 @@ const CartList = (props) => {
         <thead>
           <tr>
             <th>#</th>
-            <th>Nama Anggota</th>
+            <th>Nama Supplier</th>
             <th>Nama Barang</th>
             <th>Jumlah</th>
             <th>Harga Beli</th>

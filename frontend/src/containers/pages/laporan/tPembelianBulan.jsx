@@ -39,11 +39,11 @@ const tPembelianBulan = () => {
     getData();
     getDataPdf();
     getDataSupplier();
-  }, [page,bulan,supplier]);
+  }, [page, bulan, supplier]);
 
   const getDataSupplier = async () => {
     const dataSupplier = await axios.get("http://localhost:8800/supplier")
-    setDataSupllier(dataSupplier.data) 
+    setDataSupllier(dataSupplier.data)
 
     const r = await axios.get(`http://localhost:8800/supplier/${supplier}`)
     setSupplierName(r.data.nama)
@@ -71,67 +71,67 @@ const tPembelianBulan = () => {
 
 
   const simpan = () => {
-      // Deklarasi Pdf
-      const doc = new jsPDF("l", "pt", "a4")
-      doc.setFont("times")
+    // Deklarasi Pdf
+    const doc = new jsPDF("l", "pt", "a4")
+    doc.setFont("times")
 
-      doc.setFontSize(20)
-      const pageWidthpdf = doc.internal.pageSize.getWidth();
+    doc.setFontSize(20)
+    const pageWidthpdf = doc.internal.pageSize.getWidth();
 
-      const totalWidthLaporan = doc.getTextWidth(`Laporan Harian Pembelian`);
-      const totalXLaporan = (pageWidthpdf / 2) - (totalWidthLaporan / 2);
+    const totalWidthLaporan = doc.getTextWidth(`Laporan Harian Pembelian`);
+    const totalXLaporan = (pageWidthpdf / 2) - (totalWidthLaporan / 2);
 
-      doc.text(`Laporan Bulanan Pembelian`, totalXLaporan, 25)
-      doc.setFontSize(16)
-      doc.setFont("times")
-      doc.text( `Bulan :`, 30, 40)
-      doc.text( moment(bulan).format("MMMM"), 100, 40)
-      doc.text( `Supplier :`, 30, 60)
-      doc.text( supplierName, 100, 60)
+    doc.text(`Laporan Bulanan Pembelian`, totalXLaporan, 25)
+    doc.setFontSize(16)
+    doc.setFont("times")
+    doc.text(`Bulan :`, 30, 40)
+    doc.text(moment(bulan).format("MMMM"), 100, 40)
+    doc.text(`Supplier :`, 30, 60)
+    doc.text(supplierName, 100, 60)
 
-      doc.autoTable(
-        {
-          head: [['#', 'Faktur', 'Supplier', 'Barang', 'Jumlah', 'Total', 'Tanggal']],
-          body: dataBarangPdf.map((val, index) => [
-            index + 1,
-            val.faktur,
-            val.supplier.nama,
-            val.barang.nama,
-            val.jumlah,
-            convertRupiah.convert(val.hargaJual * val.jumlah),
-            moment(val.waktuBeli).format("D MMMM YYYY")
-          ]),
-          styles: { fontSize: 12 },
-          startY: 70,
-          margin: { left: 3, right: 3 },
-        }
-      )
-
-      let totalText
-
-      let total = 0
-      for (let val of dataBarangPdf) {
-        total = total + (val.hargaJual * val.jumlah)
+    doc.autoTable(
+      {
+        head: [['#', 'Faktur', 'Supplier', 'Barang', 'Jumlah', 'Total', 'Tanggal']],
+        body: dataBarangPdf.map((val, index) => [
+          index + 1,
+          val.faktur,
+          val.supplier.nama,
+          val.barang.nama,
+          val.jumlah,
+          convertRupiah.convert(Math.round((val.harga * val.jumlah))),
+          moment(val.waktuBeli).format("D MMMM YYYY")
+        ]),
+        styles: { fontSize: 12 },
+        startY: 70,
+        margin: { left: 3, right: 3 },
       }
+    )
 
-      totalText = "Total: " + total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })
+    let totalText
 
-      let heightTable = doc.lastAutoTable.finalY
-      const pageWidth = doc.internal.pageSize.getWidth();
-
-      const totalWidth = doc.getTextWidth(`${total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}`);
-      const totalX = pageWidth - totalWidth - 70;
-
-      doc.setFont("times", 'bold')
-      doc.text(totalText, totalX, heightTable + 50)
-
-      // window.open(doc.output("bloburl"));
-      
-        doc.save('Laporan Pembelian Bulan ' + moment(bulan).format("MMMM") + '.pdf')
+    let total = 0
+    for (let val of dataBarangPdf) {
+      total = total + (val.hargaJual * val.jumlah)
     }
 
-    console.log(bulan)
-    console.log(dataBarang)
+    totalText = "Total: " + total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })
+
+    let heightTable = doc.lastAutoTable.finalY
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    const totalWidth = doc.getTextWidth(`${total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}`);
+    const totalX = pageWidth - totalWidth - 70;
+
+    doc.setFont("times", 'bold')
+    doc.text(totalText, totalX, heightTable + 50)
+
+    // window.open(doc.output("bloburl"));
+
+    doc.save('Laporan Pembelian Bulan ' + moment(bulan).format("MMMM") + '.pdf')
+  }
+
+  console.log(bulan)
+  console.log(dataBarang)
 
   return (
     <main id="main">
@@ -144,24 +144,24 @@ const tPembelianBulan = () => {
             <div className="col-lg-12">
               <div className="row">
                 <div className="col-md-2">
-                <div className="text-end col-md-2 pt-3">
-                  <Link to={"/reportPembelian"} className="btn btn-info me-3" > Harian </Link>
-                </div>
+                  <div className="text-end col-md-2 pt-3">
+                    <Link to={"/reportPembelian"} className="btn btn-info me-3" > Harian </Link>
+                  </div>
                 </div>
                 <div className="text-end col-md-8 pt-3 d-flex justify-content-end">
-                <select class="form-select" value={supplier}  style={{ width: 180,  marginRight: 20}} onChange={(e) => setSupplier(e.target.value)}>
+                  <select class="form-select" value={supplier} style={{ width: 180, marginRight: 20 }} onChange={(e) => setSupplier(e.target.value)}>
                     <option value="" >- - Pilih Supplier --</option>
-                      {dataSupplier.map((supplier) => (
-                        <option value={supplier.id}>{supplier.nama}</option>
-                      ))}
+                    {dataSupplier.map((supplier) => (
+                      <option value={supplier.id}>{supplier.nama}</option>
+                    ))}
                   </select>
-                  <select class="form-select"  style={{ width: 180,  marginRight: 20}} value={bulan} onChange={changeBulan}>
-                      <option value="">Pilih Bulan</option>
-                      {months.map((month) => (
-                        <option key={month.value} value={month.value}>
-                          {month.name}
-                        </option>
-                      ))}
+                  <select class="form-select" style={{ width: 180, marginRight: 20 }} value={bulan} onChange={changeBulan}>
+                    <option value="">Pilih Bulan</option>
+                    {months.map((month) => (
+                      <option key={month.value} value={month.value}>
+                        {month.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div className="text-end col-md-2 pt-3">
@@ -176,20 +176,22 @@ const tPembelianBulan = () => {
                       <th>Faktur</th>
                       <th>Supplier</th>
                       <th>Barang</th>
+                      <th>Harga Beli</th>
                       <th>Jumlah</th>
                       <th>Total</th>
                       <th>Tanggal</th>
                     </tr>
                   </thead>
                   <tbody>
-                  {dataBarang.map((data, index) => (
+                    {dataBarang.map((data, index) => (
                       <tr key={data.id}>
                         <th>{index + 1}</th>
                         <td>{data.faktur}</td>
                         <td>{data.supplier.nama}</td>
                         <td>{data.barang.nama}</td>
+                        <td>{convertRupiah.convert(data.harga)}</td>
                         <td>{data.jumlah}</td>
-                        <td>{convertRupiah.convert(data.hargaJual * data.jumlah)}</td>
+                        <td>{convertRupiah.convert(Math.round((data.harga * data.jumlah)))}</td>
                         <td>{moment(data.waktuBeli).format("D MMMM YYYY")}</td>
                       </tr>
                     ))}

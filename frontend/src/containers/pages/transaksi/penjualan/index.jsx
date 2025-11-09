@@ -36,6 +36,7 @@ class TransPenjualan extends Component {
       getBarangJoinAutoComplate(this.props.namaBarang).then((data) => {
         this.setState({ barang: data });
       });
+
     }
     getTransPenjualan().then((data) => {
       this.setState({ penjualan: data });
@@ -90,40 +91,13 @@ class TransPenjualan extends Component {
             nama == this.props.namaBarang && supplierId == this.props.supplierId
         ).id;
       }
-
-      if (this.state.typeInput == 'scan' && this.props.kodeBarang != '') {
-        barang = this.state.barang.find(
-          ({ kodeBarang }) =>
-            kodeBarang == this.props.kodeBarang
-        );
-        this.props.handleJumlah(1)
-        this.props.handleNamaBarang(barang.nama)
-        this.props.handlejenisBarang(barang.jenisBarang)
-        this.props.handleHargaBarang(barang.hargaJual)
-        this.props.handleSupplierIdPenjualan(barang.supplierId)
-        jumlah = 1;
-        harga = barang.hargaJual
-        if (barang != undefined) {
-          barangIdLokal = this.state.barang.find(
-            ({ nama, supplierId }) =>
-              nama == barang.nama && supplierId == barang.supplierId
-          ).id;
-        }
-      } else {
-        if (barang != undefined) {
-          barangIdLokal = this.state.barang.find(
-            ({ nama, supplierId }) =>
-              nama == this.props.namaBarang && supplierId == this.props.supplierId
-          ).id;
-        }
-      }
-
-      let trans = this.state.penjualan.find(
-        ({ faktur, barangId, anggotaId }) =>
-          faktur == fakturLokal &&
-          barangId == barangIdLokal &&
-          anggotaId == anggotaIdLokal
-      );
+      let trans = this.state.penjualan.find(({ faktur, barangId, anggotaId }) => faktur == fakturLokal && barangId == barangIdLokal && anggotaId == anggotaIdLokal)
+      console.log(anggota)
+      console.log(barang)
+      console.log(typePembayaran)
+      console.log(harga)
+      console.log(fakturLokal)
+      console.log(jumlah)
 
       try {
         if (
@@ -274,13 +248,11 @@ class TransPenjualan extends Component {
                         >
                           TUNAI
                         </option>
-                        <option
-                          selected={
-                            this.props.typePembayaran == "Bon" ? true : false
-                          }
-                          value={"Bon"}
-                        >
+                        {/* <option selected={ this.props.typePembayaran == "Bon" ? true : false } value={ "Bon" }>
                           BON
+                        </option> */}
+                        <option selected={this.props.typePembayaran == "QRIS" ? true : false} value={"QRIS"}>
+                          QRIS
                         </option>
                       </select>
                     </div>

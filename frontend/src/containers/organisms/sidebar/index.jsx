@@ -114,12 +114,12 @@ const SideBar = () => {
               </Link>
             </li>
           </ul>
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <Link className="nav-link collapsed" to={ "/cicilan" }>
               <i className="ri-wallet-line" />
               <span>Cicilan</span>
             </Link>
-          </li>
+          </li> */}
         </li>
         <li className="nav-heading">Laporan</li>
         <li className="nav-item">
@@ -151,13 +151,13 @@ const SideBar = () => {
                 <span>Anggota</span>{ " " }
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link to="/reportSupplier">
                 { " " }
                 <i className="bx bx-store" />
                 <span>Supplier</span>{ " " }
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link to="/reportBarang">
                 <i className="bx bx-store" />

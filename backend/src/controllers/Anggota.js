@@ -122,6 +122,16 @@ const tambahAnggota = async (req, res) => {
   try {
     const { nama, noHP } = req.body;
 
+    if (!nama || nama.trim() === "") {
+      return res.status(400).json({ msg: "Nama tidak boleh kosong!" });
+    }
+
+    // Cek apakah nama sudah ada di database
+    const existingAnggota = await anggotaModel.findOne({ where: { nama } });
+    if (existingAnggota) {
+      return res.status(400).json({ msg: "Nama sudah terdaftar, gunakan nama lain!" });
+    }
+
     await anggotaModel.create({
       nama,
       noHP,
@@ -136,6 +146,16 @@ const tambahAnggota = async (req, res) => {
 const editAnggota = async (req, res) => {
   try {
     const { nama, noHP } = req.body;
+
+    if (!nama || nama.trim() === "") {
+      return res.status(400).json({ msg: "Nama tidak boleh kosong!" });
+    }
+
+    // Cek apakah nama sudah ada di database
+    const existingAnggota = await anggotaModel.findOne({ where: { nama } });
+    if (existingAnggota) {
+      return res.status(400).json({ msg: "Nama sudah terdaftar, gunakan nama lain!" });
+    }
 
     await anggotaModel.update(
       {

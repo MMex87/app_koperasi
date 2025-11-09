@@ -47,10 +47,10 @@ router.delete("/anggota/:id", anggota.hapusAnggota);
 router.get("/transPembelian", transPembelian.getPembelian);
 router.get("/transPembelian/:id", transPembelian.getPembelianId);
 router.get("/transPembelianJoin", transPembelian.getJoinPemBarang);
-router.get("/transPembelianJoinSearch", transPembelian.getJoinPemAnBarangSarch);
+router.get("/transPembelianJoinSearch", transPembelian.getJoinPemAnBarangSarch); /// Laporan Pembelian
+router.get("/transPembelianJoinSearchBulan", transPembelian.getJoinPemBulan); /// Laporan Pembelian Bulanan
 router.get("/transPembelianJoinLaporan", transPembelian.getJoinPemBarangLapor);
 router.get("/transPembelianJoinRetur", transPembelian.getJoinPenAnBarangRetur); /// Data Retur
-router.get("/transPembelianJoinSearchBulan", transPembelian.getJoinPemBulan); /// Laporan Pembelian Bulanan
 router.get("/cariPembelian", transPembelian.findTransaksi);
 router.post("/transPembelian", transPembelian.tambahPembelian);
 router.put("/transPembelian/:id", transPembelian.editPembelian);
@@ -61,11 +61,11 @@ router.get("/transPenjualan", transPenjualan.getPenjualan);
 router.get("/transPenjualan/:id", transPenjualan.getJoinPenAnBarangId);
 router.get("/totalHargaPenjualan/:faktur", transPenjualan.getTotalHarga);
 router.get("/transPenjualanJoin", transPenjualan.getJoinPenAnBarang);
-router.get("/transPenjualanJoinRetur", transPenjualan.getJoinPenAnBarangRetur); /// Data Retur
-router.get("/transPenjualanJoinLaporan",transPenjualan.getJoinPenAnBarangLapor); /// Laporan Penjualan
+router.get("/transPenjualanJoinLaporan", transPenjualan.getJoinPenAnBarangLapor);
+router.get("/transPenjualanJoinSearch", transPenjualan.getJoinPenAnBarangSarch); /// Laporan Penjualan
 router.get("/transPenjualanJoinSearchBulan", transPenjualan.getJoinPenjualannBulanan); /// Laporan Penjualan Bulanan
 router.get("/transPenjualanJoinSearchAnggota", transPenjualan.getJoinPembelianAnggota); /// Laporan Penjualan Bulanan Anggota
-router.get("/transPenjualanJoinSearch", transPenjualan.getJoinPenAnBarangSarch);
+router.get("/transPenjualanJoinRetur", transPenjualan.getJoinPenAnBarangRetur); /// Data Retur
 router.post("/transPenjualan", transPenjualan.tambahPenjualan);
 router.put("/transPenjualan/:id", transPenjualan.editPenjualan);
 router.delete("/transPenjualan/:id", transPenjualan.hapusPenjualan);
@@ -73,26 +73,17 @@ router.delete("/transPenjualan/:id", transPenjualan.hapusPenjualan);
 // return Pembelian
 router.get("/returnPembelian", returnTransPembelian.getReturnPembelian);
 router.get("/returnPembelian/:id", transPembelian.getPembelianById);
-router.get(
-  "/returnPembelianLaporan",
-  returnTransPembelian.getReturnPembelianLaporan
-);
+router.get("/returnPembelianLaporan", returnTransPembelian.getReturnPembelianLaporan);
 router.post("/returnPembelian", returnTransPembelian.tambahReturnPembelian);
 router.put("/returnPembelian/:id", returnTransPembelian.editReturnPembelian);
-router.delete(
-  "/returnPembelian/:id",
-  returnTransPembelian.hapusReturnPembelian
-);
+router.delete("/returnPembelian/:id", returnTransPembelian.hapusReturnPembelian);
 
 // return Penjualan
 router.get("/returnPenjualan", returnTransPenjualan.getReturnPenjualan);
 router.get("/returnPenjualan/:id", transPenjualan.getPenjualanById);
 router.post("/returnPenjualan", returnTransPenjualan.tambahReturnPenjualan);
 router.put("/returnPenjualan/:id", returnTransPenjualan.editReturnPenjualan);
-router.delete(
-  "/returnPenjualan/:id",
-  returnTransPenjualan.hapusReturnPenjualan
-);
+router.delete("/returnPenjualan/:id", returnTransPenjualan.hapusReturnPenjualan);
 
 // PenjualanBon
 router.get("/penjualanBon", penjualanBon.getPenBon);
