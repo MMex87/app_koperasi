@@ -3,28 +3,48 @@ import axios from "axios";
 import convertRupiah from "rupiah-format";
 import ReactPaginate from "react-paginate";
 import moment from "moment";
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf"
+import 'jspdf-autotable';
+import { Link } from "react-router-dom";
 
 const tPenjualan = () => {
   const [dataPenjualan, setDataPenjualan] = useState([]);
+  const [dataPenjualanPdf, setDataPenjualanPdf] = useState([]);
+  const [dataSupplier, setDataSupllier] = useState([]);
   const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(10);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
-  const [tanggal, setTanggal] = useState("")
+  const [tanggal, setTanggal] = useState(moment().format("YYYY-MM-DD"))
+  const [supplier, setSupplier] = useState("")
+  const [supplierName, setSupplierName] = useState("")
+  const [pembayaran, setPembayaran] = useState("")
+
 
   useEffect(() => {
+    getDataSupplier();
     getData();
-  }, [page,tanggal]);
+    getDataPDF();
+  }, [page,tanggal,supplier,pembayaran]);
 
   const getData = async () => {
-    const response = await axios.get(`http://localhost:8800/transPenjualanJoinSearch?date=${tanggal}&page=${page}&limit=${limit}`);
+    const response = await axios.get(`http://localhost:8800/transPenjualanJoinSearch?supplier=${supplier}&date=${tanggal}&pembayaran=${pembayaran}&page=${page}&limit=10`);
     setDataPenjualan(response.data.result);
     setPage(response.data.page);
     setPages(response.data.totalPage);
     setRows(response.data.totalRows);
 
-    console.log(response.data)
+    const r = await axios.get(`http://localhost:8800/supplier/${supplier}`)
+    setSupplierName(r.data.nama)
+  };
+
+  const getDataSupplier = async () => {
+    const dataSupplier = await axios.get("http://localhost:8800/supplier")
+    setDataSupllier(dataSupplier.data) 
+  }
+
+  const getDataPDF = async () => {
+    const response = await axios.get(`http://localhost:8800/transPenjualanJoinSearch?supplier=${supplier}&date=${tanggal}&pembayaran=${pembayaran}&page=${page}&limit=0`);
+    setDataPenjualanPdf(response.data.result);
   };
 
   const changePage = ({ selected }) => {
@@ -33,28 +53,104 @@ const tPenjualan = () => {
 
   const changeTanggal = async (e) => {
     setTanggal(e.target.value)
-    getData()
   }
 
-  console.log(dataPenjualan);
-  console.log(tanggal);
+  const simpan = () => {
+      // Deklarasi Pdf
+      const doc = new jsPDF("l", "pt", "a4")
+      doc.setFont("times")
+
+      doc.setFontSize(20)
+      const pageWidthpdf = doc.internal.pageSize.getWidth();
+
+      const totalWidthLaporan = doc.getTextWidth(`Laporan Harian Penjualan`);
+      const totalXLaporan = (pageWidthpdf / 2) - (totalWidthLaporan / 2);
+
+      doc.text(`Laporan Harian Penjualan`, totalXLaporan, 25)
+      doc.setFontSize(16)
+      doc.setFont("times")
+      doc.text( `Tanggal :`, 30, 40)
+      doc.text( moment(tanggal).format("D MMMM YYYY"), 100, 40)
+      doc.text( `Supplier :`, 30, 60)
+      doc.text( supplierName, 100, 60)
+      doc.text( `Pembayaran :`, 650, 60)
+      doc.text( pembayaran, 750, 60)
+
+      doc.autoTable(
+        {
+          head: [['#', 'Faktur', 'Anggota', 'Barang', 'Jumlah', 'Total', 'Tanggal']],
+          body: dataPenjualanPdf.map((val, index) => [
+            index + 1,
+            val.faktur,
+            val.anggota.nama,
+            val.barang.nama,
+            val.jumlah,
+            convertRupiah.convert(val.jumlah * val.barang.hargaJual),
+            moment(val.createdAt).format("D MMMM YYYY")
+          ]),
+          styles: { fontSize: 12 },
+          startY: 70,
+          margin: { left: 3, right: 3 },
+        }
+      )
+
+      let totalText
+
+      let total = 0
+      for (let val of dataPenjualanPdf) {
+        total = total + (val.barang.hargaJual * val.jumlah)
+      }
+
+      totalText = "Total: " + total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })
+
+      let heightTable = doc.lastAutoTable.finalY
+      const pageWidth = doc.internal.pageSize.getWidth();
+
+      const totalWidth = doc.getTextWidth(`${total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}`);
+      const totalX = pageWidth - totalWidth - 70;
+
+      doc.setFont("times", 'bold')
+      doc.text(totalText, totalX, heightTable + 50)
+
+      // window.open(doc.output("bloburl"));
+      
+        doc.save('Laporan Penjualan Per ' + moment(tanggal).format("DD-MM-YYYY") + '.pdf')
+    }
+
+    console.log(dataPenjualan)
 
   return (
     <main id="main">
       <div className="text-center pagetitle">
-        <h1 className="fs-2 fw-bold"> Laporan Penjualan </h1>
+        <h1 className="fs-2 fw-bold"> Laporan Penjualan Harian</h1>
       </div>
       <section className="section">
         <div className="card">
           <div className="card-body">
             <div className="col-lg-12">
               <div className="row">
-                <div className="col-md-2"></div>
+              <div className="col-md-2">
+              <div className="text-end col-md-2 pt-3">
+                  <Link to={"/reportPenjualanBulan"} className="btn btn-info me-3" > Bulan</Link>
+              </div>
+              </div>
                 <div className="text-end col-md-8 pt-3 d-flex justify-content-end">
+                  <select class="form-select" value={pembayaran}  style={{ width: 180,  marginRight: 20}} onChange={(e) => setPembayaran(e.target.value)}>
+                    <option selected value="" >- - Pembayaran --</option>
+                    <option selected value= {"Tunai"} > Tunai </option>
+                    <option selected value= {"Bon"} > Bon </option>
+                    <option selected value= {"QRIS"} > QRIS </option>
+                  </select>
+                  <select class="form-select" value={supplier}  style={{ width: 180,  marginRight: 20}} onChange={(e) => setSupplier(e.target.value)}>
+                    <option value="" >- - Pilih Supplier --</option>
+                      {dataSupplier.map((supplier) => (
+                        <option value={supplier.id}>{supplier.nama}</option>
+                      ))}
+                  </select>
                   <input type="date" className=" form-control" onChange={changeTanggal} value={tanggal} style={{ width: 180 }} />
                 </div>
                 <div className="text-end col-md-2 pt-3">
-                  <button className="btn btn-success me-3"> Simpan</button>
+                  <button className="btn btn-success me-3" onClick={ simpan }> Simpan</button>
                 </div>
                 <table className="table mt-2">
                   <thead>
@@ -66,6 +162,7 @@ const tPenjualan = () => {
                       <th scope="col">Jumlah</th>
                       <th scope="col">Total</th>
                       <th scope="col">Tanggal</th>
+                      <th scope="col">Pembayaran</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -76,8 +173,9 @@ const tPenjualan = () => {
                         <td>{data.anggota.nama}</td>
                         <td>{data.barang.nama}</td>
                         <td>{data.jumlah}</td>
-                        <td>{convertRupiah.convert(data.harga * data.jumlah)}</td>
-                        <td>{moment(data.waktuJual).format("D MMMM YYYY")}</td>
+                        <td>{convertRupiah.convert(data.barang.hargaJual * data.jumlah)}</td>
+                        <td>{moment(data.createdAt).format("D MMMM YYYY")}</td>
+                        <td>{(data.typePembayaran)}</td>
                       </tr>
                     ))}
                   </tbody>

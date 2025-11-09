@@ -1,9 +1,16 @@
-import axios from "../../api/axios"
+import axios from "../../api/axios";
 
 const getTransPembelian = async () => {
-    const response = await axios.get('/transPembelian')
+  const response = await axios.get("/transPembelian");
 
-    return response.data
-}
+  return response.data;
+};
+export const cariTransaksi = async (faktur, barangId) => {
+  let res = await axios.get(
+    `cariPembelian?faktur=${faktur}&barangId=${barangId}`
+  );
 
-export default getTransPembelian
+  return res.data;
+};
+
+export default getTransPembelian;

@@ -11,6 +11,7 @@ class TambahAnggota extends Component {
     this.state = {
       nama: "",
       noHP: "",
+      error: ""
     };
   }
 
@@ -19,7 +20,6 @@ class TambahAnggota extends Component {
       getAnggotaId(this.props.params.id).then((data) => {
         this.setState({
           nama: data.nama,
-          nik: data.nik,
           noHP: data.noHP,
         });
       });
@@ -48,42 +48,62 @@ class TambahAnggota extends Component {
     // params id
     const id = params.id;
 
-    const tambahAnggota = async (e) => {
-      e.preventDefault();
-      if (id == undefined)
-        try {
-          await axios.post("/anggota", {
-            nama: this.state.nama,
-            noHP: this.state.noHP,
-          });
-          Toast.fire({
-            icon: "success",
-            title: "Data Berhasil di Tambahkan!",
-          });
-          navigate("/anggota");
-        } catch (error) {
-          console.error(error);
-        }
-      else {
-        try {
-          await axios.put(`/anggota/${id}`, {
-            nama: this.state.nama,
-            noHP: this.state.noHP,
-          });
-          Toast.fire({
-            icon: "success",
-            title: "Data Berhasil di Ubah!",
-          });
-          this.setState({
-            nama: "",
-            noHP: "",
-          });
-          navigate("/anggota");
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    };
+  const tambahAnggota = async (e) => {
+  e.preventDefault();
+
+  if (id === undefined) {
+    try {
+      await axios.post("/anggota", {
+        nama: this.state.nama,
+        noHP: this.state.noHP,
+      });
+
+      Toast.fire({
+        icon: "success",
+        title: "Data Berhasil di Tambahkan!",
+      });
+
+      navigate("/anggota");
+    } catch (error) {
+      const msg = error.response?.data?.msg || "Gagal menambahkan data!";
+
+      Swal.fire({
+        icon: "error",
+        title: "Terjadi Kesalahan",
+        text: msg,
+        confirmButtonText: "OK",
+      });
+    }
+  } else {
+    try {
+      await axios.put(`/anggota/${id}`, {
+        nama: this.state.nama,
+        noHP: this.state.noHP,
+      });
+
+      Toast.fire({
+        icon: "success",
+        title: "Data Berhasil di Ubah!",
+      });
+
+      this.setState({
+        nama: "",
+        noHP: "",
+      });
+
+      navigate("/anggota");
+    } catch (error) {
+      const msg = error.response?.data?.msg || "Gagal mengubah data!";
+      Swal.fire({
+        icon: "error",
+        title: "Terjadi Kesalahan",
+        text: msg,
+        confirmButtonText: "OK",
+      });
+    }
+  }
+};
+
 
     return (
       <main id="main" className="main">

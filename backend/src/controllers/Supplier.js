@@ -5,7 +5,7 @@ const getSupplier = async (req, res) => {
     try {
         const supplier = await supplierModel.findAll({
             order: [
-                ['nama', 'ASC']
+                ['id', 'ASC']
             ]
         })
         res.status(200).json(supplier)
@@ -94,6 +94,16 @@ const getSearchSupplier = async (req, res) => {
 const tambahSupplier = async (req, res) => {
     try {
         const { nama, noHP, alamat } = req.body
+
+        if (!nama || nama.trim() === "") {
+        return res.status(400).json({ msg: "Nama tidak boleh kosong!" });}
+
+             // Cek apakah nama sudah ada di database
+        const existingSupplier = await supplierModel.findOne({ where: { nama } });
+        if (existingSupplier) {
+        return res.status(400).json({ msg: "Nama sudah terdaftar, gunakan nama lain!" });
+        }
+
         await supplierModel.create({
             nama, noHP, alamat
         })
@@ -107,6 +117,16 @@ const tambahSupplier = async (req, res) => {
 const editSupplier = async (req, res) => {
     try {
         const { nama, noHP, alamat } = req.body
+
+        if (!nama || nama.trim() === "") {
+        return res.status(400).json({ msg: "Nama tidak boleh kosong!" });}
+
+             // Cek apakah nama sudah ada di database
+        const existingSupplier = await supplierModel.findOne({ where: { nama } });
+        if (existingSupplier) {
+        return res.status(400).json({ msg: "Nama sudah terdaftar, gunakan nama lain!" });
+        }
+
         await supplierModel.update({
             nama, noHP, alamat
         }, {

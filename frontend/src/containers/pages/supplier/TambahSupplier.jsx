@@ -47,40 +47,64 @@ class TambahSupplier extends Component {
     // params id
     const id = params.id;
 
-    const tambah = async (e) => {
-      e.preventDefault();
-      if (id == undefined) {
-        try {
-          await axios.post("/supplier", {
-            nama: this.state.nama,
-            noHP: this.state.noHP,
-            alamat: this.state.alamat,
-          });
-          Toast.fire({
-            icon: "success",
-            title: "Data Berhasil di Tambahkan!",
-          });
-          navigate("/supplier");
-        } catch (error) {
-          console.error(error);
-        }
-      } else {
-        try {
-          await axios.put(`/supplier/${id}`, {
-            nama: this.state.nama,
-            noHP: this.state.noHP,
-            alamat: this.state.alamat,
-          });
-          Toast.fire({
-            icon: "success",
-            title: "Data Berhasil di Edit!",
-          });
-          navigate("/supplier");
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    };
+  const tambah = async (e) => {
+  e.preventDefault();
+
+  if (id === undefined) {
+    try {
+      await axios.post("/supplier", {
+        nama: this.state.nama,
+        noHP: this.state.noHP,
+        alamat: this.state.alamat,
+      });
+
+      Toast.fire({
+        icon: "success",
+        title: "Data Berhasil di Tambahkan!",
+      });
+
+      navigate("/supplier");
+    } catch (error) {
+      const msg = error.response?.data?.msg || "Gagal menambahkan data!";
+
+      Swal.fire({
+        icon: "error",
+        title: "Terjadi Kesalahan",
+        text: msg,
+        confirmButtonText: "OK",
+      });
+    }
+  } else {
+    try {
+      await axios.put(`/supplier/${id}`, {
+        nama: this.state.nama,
+        noHP: this.state.noHP,
+        alamat: this.state.alamat,
+      });
+
+      Toast.fire({
+        icon: "success",
+        title: "Data Berhasil di Ubah!",
+      });
+
+      this.setState({
+        nama: "",
+        noHP: "",
+      });
+
+      navigate("/supplier");
+    } catch (error) {
+      const msg = error.response?.data?.msg || "Gagal mengubah data!";
+      Swal.fire({
+        icon: "error",
+        title: "Terjadi Kesalahan",
+        text: msg,
+        confirmButtonText: "OK",
+      });
+    }
+  }
+};
+
 
     return (
       <main id="main" class="main">
