@@ -78,7 +78,7 @@ const CartList = (props) => {
         props.handleTypeBayar(dataPenjualan.typePembayaran);
       }
 
-      if(props.faktur){
+      if (props.faktur) {
         getTotalHarga(props.faktur).then((data) => {
           setHargaJual(data);
         });
@@ -153,9 +153,9 @@ const CartList = (props) => {
       <div className="col-lg-12">
         <div className="row">
           <div className="col-md-9">
-            <h1 className="card-title mt-1 fw-bold">Faktur : { props.faktur }</h1>
+            <h1 className="card-title mt-1 fw-bold">Faktur : {props.faktur}</h1>
           </div>
-          { displaySearch && (
+          {displaySearch && (
             <div className="col-md-3">
               <div className="search-bar text-center mt-3">
                 <form className="search-form d-flex align-items-center" method="POST" action="#">
@@ -169,30 +169,30 @@ const CartList = (props) => {
                         title="Enter search keyword"
                         aria-label="Recipient's username"
                         aria-describedby="button-addon2"
-                        value={ searchFaktur }
-                        onChange={ (e) => setSearchFaktur(e.target.value) }
-                        onClick={ () => setDisplayAutoFaktur(!displayAutoFaktur) }
+                        value={searchFaktur}
+                        onChange={(e) => setSearchFaktur(e.target.value)}
+                        onClick={() => setDisplayAutoFaktur(!displayAutoFaktur)}
                       />
-                      { displayAutoFaktur && (
+                      {displayAutoFaktur && (
                         <div className="flex-container flex-column pos-rel bodyAutoComplate position-relative">
                           <ul className="list-group list-group-flush">
-                            { dataFilterFaktur
+                            {dataFilterFaktur
                               .filter(({ faktur }) => faktur.indexOf(searchFaktur) > -1)
                               .map((v, i) => (
-                                <li key={ i } onClick={ () => handleAutoFaktur(v.faktur) } className="list-group-item listAutoComplate">
-                                  { " " }
-                                  { v.faktur }
+                                <li key={i} onClick={() => handleAutoFaktur(v.faktur)} className="list-group-item listAutoComplate">
+                                  {" "}
+                                  {v.faktur}
                                 </li>
-                              )) }
+                              ))}
                           </ul>
                         </div>
-                      ) }
+                      )}
                     </div>
                   </div>
                 </form>
               </div>
             </div>
-          ) }
+          )}
         </div>
       </div>
       <table className="table">
@@ -208,37 +208,37 @@ const CartList = (props) => {
           </tr>
         </thead>
         <tbody>
-          { transaksi
+          {transaksi
             .filter(({ faktur }) => faktur == props.faktur)
             .map((val, index) => (
-              <tr key={ index }>
-                <th>{ index + 1 }</th>
-                <td>{ val.anggota.nama }</td>
-                <td>{ val.barang.nama }</td>
-                <td>{ val.barang.jenisBarang }</td>
-                <td>{ display && val.id == idEdit
+              <tr key={index}>
+                <th>{index + 1}</th>
+                <td>{val.anggota.nama}</td>
+                <td>{val.barang.nama}</td>
+                <td>{val.barang.jenisBarang}</td>
+                <td>{display && val.id == idEdit
                   ?
-                  <input type="text" className="form-control" id="jumlah" value={ jumlah } onChange={ (e) => setJumlah(e.target.value) } /> : val.jumlah }</td>
-                <td>{ val.barang.hargaJual }</td>
+                  <input type="text" className="form-control" id="jumlah" value={jumlah} onChange={(e) => setJumlah(e.target.value)} /> : val.jumlah}</td>
+                <td>{val.barang.hargaJual}</td>
                 <td>
-                  { display && val.id == idEdit
+                  {display && val.id == idEdit
                     ?
                     (
                       <>
-                        <button className="btn btn-warning" onClick={ batal }>Batal</button>
-                        <button className="btn btn-success" onClick={ () => save(val.barang.hargaJual) }>
+                        <button className="btn btn-warning" onClick={batal}>Batal</button>
+                        <button className="btn btn-success" onClick={() => save(val.barang.hargaJual)}>
                           Save
                         </button>
                       </>
                     ) : (
                       <>
-                        <button className="btn btn-warning bx bx-edit-alt text-black-50 me-2" onClick={ () => handleEditJumlah(val.id, val.jumlah) } />
-                        <button className="bx bx-trash btn btn-danger " onClick={ () => handleHapusTransaksi(val.id) } />
+                        {/* <button className="btn btn-warning bx bx-edit-alt text-black-50 me-2" onClick={ () => handleEditJumlah(val.id, val.jumlah) } /> */}
+                        <button className="bx bx-trash btn btn-danger " onClick={() => handleHapusTransaksi(val.id)} />
                       </>
-                    ) }
+                    )}
                 </td>
               </tr>
-            )) }
+            ))}
         </tbody>
       </table>
       <div className="col-lg-12 sticky-footer">
@@ -248,18 +248,18 @@ const CartList = (props) => {
               <h1 className="card-title text-end fw-bold fs-1">TOTAL :</h1>
             </div>
             <div className="col-md-5">
-              <h1 className="card-title text-end fs-1 fw-bold">{ hargaJual.toLocaleString("id-ID", { style: "currency", currency: "IDR" }) }</h1>
+              <h1 className="card-title text-end fs-1 fw-bold">{hargaJual.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}</h1>
             </div>
             <div className="col-md-12 ">
               <button className=" btn mt-auto fs-3 fw-normal btn-success bx bx-printer" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                onClick={ () => setRefresh(!refresh) }></button>
+                onClick={() => setRefresh(!refresh)}></button>
             </div>
           </div>
         </div>
       </div>
-      {/* <!-- Modal Chekout--> */ }
-      <ModalCheckout transaksiProps={ transaksi } totalHarga={ hargaJual }
-        refreshAutoFokus={ refreshAutoFokus } refresh={ refresh } />
+      {/* <!-- Modal Chekout--> */}
+      <ModalCheckout transaksiProps={transaksi} totalHarga={hargaJual}
+        refreshAutoFokus={refreshAutoFokus} refresh={refresh} />
     </>
   );
 };

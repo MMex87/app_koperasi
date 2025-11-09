@@ -38,9 +38,9 @@ class TransPenjualan extends Component {
       });
 
     }
-    getTransPenjualan().then((data) => {
-      this.setState({ penjualan: data });
-    });
+    // getTransPenjualan().then((data) => {
+    //   this.setState({ penjualan: data });
+    // });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -92,12 +92,6 @@ class TransPenjualan extends Component {
         ).id;
       }
       let trans = this.state.penjualan.find(({ faktur, barangId, anggotaId }) => faktur == fakturLokal && barangId == barangIdLokal && anggotaId == anggotaIdLokal)
-      console.log(anggota)
-      console.log(barang)
-      console.log(typePembayaran)
-      console.log(harga)
-      console.log(fakturLokal)
-      console.log(jumlah)
 
       try {
         if (
