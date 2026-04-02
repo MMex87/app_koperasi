@@ -95,21 +95,12 @@ const addCartManual = (props) => {
         <label htmlFor="kodeBarang" className="form-label">
           Kode Barang
         </label>
-        <input
-          type="text"
-          className="form-control"
-          id="kodeBarang"
-          value={props.kodeBarang}
-          onChange={handleChangeKodeBarang}
-          onClick={() => setDisplayKode(!displayKode)}
-        />
+        <input type="text" className="form-control" id="kodeBarang" value={props.kodeBarang} onChange={handleChangeKodeBarang} onClick={() => setDisplayKode(!displayKode)} />
         {displayKode && (
           <div className="flex-container flex-column pos-rel bodyAutoComplate">
             <ul className="list-group list-group-flush">
               {barangKode
-                .filter(
-                  ({ kodeBarang }) => kodeBarang.indexOf(props.kodeBarang) > -1
-                )
+                .filter(({ kodeBarang }) => kodeBarang.indexOf(props.kodeBarang) > -1)
                 .map((v, i) => (
                   <li
                     key={i}
@@ -129,14 +120,7 @@ const addCartManual = (props) => {
         <label htmlFor="namabarang" className="form-label">
           Nama Barang
         </label>
-        <input
-          type="text"
-          className="form-control"
-          id="namabarang"
-          value={props.namaBarang}
-          onChange={handleChangeNamaBarang}
-          onClick={() => setDisplayNama(!displayNama)}
-        />
+        <input type="text" className="form-control" id="namabarang" value={props.namaBarang} onChange={handleChangeNamaBarang} onClick={() => setDisplayNama(!displayNama)} />
         {displayNama && (
           <div className="flex-container flex-column pos-rel bodyAutoComplate">
             <ul className="list-group list-group-flush">
@@ -161,26 +145,13 @@ const addCartManual = (props) => {
         <label htmlFor="jumlah" className="form-label">
           Jumlah
         </label>
-        <input
-          type="text"
-          className="form-control"
-          id="jumlah"
-          value={props.jumlah}
-          onChange={(e) => props.handleJumlah(e.target.value)}
-        />
+        <input type="number" className="form-control" id="jumlah" value={props.jumlah} onChange={(e) => props.handleJumlah(e.target.value)} />
       </div>
       <div className="col-md-3">
         <label htmlFor="harga" className="form-label">
           Harga
         </label>
-        <input
-          type="text"
-          className="form-control"
-          disabled
-          id="harga"
-          value={props.harga}
-          onChange={(e) => props.handleHargaBarang(e.target.value)}
-        />
+        <input type="number" className="form-control" disabled id="harga" value={props.harga} onChange={(e) => props.handleHargaBarang(e.target.value)} />
       </div>
     </>
   );
@@ -202,10 +173,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    handleAnggota: (anggota) =>
-      dispatch({ type: ActionType.SET_ANGGOTA_PENJUALAN, index: anggota }),
-    handleTypeBayar: (typeBayar) =>
-      dispatch({ type: ActionType.SET_TYPE_BAYAR_PENJUALAN, index: typeBayar }),
+    handleAnggota: (anggota) => dispatch({ type: ActionType.SET_ANGGOTA_PENJUALAN, index: anggota }),
+    handleTypeBayar: (typeBayar) => dispatch({ type: ActionType.SET_TYPE_BAYAR_PENJUALAN, index: typeBayar }),
     handleKodeBarang: (kodeBarang) =>
       dispatch({
         type: ActionType.SET_KODE_BARANG_PENJUALAN,
@@ -216,16 +185,11 @@ const mapDispatchToProps = (dispatch) => {
         type: ActionType.SET_NAMA_BARANG_PENJUALAN,
         index: namaBarang,
       }),
-    handleJumlah: (jumlah) =>
-      dispatch({ type: ActionType.SET_JUMLAH_PENJUALAN, index: jumlah }),
-    handlejenisBarang: (jenisBarang) =>
-      dispatch({ type: ActionType.SET_JENIS_PENJUALAN, index: jenisBarang }),
-    handleHargaBarang: (hargaBarang) =>
-      dispatch({ type: ActionType.SET_HARGA_PENJUALAN, index: hargaBarang }),
-    handleFakturPenjualan: (faktur) =>
-      dispatch({ type: ActionType.SET_FAKTUR_PENJUALAN, index: faktur }),
-    handleSupplierIdPenjualan: (supplier) =>
-      dispatch({ type: ActionType.SET_ID_SUPPLIER_PENJUALAN, index: supplier }),
+    handleJumlah: (jumlah) => dispatch({ type: ActionType.SET_JUMLAH_PENJUALAN, index: jumlah }),
+    handlejenisBarang: (jenisBarang) => dispatch({ type: ActionType.SET_JENIS_PENJUALAN, index: jenisBarang }),
+    handleHargaBarang: (hargaBarang) => dispatch({ type: ActionType.SET_HARGA_PENJUALAN, index: hargaBarang }),
+    handleFakturPenjualan: (faktur) => dispatch({ type: ActionType.SET_FAKTUR_PENJUALAN, index: faktur }),
+    handleSupplierIdPenjualan: (supplier) => dispatch({ type: ActionType.SET_ID_SUPPLIER_PENJUALAN, index: supplier }),
   };
 };
 

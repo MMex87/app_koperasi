@@ -1,20 +1,18 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import Router from './router/index';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import Router from "./router/index";
 
+import { createStore } from "redux";
+import { Provider } from "react-redux";
+import rootReducer from "./redux/reducer/globalReducer";
 
-import { createStore } from 'redux'
-import { Provider } from 'react-redux'
-import rootReducer from './redux/reducer/globalReducer'
+const store = createStore(rootReducer);
 
-const store = createStore(rootReducer)
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Provider store={ store }>
+    <Provider store={store}>
       <Router />
     </Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
-

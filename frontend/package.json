@@ -9,6 +9,8 @@
     "axios": "^1.6.2",
     "bootstrap": "^5.2.3",
     "convert-rupiah": "^1.0.1",
+    "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.28",
     "moment": "^2.29.4",

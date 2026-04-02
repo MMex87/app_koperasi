@@ -7,7 +7,7 @@ const Header = () => {
       <div className="d-flex align-items-center justify-content-between">
         <Link to="/" className="logo d-flex align-items-center">
           <img src={"assets/img/logo_koperasi.png"} />
-          <span className="d-none d-lg-block">Kantin</span>
+          <span className="d-none d-lg-block">Caffee</span>
         </Link>
       </div>
       <nav className="header-nav ms-auto">

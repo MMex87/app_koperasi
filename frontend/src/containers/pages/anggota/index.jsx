@@ -1,178 +1,175 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "../../../api/axios.jsx";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import ReactPaginate from "react-paginate";
-import getAnggota from "../../../utils/anggota/getAnggota.jsx";
 import getSearchAnggota from "../../../utils/anggota/getSearchAnggota.jsx";
 
-export class Anggota extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      anggota: [],
-      search: "",
-      page: 0,
-      limit: 10,
-      pages: 0,
-      rows: 0,
-    };
-  }
+const Anggota = () => {
+  const [anggota, setAnggota] = useState([]);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(0);
+  const [limit] = useState(10);
+  const [pages, setPages] = useState(0);
+  const [rows, setRows] = useState(0);
 
-  componentDidMount() {
-    getSearchAnggota(this.state.search, this.state.limit, this.state.page).then((data) => {
-      this.setState({ anggota: data.result });
-      this.setState({ page: data.page });
-      this.setState({ pages: data.totalPage });
-      this.setState({ rows: data.totalRows });
+  // edit state
+  const [anggotaId, setAnggotaId] = useState(0);
+  const [namaAnggota, setNamaAnggota] = useState("");
+  const [noHp, setNoHp] = useState("");
+
+  // Load data pertama kali
+  useEffect(() => {
+    loadAnggota();
+  }, []);
+
+  // Load ketika page / search berubah
+  useEffect(() => {
+    loadAnggota();
+  }, [page, search, anggotaId]);
+
+  const loadAnggota = () => {
+    getSearchAnggota(search, limit, page).then((data) => {
+      setAnggota(data.result);
+      setPage(data.page);
+      setPages(data.totalPage);
+      setRows(data.totalRows);
     });
-  }
+  };
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.page != prevState.page || this.state.search != prevState.search) {
-      getSearchAnggota(this.state.search, this.state.limit, this.state.page).then((data) => {
-        this.setState({ anggota: data.result });
-        this.setState({ page: data.page });
-        this.setState({ pages: data.totalPage });
-        this.setState({ rows: data.totalRows });
+  // Pagination
+  const changePage = ({ selected }) => {
+    setPage(selected);
+  };
+
+  const edit = (id, nama, noHp) => {
+    setAnggotaId(id);
+    setNamaAnggota(nama);
+    setNoHp(noHp);
+  };
+
+  const Toast = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-success",
+      cancelButton: "btn btn-danger",
+    },
+    buttonsStyling: false,
+  });
+
+  const batal = () => {
+    setAnggotaId(0);
+    setNamaAnggota("");
+    setNoHp("");
+  };
+
+  // Edit data anggota
+  const save = async () => {
+    try {
+      await axios.put(`/anggota/${anggotaId}`, {
+        nama: namaAnggota,
+        noHP: noHp,
       });
+      batal();
+      loadAnggota();
+    } catch (error) {
+      console.error(error);
     }
-  }
+  };
 
-  render() {
+  console.log(noHp);
 
-    const Toast = Swal.mixin({
-      customClass: {
-        confirmButton: "btn btn-success",
-        cancelButton: "btn btn-danger",
-      },
-      buttonsStyling: false,
-    });
+  return (
+    <main id="main" className="main">
+      <div className="pagetitle text-center">
+        <h1 className="fw-bold fs-2">Data Anggota</h1>
+      </div>
 
-    // handle Pagination
-    const changePage = ({ selected }) => {
-      this.setState({ page: selected });
-    };
-
-    const handleDelete = (val) => {
-      try {
-        Toast.fire({
-          title: "Hapus Data ?",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonText: "Hapus!",
-          cancelButtonText: "Tidak!",
-          reverseButtons: true,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            axios.delete(`/anggota/${val}`);
-            Toast.fire("Berhasil", "Data Anggota Dihapus", "success");
-            getSearchAnggota(this.state.search, this.state.limit, this.state.page).then((data) => {
-              this.setState({ anggota: data.result });
-              this.setState({ page: data.page });
-              this.setState({ pages: data.totalPage });
-              this.setState({ rows: data.totalRows });
-            });
-          } else if (
-            /* Read more about handling dismissals below */
-            result.dismiss === Swal.DismissReason.cancel
-          ) {
-            Toast.fire("Gagal", "Data Aggota Aman", "error");
-          }
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    return (
-      <main id="main" className="main">
-        <div className="pagetitle text-center">
-          <h1 className="fw-bold fs-2">Data Anggota</h1>
-        </div>
-        <section className="section">
-          <div className="card">
-            <div className="card-body">
-              <div className="col-lg-12">
-                <div className="row">
-                  <div className="col-md-8"></div>
-                  <div className="col-md-3">
-                    <div className="search-bar text-center mt-3">
-                      <form className="search-form d-flex align-items-center" method="POST" action="#">
-                        <div className="input-group mb-3">
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="query"
-                            placeholder="Cari Anggota"
-                            title="Enter search keyword"
-                            aria-label="Recipient's username"
-                            aria-describedby="button-addon2"
-                            onChange={ (e) => this.setState({ search: e.target.value }) }
-                          />
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                  <div className="col-1">
-                    <Link to="/anggota/tambah">
-                      <img src={ "assets/img/add.svg" } alt="" id="add" />
-                    </Link>
-                  </div>
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nama Anggota</th>
-                        <th scope="col">Nomor Handphone</th>
-                        <th scope="col">Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      { this.state.anggota.map((val, index) => (
-                        <tr key={ index }>
-                          <th>{ index + 1 }</th>
-                          <td>{ val.nama }</td>
-                          <td>{ val.noHP }</td>
-                          <td>
-                            <Link className="btn btn-warning bx bx-edit-alt text-black-50 me-2" to={ `edit/${val.id}` } />
-                            {/* <button className="bx bx-trash btn btn-danger " onClick={ () => handleDelete(val.id) } /> */ }
-                          </td>
-                        </tr>
-                      )) }
-                    </tbody>
-                  </table>
-                  <div className="p-3">
-                    <div className="d-flex justify-content-between">
-                      <p className="text-center">
-                        Total Anggota: { this.state.rows } Page: { this.state.rows ? this.state.page + 1 : 0 } of { this.state.pages }
-                      </p>
-                      <nav aria-label="Page navigate example justify-content-end">
-                        <ReactPaginate
-                          previousLabel={ "< Prev" }
-                          nextLabel={ "Next >" }
-                          pageCount={ this.state.pages }
-                          onPageChange={ changePage }
-                          containerClassName={ "pagination" }
-                          pageLinkClassName={ "page-link" }
-                          pageClassName={ "page-item" }
-                          previousLinkClassName={ "page-link" }
-                          previousClassName={ "page-item" }
-                          nextClassName={ "page-item" }
-                          nextLinkClassName={ "page-link" }
-                          activeClassName={ "active" }
-                        />
-                      </nav>
-                    </div>
-                  </div>
-                </div>
+      <section className="section">
+        <div className="card shadow-sm">
+          <div className="card-body p-4">
+            {/* Search + Tambah */}
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <div className="input-group search-group" style={{ maxWidth: "300px" }}>
+                <span className="input-group-text bg-white">
+                  <i className="bi bi-search"></i>
+                </span>
+                <input type="text" className="form-control" placeholder="Cari Anggota..." onChange={(e) => setSearch(e.target.value)} />
               </div>
+
+              <Link to="/anggota/tambah" className="btn btn-primary btn-sm px-3">
+                <i className="bi bi-plus-lg"></i> Tambah
+              </Link>
+            </div>
+
+            {/* TABLE */}
+            <table className="table table-striped table-hover align-middle">
+              <thead className="table-dark">
+                <tr>
+                  <th>#</th>
+                  <th>Nama</th>
+                  <th>No HP</th>
+                  <th className="text-center">Aksi</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {anggota.map((val, index) => (
+                  <tr key={index} className={anggotaId === val.id ? "table-warning" : ""}>
+                    <td>{index + 1}</td>
+                    {/* NAMA */}
+                    <td>{anggotaId === val.id ? <input type="text" className="form-control form-control-sm" value={namaAnggota} onChange={(e) => setNamaAnggota(e.target.value)} /> : val.nama}</td>
+
+                    {/* KODE */}
+                    <td>{anggotaId === val.id ? <input type="number" className="form-control form-control-sm" value={noHp} onChange={(e) => setNoHp(e.target.value)} /> : val.noHP}</td>
+
+                    {/* BUTTON AKSI */}
+                    <td className="text-center" style={{ width: "150px" }}>
+                      {anggotaId === val.id ? (
+                        <>
+                          <button className="btn btn-sm btn-secondary me-1" onClick={batal}>
+                            <i className="bi bi-x-lg"></i> Batal
+                          </button>
+                          <button className="btn btn-sm btn-success" onClick={save}>
+                            <i className="bi bi-check-lg"></i> Simpan
+                          </button>
+                        </>
+                      ) : (
+                        <button className="btn btn-sm btn-warning" onClick={() => edit(val.id, val.nama, val.noHP)}>
+                          <i className="bi bi-pencil-square"></i> Edit
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* PAGINATION */}
+            <div className="d-flex justify-content-between align-items-center mt-3">
+              <p className="m-0">
+                Total Anggota: <b>{rows}</b> — Halaman <b>{page + 1}</b> dari <b>{pages}</b>
+              </p>
+
+              <ReactPaginate
+                previousLabel={"‹"}
+                nextLabel={"›"}
+                pageCount={pages}
+                onPageChange={changePage}
+                containerClassName={"pagination pagination-sm m-0"}
+                pageClassName={"page-item"}
+                pageLinkClassName={"page-link"}
+                previousClassName={"page-item"}
+                previousLinkClassName={"page-link"}
+                nextClassName={"page-item"}
+                nextLinkClassName={"page-link"}
+                activeClassName={"active"}
+              />
             </div>
           </div>
-        </section>
-      </main>
-    );
-  }
-}
+        </div>
+      </section>
+    </main>
+  );
+};
 
 export default Anggota;

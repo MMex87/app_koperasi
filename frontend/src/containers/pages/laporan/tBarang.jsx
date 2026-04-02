@@ -100,15 +100,15 @@ const tBarang = () => {
                 <div class="container text-center">
                   <div class="col-lg-10"></div>
                   <div className="text-end mt-3 me-3">
-                    <button className="btn btn-success" onClick={download}>
+                    <button className="btn btn-sm btn-success mb-2" onClick={download}>
                       Simpan
                     </button>
                   </div>
                 </div>
               </div>
 
-              <table className="table mt-2">
-                <thead>
+              <table className="table table-striped table-hover align-middle">
+                <thead className="table-dark">
                   <tr>
                     <th scope="col">#</th>
                     <th scope="col">Barang</th>
@@ -129,28 +129,25 @@ const tBarang = () => {
                   ))}
                 </tbody>
               </table>
-              <div className="p-3">
-                <div className="d-flex justify-content-between">
-                  <p className="text-center">
-                    Total Rows : {rows} Page: {rows ? page + 1 : 0} of {pages}
-                  </p>
-                  <nav aria-label="Page navigate example justify-content-end">
-                    <ReactPaginate
-                      previousLabel={"< Prev"}
-                      nextLabel={"Next >"}
-                      pageCount={pages}
-                      onPageChange={changePage}
-                      containerClassName={"pagination"}
-                      pageLinkClassName={"page-link"}
-                      pageClassName={"page-item"}
-                      previousLinkClassName={"page-link"}
-                      previousClassName={"page-item"}
-                      nextClassName={"page-item"}
-                      nextLinkClassName={"page-link"}
-                      activeClassName={"active"}
-                    />
-                  </nav>
-                </div>
+              <div className="d-flex justify-content-between align-items-center mt-3">
+                <p className="m-0">
+                  Data <b>{rows}</b> — Halaman <b>{page + 1}</b> dari <b>{pages}</b>
+                </p>
+
+                <ReactPaginate
+                  previousLabel={"‹"}
+                  nextLabel={"›"}
+                  pageCount={pages}
+                  onPageChange={changePage}
+                  containerClassName={"pagination pagination-sm m-0"}
+                  pageClassName={"page-item"}
+                  pageLinkClassName={"page-link"}
+                  previousClassName={"page-item"}
+                  previousLinkClassName={"page-link"}
+                  nextClassName={"page-item"}
+                  nextLinkClassName={"page-link"}
+                  activeClassName={"active"}
+                />
               </div>
             </div>
           </div>
