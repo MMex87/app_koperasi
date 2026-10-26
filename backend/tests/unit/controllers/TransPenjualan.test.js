@@ -9,11 +9,23 @@
 
 const { validPenjualanData, incompletePenjualanData, negativeJumlahData, zeroJumlahData, mockTransPenjualan, mockBarang } = require("../../fixtures/mockData");
 
-// Mock semua models sebelum import controller
-jest.mock("../../../src/model/TransPenjualanModel");
-jest.mock("../../../src/model/BarangModel");
-jest.mock("../../../src/model/AnggotaModel");
-jest.mock("../../../src/model/SupplierModel");
+// Mock semua models sebelum import controller (pakai factory: automock tetap menjalankan definisi model + relasi Sequelize)
+jest.mock("../../../src/config/database.js", () => ({}));
+jest.mock("../../../src/config/config.js", () => ({ idAnggotaCustomer: "354" }));
+jest.mock("../../../src/model/TransPenjualanModel", () => ({
+  create: jest.fn(),
+  findAll: jest.fn(),
+  findOne: jest.fn(),
+  findByPk: jest.fn(),
+  update: jest.fn(),
+  destroy: jest.fn(),
+}));
+jest.mock("../../../src/model/BarangModel", () => ({}));
+jest.mock("../../../src/model/AnggotaModel", () => ({}));
+jest.mock("../../../src/model/SupplierModel", () => ({}));
+jest.mock("../../../src/model/LogPenjualanModel.js", () => ({}));
+jest.mock("../../../src/model/PembatalanModel.js", () => ({}));
+jest.mock("../../../src/model/JejakAdminModel.js", () => ({}));
 
 const transPenjualanModel = require("../../../src/model/TransPenjualanModel");
 const barangModel = require("../../../src/model/BarangModel");
@@ -153,7 +165,7 @@ describe("TransPenjualan Controller - Unit Tests", () => {
   // TEST CASE: editPenjualan
   // ================================
   describe("editPenjualan", () => {
-    // TEST 8: Positive - Berhasil update
+    // TEST 8: Positive - Berhasil update item keranjang (status selesai hanya lewat checkout)
     it("✅ harus berhasil mengupdate data penjualan", async () => {
       mockReq.params.id = "1";
       mockReq.body = {
@@ -163,9 +175,10 @@ describe("TransPenjualan Controller - Unit Tests", () => {
         typePembayaran: "Tunai",
         anggotaId: 1,
         barangId: 1,
-        statusPenjualan: "Selesai",
+        statusPenjualan: "onProcess",
       };
 
+      transPenjualanModel.findByPk.mockResolvedValue({ ...mockTransPenjualan, statusPenjualan: "onProcess" });
       transPenjualanModel.update.mockResolvedValue([1]);
 
       await editPenjualan(mockReq, mockRes);
@@ -181,6 +194,7 @@ describe("TransPenjualan Controller - Unit Tests", () => {
       mockReq.params.id = "1";
       mockReq.body = validPenjualanData;
 
+      transPenjualanModel.findByPk.mockResolvedValue({ ...mockTransPenjualan, statusPenjualan: "onProcess" });
       transPenjualanModel.update.mockRejectedValue(new Error("Update error"));
 
       await editPenjualan(mockReq, mockRes);

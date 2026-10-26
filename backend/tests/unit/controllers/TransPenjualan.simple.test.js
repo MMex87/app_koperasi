@@ -24,6 +24,11 @@ jest.doMock("../../../src/model/TransPenjualanModel", () => ({
 jest.doMock("../../../src/model/BarangModel", () => ({}));
 jest.doMock("../../../src/model/AnggotaModel", () => ({}));
 jest.doMock("../../../src/model/SupplierModel", () => ({}));
+jest.doMock("../../../src/model/LogPenjualanModel", () => ({}));
+jest.doMock("../../../src/model/PembatalanModel", () => ({}));
+jest.doMock("../../../src/model/JejakAdminModel", () => ({}));
+jest.doMock("../../../src/config/database", () => ({}));
+jest.doMock("../../../src/config/config", () => ({ idAnggotaCustomer: "354" }));
 
 // Valid test data
 const validPenjualanData = {
