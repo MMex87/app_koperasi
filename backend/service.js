@@ -34,6 +34,20 @@ svc.on("stop", () => {
   console.log("Service stopped!");
 });
 
+// node-windows menganggap service terpasang jika file daemon/*.exe & *.xml ada, walau belum terdaftar di Windows
+svc.on("alreadyinstalled", () => {
+  console.log("Service sudah terpasang (file di folder daemon sudah ada).");
+  console.log("Jika service tidak ada di services.msc, hapus file .exe/.xml/.exe.config di folder daemon lalu install ulang.");
+});
+
+svc.on("invalidinstallation", () => {
+  console.log("Instalasi service tidak lengkap. Jalankan uninstall lalu install ulang.");
+});
+
+svc.on("error", (err) => {
+  console.error("Error service:", err);
+});
+
 // Eksekusi sesuai argumen
 switch (action) {
   case "install":
