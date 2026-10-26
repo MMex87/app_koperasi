@@ -142,6 +142,115 @@ const TransaksiPembalian = (props) => {
             barangId: props.barangId,
             statusPembelian: "onProcess",
           });
+      try {
+        if (
+          jumlah == "" ||
+          fakturLokal == "" ||
+          harga == "" ||
+          idSupplier == undefined ||
+          hargaJual == ""
+        ) {
+          // ketika barang kurang lengkap di isinya
+          Swal.fire(
+            "Gagal menambahkan data!!",
+            "Tolong isi semua Data",
+            "warning"
+          );
+        } else {
+          if (
+            this.props.namaBarang.length > 2 &&
+            this.props.kodeBarang.length > 2
+          ) {
+            if (trans == null) {
+              if (cariBarang == null) {
+                // ketika barang tidak ada sama sekali di db barang
+                const barang = await axios.post("/barang", {
+                  nama: this.props.namaBarang,
+                  kodeBarang: this.props.kodeBarang,
+                  jenisBarang: this.props.jenis,
+                  satuan: this.props.satuan,
+                  jumlah,
+                  hargaBeli: harga,
+                  hargaJual,
+                  supplierId: idSupplier,
+                });
+                await axios.post("/transPembelian", {
+                  jumlah,
+                  faktur: fakturLokal,
+                  harga,
+                  hargaJual,
+                  supplierId: idSupplier,
+                  barangId: barang.data.barangId,
+                  statusPembelian: "onProcess",
+                });
+              } else if (cariBarang.supplier.nama != this.props.supplier) {
+                // ketika barang sudah ada di db, tetapi nama suppliernya tidak sama
+                const barang = await axios.post("/barang", {
+                  nama: this.props.namaBarang,
+                  kodeBarang: this.props.kodeBarang,
+                  jenisBarang: this.props.jenis,
+                  satuan: this.props.satuan,
+                  jumlah,
+                  hargaBeli: harga,
+                  hargaJual,
+                  supplierId: idSupplier,
+                });
+                await axios.post("/transPembelian", {
+                  jumlah,
+                  faktur: fakturLokal,
+                  harga,
+                  hargaJual,
+                  supplierId: idSupplier,
+                  barangId: barang.data.barangId,
+                  statusPembelian: "onProcess",
+                });
+              } else {
+                // ketika barang sudah ada di db barang
+                barangTerbeli(this.props.barangId, jumlah);
+                await axios.put(`/barang/${this.props.barangId}`, {
+                  jenisBarang: this.props.jenis,
+                  satuan: this.props.satuan,
+                  hargaBeli: harga,
+                  hargaJual,
+                });
+                await axios.post(`/transPembelian`, {
+                  jumlah,
+                  faktur: fakturLokal,
+                  harga,
+                  hargaJual,
+                  supplierId: idSupplier,
+                  barangId: this.props.barangId,
+                  statusPembelian: "onProcess",
+                });
+              }
+            } else {
+              // ketika barang sudah ada di keranjang dan menambahkan barang yang sama
+              barangTerbeli(this.props.barangId, jumlah);
+              await axios.put(`/barang/${this.props.barangId}`, {
+                jenisBarang: this.props.jenis,
+                satuan: this.props.satuan,
+                hargaBeli: harga,
+                hargaJual,
+              });
+              await axios.put(`/transPembelian/${trans.id}`, {
+                jumlah: parseInt(trans.jumlah) + parseInt(jumlah),
+              });
+            }
+            this.props.handleKodeBarang("");
+            this.props.handlejenisBarang("");
+            this.props.handleHargaBarang("");
+            this.props.handleJumlah("");
+            this.props.handleSatuanBarang("");
+            this.props.handleHargaJualBarang("");
+            this.props.handleNamaBarang("");
+            this.props.handleSupplier("");
+          } else {
+            Swal.fire(
+              "Gagal menambahkan data!!",
+              "Tolong isi Nama Barang dan Kode minimal 3 huruf!",
+              "warning"
+            );
+          }
         }
       }
 
@@ -373,5 +482,40 @@ const mapDispatchToProps = (dispatch) => ({
       index: v,
     }),
 });
+
+export default connect(mapStateToProps, mapDispatchToProps)(TransaksiPembalian);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    handleSupplier: (supplier) =>
+      dispatch({ type: ActionType.SET_SUPPLIER_PEMBELIAN, index: supplier }),
+    handleKodeBarang: (kodeBarang) =>
+      dispatch({
+        type: ActionType.SET_KODE_BARANG_PEMBELIAN,
+        index: kodeBarang,
+      }),
+    handleNamaBarang: (namaBarang) =>
+      dispatch({
+        type: ActionType.SET_NAMA_BARANG_PEMBELIAN,
+        index: namaBarang,
+      }),
+    handleJumlah: (jumlah) =>
+      dispatch({ type: ActionType.SET_JUMLAH_PEMBELIAN, index: jumlah }),
+    handleSatuanBarang: (satuanBarang) =>
+      dispatch({ type: ActionType.SET_SATUAN_PEMBELIAN, index: satuanBarang }),
+    handlejenisBarang: (jenisBarang) =>
+      dispatch({ type: ActionType.SET_JENIS_PEMBELIAN, index: jenisBarang }),
+    handleHargaBarang: (hargaBarang) =>
+      dispatch({ type: ActionType.SET_HARGA_PEMBELIAN, index: hargaBarang }),
+    handleHargaJualBarang: (hargaJualBarang) =>
+      dispatch({
+        type: ActionType.SET_HARGA_JUAL_PEMBELIAN,
+        index: hargaJualBarang,
+      }),
+    handleFakturPembelian: (faktur) =>
+      dispatch({ type: ActionType.SET_FAKTUR_PEMBELIAN, index: faktur }),
+    handleBarangId: (barangId) =>
+      dispatch({ type: ActionType.SET_BARANG_ID, index: barangId }),
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(TransaksiPembalian);

@@ -101,6 +101,12 @@ const SideBar = () => {
               </li>
             </ul>
           </li>
+          {/* <li className="nav-item">
+            <Link className="nav-link collapsed" to={ "/cicilan" }>
+              <i className="ri-wallet-line" />
+              <span>Cicilan</span>
+            </Link>
+          </li> */}
         </li>
         <li className="nav-heading">Laporan</li>
         <li className="nav-item">
@@ -135,10 +141,13 @@ const SideBar = () => {
             <li>
               <Link to="/reportCustomer">
                 {" "}
+            {/* <li>
+              <Link to="/reportSupplier">
+                { " " }
                 <i className="bx bx-store" />
                 <span>Customer</span>{" "}
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link to="/reportBarang">
                 <i className="bx bx-store" />

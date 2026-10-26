@@ -269,6 +269,7 @@ const getJoinPenAnBarangSarch = async (req, res) => {
             [Op.lte]: endOfDay,
           },
           typePembayaran: pembayaran,
+          typePembayaran: pembayaran
         },
         order: [["id", "DESC"]],
       });
@@ -297,6 +298,7 @@ const getJoinPenAnBarangSarch = async (req, res) => {
             [Op.lte]: endOfDay,
           },
           typePembayaran: pembayaran,
+          typePembayaran: pembayaran
         },
       });
 
@@ -325,6 +327,7 @@ const getJoinPenAnBarangSarch = async (req, res) => {
             [Op.lte]: endOfDay,
           },
           typePembayaran: pembayaran,
+          typePembayaran: pembayaran
         },
         offset,
         limit,
@@ -478,6 +481,127 @@ const getJoinPembelianAnggota = async (req, res) => {
     const search = req.query.date; // Input hanya berupa bulan, misalnya "01"
     const offset = page * limit;
 
+    const startOfDay = moment(search).startOf('day').toDate(); // Mulai hari pada tanggal tertentu
+    const endOfDay = moment(search).endOf('day').toDate(); // Akhir hari pada tanggal tertentu
+
+    let totalPage = 0;
+    let result = [];
+    let totalRows = 0;
+
+    if (limit == 0) {
+      result = await transPenjualanModel.findAll({
+        include: [
+          {
+            model: barangModel,
+            as: "barang",
+            include: [
+              {
+                model: supplierModel,
+              },
+            ],
+          },
+          {
+            model: anggotaModel,
+            as: "anggota",
+            where: {
+              id: { [Op.ne]: "354" }, // Nama anggota bukan "customer"
+            },
+          },
+        ],
+        where: {
+          createdAt: {
+            [Op.gte]: startOfDay,
+            [Op.lte]: endOfDay,
+          },
+        },
+        order: [["createdAt", "DESC"]],
+      });
+    } else {
+      totalRows = await transPenjualanModel.count({
+        include: [
+          {
+            model: barangModel,
+            as: "barang",
+            // where: {
+            //   supplierid: IdSupplier,
+            // },
+            include: [
+              {
+                model: supplierModel,
+              },
+            ],
+          },
+          {
+            model: anggotaModel,
+            as: "anggota",
+            where: {
+              id: { [Op.ne]: "354" }, // Nama anggota bukan "customer"
+            },
+          },
+        ],
+        where: {
+          createdAt: {
+            [Op.gte]: startOfDay,
+            [Op.lte]: endOfDay,
+          },
+        },
+      });
+
+      totalPage = Math.ceil(totalRows / limit);
+      result = await transPenjualanModel.findAll({
+        include: [
+          {
+            model: barangModel,
+            as: "barang",
+            // where: {
+            //   supplierid: IdSupplier,
+            // },
+            include: [
+              {
+                model: supplierModel,
+              },
+            ],
+          },
+          {
+            model: anggotaModel,
+            as: "anggota",
+            where: {
+              id: { [Op.ne]: "354" }, // Nama anggota bukan "customer"
+            },
+          },
+        ],
+        where: {
+          createdAt: {
+            [Op.gte]: startOfDay,
+            [Op.lte]: endOfDay,
+          },
+        },
+        offset,
+        limit,
+        order: [["createdAt", "DESC"]],
+      });
+    }
+
+    res.status(200).json({
+      page,
+      result,
+      totalPage,
+      totalRows,
+      limit,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ msg: "Gagal Mengambil Data: " + error });
+  }
+};
+
+const getJoinPenAnBarangRetur = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 0;
+    const limit = parseInt(req.query.limit);
+    const search = req.query.date; // Input hanya berupa bulan, misalnya "01"
+    const offset = page * limit;
+
     const startOfDay = moment(search).startOf("day").toDate(); // Mulai hari pada tanggal tertentu
     const endOfDay = moment(search).endOf("day").toDate(); // Akhir hari pada tanggal tertentu
 
@@ -502,6 +626,9 @@ const getJoinPembelianAnggota = async (req, res) => {
             where: {
               id: { [Op.ne]: "354" }, // Nama anggota bukan "customer"
             },
+            include: [{
+              model: supplierModel
+            }]
           },
         ],
         where: {
@@ -713,6 +840,35 @@ const getJoinPembelianCustomer = async (req, res) => {
 };
 
 const getJoinPenAnBarangRetur = async (req, res) => {
+
+const tambahPenjualan = async (req, res) => {
+  try {
+    const {
+      jumlah,
+      faktur,
+      harga,
+      typePembayaran,
+      anggotaId,
+      barangId,
+      statusPenjualan,
+    } = req.body;
+    await transPenjualanModel.create({
+      jumlah,
+      faktur,
+      harga,
+      typePembayaran,
+      anggotaId,
+      barangId,
+      statusPenjualan,
+    });
+    res.status(200).json({ msg: "Data Berhasil diTambahkan!" });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ msg: "Gagal Menambah Data: " + error });
+  }
+};
+
+const editPenjualan = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 0;
     const limit = parseInt(req.query.limit) || 10;

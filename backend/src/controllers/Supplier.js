@@ -13,6 +13,18 @@ const getSupplier = async (req, res) => {
   }
 };
 
+    try {
+        const supplier = await supplierModel.findAll({
+            order: [
+                ['id', 'ASC']
+            ]
+        })
+        res.status(200).json(supplier)
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ msg: "Gagal Mengambil Data: " + error })
+    }
+}
 const getSupplierId = async (req, res) => {
   try {
     const supplier = await supplierModel.findOne({
@@ -106,6 +118,25 @@ const tambahSupplier = async (req, res) => {
     const existingSupplier = await supplierModel.findOne({ where: { nama } });
     if (existingSupplier) {
       return res.status(400).json({ msg: "Nama sudah terdaftar, gunakan nama lain!" });
+    try {
+        const { nama, noHP, alamat } = req.body
+
+        if (!nama || nama.trim() === "") {
+        return res.status(400).json({ msg: "Nama tidak boleh kosong!" });}
+
+             // Cek apakah nama sudah ada di database
+        const existingSupplier = await supplierModel.findOne({ where: { nama } });
+        if (existingSupplier) {
+        return res.status(400).json({ msg: "Nama sudah terdaftar, gunakan nama lain!" });
+        }
+
+        await supplierModel.create({
+            nama, noHP, alamat
+        })
+        res.status(200).json('Data Berhasil diTambahkan!')
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ msg: "Gagal Mengambil Data: " + error })
     }
 
     await supplierModel.create({
@@ -126,6 +157,29 @@ const editSupplier = async (req, res) => {
 
     if (!nama || nama.trim() === "") {
       return res.status(400).json({ msg: "Nama tidak boleh kosong!" });
+    try {
+        const { nama, noHP, alamat } = req.body
+
+        if (!nama || nama.trim() === "") {
+        return res.status(400).json({ msg: "Nama tidak boleh kosong!" });}
+
+             // Cek apakah nama sudah ada di database
+        const existingSupplier = await supplierModel.findOne({ where: { nama } });
+        if (existingSupplier) {
+        return res.status(400).json({ msg: "Nama sudah terdaftar, gunakan nama lain!" });
+        }
+
+        await supplierModel.update({
+            nama, noHP, alamat
+        }, {
+            where: {
+                id: req.params.id
+            }
+        })
+        res.status(200).json('Data Berhasil diUbah!')
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ msg: "Gagal Mengubah Data: " + error })
     }
     await supplierModel.update(
       {

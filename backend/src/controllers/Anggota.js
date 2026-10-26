@@ -151,6 +151,12 @@ const editAnggota = async (req, res) => {
       return res.status(400).json({ msg: "Nama tidak boleh kosong!" });
     }
 
+    // Cek apakah nama sudah ada di database
+    const existingAnggota = await anggotaModel.findOne({ where: { nama } });
+    if (existingAnggota) {
+      return res.status(400).json({ msg: "Nama sudah terdaftar, gunakan nama lain!" });
+    }
+
     await anggotaModel.update(
       {
         nama,

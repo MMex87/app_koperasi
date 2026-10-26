@@ -31,6 +31,8 @@ const RPembelian = () => {
   const search = (e) => {
     setNama(e.target.value);
   };
+    setNama(e.target.value)
+  }
 
   return (
     <main id="main">
@@ -100,6 +102,80 @@ const RPembelian = () => {
                   </div>
                 </>
               </div>
+        <div className="card p-3">
+          <div className="col-lg-12">
+            <div className="col-md-12">
+              <>
+                <div className="row">
+                  <div className="col-md-9"></div>
+                  <div className="col-md-3 text-end">
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="query"
+                      placeholder="Cari Barang"
+                      title="Enter search keyword"
+                      aria-label="Recipient's username"
+                      aria-describedby="button-addon2"
+                      value={nama}
+                      onChange={search}
+                    />
+                  </div>
+                </div>
+                <table className="table ">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Faktur</th>
+                      <th>Barang</th>
+                      <th>Jumlah</th>
+                      <th>Total</th>
+                      <th>Tanggal</th>
+                      <th>Status</th>
+                      <th>Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dataPembelian.map((data, index) => (
+                      <tr key={data.id}>
+                        <th>{index + 1}</th>
+                        <td>{data.faktur}</td>
+                        <td>{data.barang.nama}</td>
+                        <td>{data.jumlah}</td>
+                        <td>{convertRupiah.convert(data.barang.hargaJual * data.jumlah)}</td>
+                        <td>{moment(data.createdAt).format("D MMMM YYYY")}</td>
+                        <td>{data.statusPembelian}</td>
+                        <Link to={`/retrunPembelian/${data.id}`} className="btn btn-warning me-3">
+                          Retur
+                        </Link>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className="p-3">
+                  <div className="d-flex justify-content-between">
+                    <p className="text-center">
+                      Total Rows : {rows} Page: {rows ? page + 1 : 0} of {pages}
+                    </p>
+                    <nav aria-label="Page navigate example justify-content-end">
+                      <ReactPaginate
+                        previousLabel={"< Prev"}
+                        nextLabel={"Next >"}
+                        pageCount={pages}
+                        onPageChange={changePage}
+                        containerClassName={"pagination"}
+                        pageLinkClassName={"page-link"}
+                        pageClassName={"page-item"}
+                        previousLinkClassName={"page-link"}
+                        previousClassName={"page-item"}
+                        nextClassName={"page-item"}
+                        nextLinkClassName={"page-link"}
+                        activeClassName={"active"}
+                      />
+                    </nav>
+                  </div>
+                </div>
+              </>
             </div>
           </div>
         </div>
@@ -107,5 +183,6 @@ const RPembelian = () => {
     </main>
   );
 };
+}
 
 export default RPembelian;

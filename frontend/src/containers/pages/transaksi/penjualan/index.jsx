@@ -24,6 +24,37 @@ const TransPenjualan = () => {
   const harga = useSelector((s) => s.harga);
   const faktur = useSelector((s) => s.faktur);
   const supplierId = useSelector((s) => s.supplierId);
+class TransPenjualan extends Component {
+  state = {
+    penjualan: [],
+    visiJenisInput: false,
+    displayAnggota: false,
+    anggotas: [],
+    barang: [],
+    typeInput: '',
+  };
+
+  componentDidMount() {
+    if (this.props.faktur == "") {
+      this.props.handleFakturPenjualan(generateFaktur("FKJ"));
+    }
+    getAnggotaAutoComplate(this.props.anggota).then((data) => {
+      this.setState({ anggotas: data });
+    });
+    if (this.props.namaBarang == "") {
+      getBarangJoinAutoComplate(this.props.kodeBarang).then((data) => {
+        this.setState({ barang: data });
+      });
+    } else {
+      getBarangJoinAutoComplate(this.props.namaBarang).then((data) => {
+        this.setState({ barang: data });
+      });
+
+    }
+    // getTransPenjualan().then((data) => {
+    //   this.setState({ penjualan: data });
+    // });
+  }
 
   // Local state
   const [penjualan, setPenjualan] = useState([]);
@@ -68,6 +99,7 @@ const TransPenjualan = () => {
         Swal.fire("Gagal menambahkan data!!", "Tolong isi semua Data", "warning");
         return;
       }
+      let trans = this.state.penjualan.find(({ faktur, barangId, anggotaId }) => faktur == fakturLokal && barangId == barangIdLokal && anggotaId == anggotaIdLokal)
 
       // Stok tidak cukup
       if (selectedBarang.jumlah - jumlah < 0) {
@@ -98,6 +130,11 @@ const TransPenjualan = () => {
           barangId: barangIdLokal,
           statusPenjualan: "onProcess",
         });
+    const handleVisiInput = (e) => {
+      let handle = e.target.value;
+      this.setState({ typeInput: handle });
+      if (handle == "scan") {
+        this.setState({ visiJenisInput: true });
       } else {
         // Update (jumlah bertambah)
         let jumlahBaru = parseInt(trans.jumlah) + parseInt(jumlah);
@@ -143,6 +180,119 @@ const TransPenjualan = () => {
               <div className="card-body row">
                 <div className="col-md-3">
                   <h1 className="card-title mt-1 fw-bolder">Faktur : {faktur}</h1>
+    return (
+      <main id="main" className="main">
+        <div className="pagetitle text-center">
+          <h1 className="fw-bold fs-2">Transaksi Penjualan</h1>
+        </div>
+        <section className="section">
+          <div className="row">
+            <div className="col-lg-12">
+              <div className="card">
+                <div className="card-body row">
+                  <div className="col-md-3">
+                    <h1 className="card-title mt-1 fw-bolder">
+                      Faktur : {this.props.faktur}{" "}
+                    </h1>
+                  </div>
+                  <form className="row g-3" onSubmit={handlecart}>
+                    <div className="col-md-6">
+                      <label htmlFor="namaAnggota" className="form-label">
+                        Nama Anggota
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="namaAnggota"
+                        value={this.props.anggota}
+                        autoComplete="false"
+                        onChange={(e) =>
+                          this.props.handleAnggota(e.target.value)
+                        }
+                        onClick={() =>
+                          this.setState({
+                            displayAnggota: !this.state.displayAnggota,
+                          })
+                        }
+                      />
+                      {this.state.displayAnggota && (
+                        <div className="flex-container flex-column pos-rel bodyAutoComplate">
+                          <ul className="list-group list-group-flush">
+                            {this.state.anggotas
+                              .filter(
+                                ({ nama }) =>
+                                  nama.indexOf(this.props.anggota) > -1
+                              )
+                              .map((v, i) => (
+                                <li
+                                  key={i}
+                                  onClick={() => {
+                                    handleAutoAnggota(v.nama);
+                                  }}
+                                  className="list-group-item listAutoComplate"
+                                >
+                                  {" "}
+                                  {v.nama}
+                                </li>
+                              ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                    <div className="col-md-6">
+                      <label htmlFor="typePembayaran" className="form-label">
+                        Type Pembayaran
+                      </label>
+                      <select
+                        id="typePembayaran"
+                        className="form-select"
+                        onChange={(e) =>
+                          this.props.handleTypeBayar(e.target.value)
+                        }
+                      >
+                        <option selected value="">
+                          -- Pilih Type Pembayaran --
+                        </option>
+                        <option
+                          selected={
+                            this.props.typePembayaran == "Tunai" ? true : false
+                          }
+                          value={"Tunai"}
+                        >
+                          TUNAI
+                        </option>
+                        {/* <option selected={ this.props.typePembayaran == "Bon" ? true : false } value={ "Bon" }>
+                          BON
+                        </option> */}
+                        <option selected={this.props.typePembayaran == "QRIS" ? true : false} value={"QRIS"}>
+                          QRIS
+                        </option>
+                      </select>
+                    </div>
+                    <div className="col-12">
+                      <label htmlFor="jenisInput" className="form-label">
+                        Jenis Input
+                      </label>
+                      <select
+                        id="jenisInput"
+                        className="form-select"
+                        onChange={handleVisiInput}
+                      >
+                        <option value={"manual"}>Manual</option>
+                        <option value={"scan"}>Scan Barcode</option>
+                      </select>
+                    </div>
+                    {this.state.visiJenisInput ? (
+                      <AddCartScan />
+                    ) : (
+                      <AddCartManual />
+                    )}
+                    <div className="text-lg-end">
+                      <button type="submit" className="btn btn-primary">
+                        Tambah
+                      </button>
+                    </div>
+                  </form>
                 </div>
 
                 {/* FORM */}
@@ -220,3 +370,4 @@ const TransPenjualan = () => {
 };
 
 export default TransPenjualan;
+export default connect(mapStateToProps, mapDispatchToProps)(TransPenjualan);

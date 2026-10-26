@@ -42,6 +42,8 @@ const tPembelianBulan = () => {
   const getDataSupplier = async () => {
     const dataSupplier = await axios.get("http://localhost:8800/supplier");
     setDataSupllier(dataSupplier.data);
+    const dataSupplier = await axios.get("http://localhost:8800/supplier")
+    setDataSupllier(dataSupplier.data)
 
     const r = await axios.get(`http://localhost:8800/supplier/${supplier}`);
     setSupplierName(r.data.nama);
@@ -119,6 +121,66 @@ const tPembelianBulan = () => {
 
   console.log(bulan);
   console.log(dataBarang);
+    const doc = new jsPDF("l", "pt", "a4")
+    doc.setFont("times")
+
+    doc.setFontSize(20)
+    const pageWidthpdf = doc.internal.pageSize.getWidth();
+
+    const totalWidthLaporan = doc.getTextWidth(`Laporan Harian Pembelian`);
+    const totalXLaporan = (pageWidthpdf / 2) - (totalWidthLaporan / 2);
+
+    doc.text(`Laporan Bulanan Pembelian`, totalXLaporan, 25)
+    doc.setFontSize(16)
+    doc.setFont("times")
+    doc.text(`Bulan :`, 30, 40)
+    doc.text(moment(bulan).format("MMMM"), 100, 40)
+    doc.text(`Supplier :`, 30, 60)
+    doc.text(supplierName, 100, 60)
+
+    doc.autoTable(
+      {
+        head: [['#', 'Faktur', 'Supplier', 'Barang', 'Jumlah', 'Total', 'Tanggal']],
+        body: dataBarangPdf.map((val, index) => [
+          index + 1,
+          val.faktur,
+          val.supplier.nama,
+          val.barang.nama,
+          val.jumlah,
+          convertRupiah.convert(Math.round((val.harga * val.jumlah))),
+          moment(val.waktuBeli).format("D MMMM YYYY")
+        ]),
+        styles: { fontSize: 12 },
+        startY: 70,
+        margin: { left: 3, right: 3 },
+      }
+    )
+
+    let totalText
+
+    let total = 0
+    for (let val of dataBarangPdf) {
+      total = total + (val.hargaJual * val.jumlah)
+    }
+
+    totalText = "Total: " + total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })
+
+    let heightTable = doc.lastAutoTable.finalY
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    const totalWidth = doc.getTextWidth(`${total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}`);
+    const totalX = pageWidth - totalWidth - 70;
+
+    doc.setFont("times", 'bold')
+    doc.text(totalText, totalX, heightTable + 50)
+
+    // window.open(doc.output("bloburl"));
+
+    doc.save('Laporan Pembelian Bulan ' + moment(bulan).format("MMMM") + '.pdf')
+  }
+
+  console.log(bulan)
+  console.log(dataBarang)
 
   return (
     <main id="main">
@@ -141,6 +203,12 @@ const tPembelianBulan = () => {
                 <div className="text-end col-md-8 pt-3 d-flex justify-content-end mb-2">
                   <select class="form-select" value={supplier} style={{ width: 180, marginRight: 20 }} onChange={(e) => setSupplier(e.target.value)}>
                     <option value="">- - Pilih Supplier --</option>
+                    <Link to={"/reportPembelian"} className="btn btn-info me-3" > Harian </Link>
+                  </div>
+                </div>
+                <div className="text-end col-md-8 pt-3 d-flex justify-content-end">
+                  <select class="form-select" value={supplier} style={{ width: 180, marginRight: 20 }} onChange={(e) => setSupplier(e.target.value)}>
+                    <option value="" >- - Pilih Supplier --</option>
                     {dataSupplier.map((supplier) => (
                       <option value={supplier.id}>{supplier.nama}</option>
                     ))}
@@ -182,6 +250,7 @@ const tPembelianBulan = () => {
                         <td>{convertRupiah.convert(data.harga)}</td>
                         <td>{data.jumlah}</td>
                         <td>{convertRupiah.convert(Math.round(data.harga * data.jumlah))}</td>
+                        <td>{convertRupiah.convert(Math.round((data.harga * data.jumlah)))}</td>
                         <td>{moment(data.waktuBeli).format("D MMMM YYYY")}</td>
                       </tr>
                     ))}

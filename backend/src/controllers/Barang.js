@@ -331,6 +331,12 @@ const tambahBarang = async (req, res) => {
       return res.status(400).json({ msg: "Barang sudah terdaftar" });
     }
 
+    // Cek apakah nama sudah ada di database
+    const existingBarang = await barangModel.findOne({ where: { nama } });
+    if (existingBarang) {
+      return res.status(400).json({ msg: "Barang sudah terdaftar" });
+    }
+
     const barang = await barangModel.create({
       nama,
       kodeBarang,
@@ -358,6 +364,12 @@ const editBarang = async (req, res) => {
     // if (existingBarang) {
     //   return res.status(400).json({ msg: "Barang sudah terdaftar" });
     // }
+
+    // Cek apakah nama sudah ada di database
+    const existingBarang = await barangModel.findOne({ where: { nama } });
+    if (existingBarang) {
+      return res.status(400).json({ msg: "Barang sudah terdaftar" });
+    }
 
     await barangModel.update(
       {

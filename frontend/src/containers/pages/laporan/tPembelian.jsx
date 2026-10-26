@@ -27,6 +27,9 @@ const tPembelian = () => {
     const dataSupplier = await axios.get("http://localhost:8800/supplier");
     setDataSupllier(dataSupplier.data);
   };
+    const dataSupplier = await axios.get("http://localhost:8800/supplier")
+    setDataSupllier(dataSupplier.data)
+  }
 
   const getData = async () => {
     const response = await axios.get(`http://localhost:8800/transPembelianJoinSearch?supplier=${supplier}&date=${tanggal}&page=${page}&limit=10`);
@@ -102,6 +105,60 @@ const tPembelian = () => {
       console.log(transaksi);
 
       const doc = new jsPDF("p", "mm", [48, 120]);
+    const doc = new jsPDF("l", "pt", "a4")
+    doc.setFont("times")
+
+    doc.setFontSize(20)
+    const pageWidthpdf = doc.internal.pageSize.getWidth();
+
+    const totalWidthLaporan = doc.getTextWidth(`Laporan Harian Pembelian`);
+    const totalXLaporan = (pageWidthpdf / 2) - (totalWidthLaporan / 2);
+
+    doc.text("Laporan Harian Pembelian", totalXLaporan, 25)
+    doc.setFontSize(16)
+
+    doc.autoTable(
+      {
+        head: [['#', 'Faktur', 'Supplier', 'Barang', 'Jumlah', 'Total', 'Tanggal']],
+        body: dataBarangPdf.map((val, index) => [
+          index + 1,
+          val.faktur,
+          val.supplier.nama,
+          val.barang.nama,
+          val.jumlah,
+          convertRupiah.convert(Math.round((val.harga * val.jumlah) / 100) * 100),
+          moment(val.waktuBeli).format("D MMMM YYYY")
+        ]),
+        styles: { fontSize: 12 },
+        startY: 70,
+        margin: { left: 3, right: 3 },
+      }
+    )
+
+    let totalText
+
+    let total = 0
+    for (let val of dataBarangPdf) {
+      total = total + (val.hargaJual * val.jumlah)
+    }
+
+    totalText = "Total: " + total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })
+
+    let heightTable = doc.lastAutoTable.finalY
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    const totalWidth = doc.getTextWidth(`${total.toLocaleString("id-ID", { style: "currency", currency: "IDR" })}`);
+    const totalX = pageWidth - totalWidth - 70;
+
+    doc.setFont("times", 'bold')
+    doc.text(totalText, totalX, heightTable + 50)
+
+    // window.open(doc.output("bloburl"));
+
+    doc.save('Laporan Harian Pembelian ' + moment(tanggal).format("DD-MM-YYYY") + '.pdf')
+  }
+  console.log(dataBarang)
+  console.log(supplier)
 
       // ===== tanggal =====
       let today = new Date();
@@ -170,11 +227,13 @@ const tPembelian = () => {
                       {" "}
                       Bulan
                     </Link>
+                    <Link to={"/reportPembelianBulan"} className="btn btn-info me-3" > Bulan</Link>
                   </div>
                 </div>
                 <div className="text-end col-md-8 pt-3 d-flex justify-content-end">
                   <select class="form-select" value={supplier} style={{ width: 180, marginRight: 20 }} onChange={(e) => setSupplier(e.target.value)}>
                     <option value="">- - Pilih Supplier --</option>
+                    <option value="" >- - Pilih Supplier --</option>
                     {dataSupplier.map((supplier) => (
                       <option value={supplier.id}>{supplier.nama}</option>
                     ))}
