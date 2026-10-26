@@ -99,7 +99,6 @@ DB_NAME = db_kasir
 ```
 cd D:\app_kantin\app_koperasi\backend
 npm install
-npm install node-windows
 
 cd D:\app_kantin\app_koperasi\frontend
 npm install
