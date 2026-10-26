@@ -2,7 +2,17 @@ const { Op } = require("sequelize");
 const barangModel = require("../model/BarangModel.js");
 const supplierModel = require("../model/SupplierModel.js");
 const transPembelianModel = require("../model/TransPembelianModel.js");
+const logPembelianModel = require("../model/LogPembelianModel.js");
+const pembatalanModel = require("../model/PembatalanModel.js");
+const { catatJejak } = require("../middleware/adminPin.js");
+const db = require("../config/database.js");
 const moment = require("moment");
+
+const STATUS_PEMBELIAN = ["onProcess", "Done", "Retur"];
+
+const isBilanganBulat = (v) => v !== null && v !== "" && Number.isInteger(Number(v));
+
+const httpError = (status, msg) => Object.assign(new Error(msg), { status });
 
 const getPembelian = async (req, res) => {
   try {
@@ -160,7 +170,7 @@ const getJoinPemAnBarangSarch = async (req, res) => {
             [Op.gte]: startOfDay,
             [Op.lte]: endOfDay,
           },
-          supplierId: IdSupplier,
+          ...(IdSupplier ? { supplierId: IdSupplier } : {}), // kosong = semua supplier
           barangId: {
             [Op.not]: null,
           },
@@ -184,7 +194,7 @@ const getJoinPemAnBarangSarch = async (req, res) => {
             [Op.gte]: startOfDay,
             [Op.lte]: endOfDay,
           },
-          supplierId: IdSupplier,
+          ...(IdSupplier ? { supplierId: IdSupplier } : {}), // kosong = semua supplier
           barangId: {
             [Op.not]: null,
           },
@@ -207,7 +217,7 @@ const getJoinPemAnBarangSarch = async (req, res) => {
             [Op.gte]: startOfDay,
             [Op.lte]: endOfDay,
           },
-          supplierId: IdSupplier,
+          ...(IdSupplier ? { supplierId: IdSupplier } : {}), // kosong = semua supplier
           barangId: {
             [Op.not]: null,
           },
@@ -241,7 +251,7 @@ const getJoinPemBulan = async (req, res) => {
     const offset = page * limit;
 
     // Ambil tahun saat ini jika tidak dikirim dari frontend
-    const currentYear = new Date().getFullYear();
+    const currentYear = parseInt(req.query.tahun) || new Date().getFullYear();
 
     // Gabungkan tahun saat ini dengan bulan dari frontend untuk membuat format YYYY-MM
     const monthYearFormat = `${currentYear}-${search}`;
@@ -270,7 +280,7 @@ const getJoinPemBulan = async (req, res) => {
             [Op.gte]: startOfMonth,
             [Op.lte]: endOfMonth,
           },
-          supplierId: IdSupplier,
+          ...(IdSupplier ? { supplierId: IdSupplier } : {}), // kosong = semua supplier
         },
         attributes: ["id", "jumlah", "faktur", "harga", "hargaJual", "supplierId", "barangId", ["createdAt", "waktuBeli"], "statusPembelian"],
         order: [["waktuBeli", "DESC"]],
@@ -291,7 +301,7 @@ const getJoinPemBulan = async (req, res) => {
             [Op.gte]: startOfMonth,
             [Op.lte]: endOfMonth,
           },
-          supplierId: IdSupplier,
+          ...(IdSupplier ? { supplierId: IdSupplier } : {}), // kosong = semua supplier
         },
       });
 
@@ -311,7 +321,7 @@ const getJoinPemBulan = async (req, res) => {
             [Op.gte]: startOfMonth,
             [Op.lte]: endOfMonth,
           },
-          supplierId: IdSupplier,
+          ...(IdSupplier ? { supplierId: IdSupplier } : {}), // kosong = semua supplier
         },
         attributes: ["id", "jumlah", "faktur", "harga", "hargaJual", "supplierId", "barangId", ["createdAt", "waktuBeli"], "statusPembelian"],
         offset,
@@ -366,45 +376,28 @@ const getJoinPenAnBarangRetur = async (req, res) => {
         order: [["createdAt", "DESC"]],
       });
     } else {
-      totalRows = await transPembelianModel.count({
-        include: [
-          {
-            model: barangModel,
-            as: "barang",
-            where: {
-              nama: {
-                [Op.like]: `%${nama_barang}%`,
-              },
-            },
-            include: [
-              {
-                model: supplierModel,
-                as: "supplier",
-              },
-            ],
-          },
-        ],
-      });
+      // Hanya transaksi yang sudah checkout & masih ada sisa jumlah yang bisa diretur; cari per nama barang atau faktur
+      const where = {
+        statusPembelian: { [Op.notIn]: ["onProcess", "Batal"] },
+        jumlah: { [Op.gt]: 0 },
+        // Retur hanya untuk transaksi tahun berjalan
+        createdAt: { [Op.gte]: moment().startOf("year").toDate() },
+        [Op.or]: [{ "$barang.nama$": { [Op.like]: `%${nama_barang}%` } }, { faktur: { [Op.like]: `%${nama_barang}%` } }],
+      };
+      const include = [
+        {
+          model: barangModel,
+          as: "barang",
+          required: true,
+          include: [{ model: supplierModel, as: "supplier" }],
+        },
+      ];
 
+      totalRows = await transPembelianModel.count({ where, include });
       totalPage = Math.ceil(totalRows / limit);
       result = await transPembelianModel.findAll({
-        include: [
-          {
-            model: barangModel,
-            as: "barang",
-            where: {
-              nama: {
-                [Op.like]: `%${nama_barang}%`,
-              },
-            },
-            include: [
-              {
-                model: supplierModel,
-                as: "supplier",
-              },
-            ],
-          },
-        ],
+        where,
+        include,
         offset,
         limit,
         order: [["createdAt", "DESC"]],
@@ -482,6 +475,18 @@ const tambahPembelian = async (req, res) => {
       return res.status(400).json({
         msg: "Data tidak lengkap",
       });
+    }
+    if (!isBilanganBulat(jumlah) || Number(jumlah) <= 0) {
+      return res.status(400).json({ msg: "Jumlah harus lebih dari 0" });
+    }
+    if (!isBilanganBulat(harga) || Number(harga) <= 0 || !isBilanganBulat(hargaJual) || Number(hargaJual) <= 0) {
+      return res.status(400).json({ msg: "Harga beli dan harga jual harus lebih dari 0" });
+    }
+    if (Number(hargaJual) < Number(harga)) {
+      return res.status(400).json({ msg: "Harga jual tidak boleh lebih kecil dari harga beli" });
+    }
+    if (statusPembelian && !STATUS_PEMBELIAN.includes(statusPembelian)) {
+      return res.status(400).json({ msg: "statusPembelian tidak valid" });
     }
 
     /* ================= CEK BARANG ================= */
@@ -561,6 +566,53 @@ const tambahPembelian = async (req, res) => {
 const editPembelian = async (req, res) => {
   try {
     const { jumlah, faktur, harga, hargaJual, supplierId, barangId, statusPembelian } = req.body;
+
+    // Body boleh parsial (mis. hanya statusPembelian), jadi field hanya dicek jika dikirim
+    if (jumlah !== undefined) {
+      if (!isBilanganBulat(jumlah) || Number(jumlah) < 0) {
+        return res.status(400).json({ msg: "Jumlah tidak valid" });
+      }
+      // Jumlah 0 hanya boleh untuk retur penuh
+      if (Number(jumlah) === 0 && statusPembelian !== "Retur") {
+        return res.status(400).json({ msg: "Jumlah harus lebih dari 0" });
+      }
+    }
+    if (harga !== undefined && (!isBilanganBulat(harga) || Number(harga) <= 0)) {
+      return res.status(400).json({ msg: "Harga beli harus lebih dari 0" });
+    }
+    if (hargaJual !== undefined && (!isBilanganBulat(hargaJual) || Number(hargaJual) <= 0)) {
+      return res.status(400).json({ msg: "Harga jual harus lebih dari 0" });
+    }
+    if (statusPembelian !== undefined && !STATUS_PEMBELIAN.includes(statusPembelian)) {
+      return res.status(400).json({ msg: "statusPembelian tidak valid" });
+    }
+
+    // Pembelian yang sudah disimpan sudah menambah stok: isinya dikunci (koreksi lewat retur/pembatalan).
+    // Status keranjang hanya berubah lewat checkout agar stok & log ikut diproses.
+    const trans = await transPembelianModel.findByPk(req.params.id);
+    if (!trans) {
+      return res.status(404).json({ msg: "Transaksi tidak ditemukan" });
+    }
+    if (trans.statusPembelian !== "onProcess") {
+      return res.status(409).json({ msg: "Pembelian yang sudah disimpan tidak bisa diubah. Gunakan retur atau pembatalan faktur." });
+    }
+    if (statusPembelian !== undefined && statusPembelian !== "onProcess") {
+      return res.status(400).json({ msg: "Status keranjang hanya bisa diubah melalui simpan pembelian" });
+    }
+
+    if (harga !== undefined && hargaJual !== undefined) {
+      if (Number(hargaJual) < Number(harga)) {
+        return res.status(400).json({ msg: "Harga jual tidak boleh lebih kecil dari harga beli" });
+      }
+    } else if (harga !== undefined || hargaJual !== undefined) {
+      // Hanya salah satu harga yang dikirim: bandingkan dengan nilai yang tersimpan
+      const hargaBeliAkhir = Number(harga ?? trans.harga);
+      const hargaJualAkhir = Number(hargaJual ?? trans.hargaJual);
+      if (hargaJualAkhir < hargaBeliAkhir) {
+        return res.status(400).json({ msg: "Harga jual tidak boleh lebih kecil dari harga beli" });
+      }
+    }
+
     await transPembelianModel.update(
       {
         jumlah,
@@ -584,13 +636,82 @@ const editPembelian = async (req, res) => {
   }
 };
 
+// Simpan (checkout) satu faktur pembelian dalam satu DB transaction:
+// tambah stok, simpan log, dan ubah status ke Done. Jika satu item gagal, semua dibatalkan.
+const checkoutPembelian = async (req, res) => {
+  const { faktur } = req.body;
+
+  if (!faktur) {
+    return res.status(400).json({ msg: "faktur wajib diisi" });
+  }
+
+  try {
+    await db.transaction(async (t) => {
+      const items = await transPembelianModel.findAll({
+        where: { faktur, statusPembelian: "onProcess" },
+        transaction: t,
+        lock: t.LOCK.UPDATE,
+      });
+
+      if (items.length === 0) {
+        throw httpError(400, "Tidak ada transaksi onProcess untuk faktur ini");
+      }
+
+      for (const item of items) {
+        const jumlah = parseInt(item.jumlah);
+        if (!jumlah || jumlah <= 0) {
+          throw httpError(400, `Jumlah transaksi id ${item.id} tidak valid`);
+        }
+
+        const barang = await barangModel.findByPk(item.barangId, {
+          transaction: t,
+          lock: t.LOCK.UPDATE,
+        });
+        if (!barang) {
+          throw httpError(404, `Barang id ${item.barangId} tidak ditemukan`);
+        }
+
+        const stokAwal = parseInt(barang.jumlah) || 0;
+        const stokAkhir = stokAwal + jumlah;
+        // Harga barang baru berlaku saat pembelian disimpan (bukan saat masih di keranjang)
+        const hargaBaru = parseInt(item.harga) > 0 && parseInt(item.hargaJual) > 0 ? { hargaBeli: item.harga, hargaJual: item.hargaJual } : {};
+        await barang.update({ jumlah: stokAkhir, ...hargaBaru }, { transaction: t });
+
+        await logPembelianModel.create(
+          {
+            qty: jumlah,
+            qty_awal: stokAwal,
+            qty_baru: stokAkhir,
+            keterangan: "Pembelian (+)",
+            barangId: barang.id,
+            faktur,
+          },
+          { transaction: t },
+        );
+
+        await item.update({ statusPembelian: "Done" }, { transaction: t });
+      }
+    });
+
+    res.status(200).json({ msg: "Pembelian Berhasil Disimpan" });
+  } catch (error) {
+    console.error(error);
+    res.status(error.status || 400).json({ msg: error.status ? error.message : "Gagal Menyimpan Pembelian: " + error });
+  }
+};
+
 const hapusPembelian = async (req, res) => {
   try {
-    await transPembelianModel.destroy({
+    // Hanya item keranjang (onProcess) yang boleh dihapus; pembelian Done sudah menambah stok
+    const deleted = await transPembelianModel.destroy({
       where: {
         id: req.params.id,
+        statusPembelian: "onProcess",
       },
     });
+    if (deleted === 0) {
+      return res.status(400).json({ msg: "Hanya transaksi di keranjang (onProcess) yang bisa dihapus" });
+    }
     res.status(200).json({ msg: "Data Berhasil diHapus!" });
   } catch (error) {
     console.error(error);
@@ -598,7 +719,77 @@ const hapusPembelian = async (req, res) => {
   }
 };
 
+// Pembatalan (void) satu faktur pembelian dalam satu DB transaction:
+// stok dikurangi kembali, log dicatat, status jadi "Batal", dan alasan disimpan.
+// Hanya untuk faktur hari ini dan jika stok barang masih mencukupi.
+const batalPembelian = async (req, res) => {
+  const { faktur } = req.body;
+  const alasan = (req.body.alasan || "").trim();
+
+  if (!faktur) {
+    return res.status(400).json({ msg: "faktur wajib diisi" });
+  }
+  if (alasan.length < 5) {
+    return res.status(400).json({ msg: "Alasan pembatalan wajib diisi (minimal 5 karakter)" });
+  }
+
+  try {
+    await db.transaction(async (t) => {
+      const items = await transPembelianModel.findAll({ where: { faktur }, transaction: t, lock: t.LOCK.UPDATE });
+
+      if (items.length === 0) {
+        throw httpError(404, "Faktur tidak ditemukan");
+      }
+      if (items.some((i) => i.statusPembelian === "onProcess")) {
+        throw httpError(400, "Pembelian belum disimpan, hapus item dari daftar pembelian saja");
+      }
+      if (items.every((i) => i.statusPembelian === "Batal")) {
+        throw httpError(409, "Faktur ini sudah dibatalkan");
+      }
+      if (!items.every((i) => moment(i.createdAt).isSame(moment(), "day"))) {
+        throw httpError(409, "Hanya faktur hari ini yang bisa dibatalkan. Gunakan retur pembelian untuk transaksi sebelumnya.");
+      }
+
+      let jumlahItem = 0;
+      let totalNilai = 0;
+      for (const item of items) {
+        if (item.statusPembelian === "Batal") continue;
+        // Jumlah tersisa (setelah retur) yang ditarik kembali dari stok
+        const jumlah = parseInt(item.jumlah) || 0;
+        if (jumlah > 0) {
+          const barang = await barangModel.findByPk(item.barangId, { transaction: t, lock: t.LOCK.UPDATE });
+          if (!barang) {
+            throw httpError(404, `Barang id ${item.barangId} tidak ditemukan`);
+          }
+          const stokAwal = parseInt(barang.jumlah) || 0;
+          if (stokAwal < jumlah) {
+            throw httpError(409, `Stok "${barang.nama}" tinggal ${stokAwal}, tidak cukup untuk membatalkan ${jumlah}. Gunakan retur pembelian sebagian.`);
+          }
+          const stokAkhir = stokAwal - jumlah;
+          await barang.update({ jumlah: stokAkhir }, { transaction: t });
+          await logPembelianModel.create(
+            { qty: jumlah, qty_awal: stokAwal, qty_baru: stokAkhir, keterangan: "Pembatalan Pembelian (-)", barangId: barang.id, faktur },
+            { transaction: t },
+          );
+        }
+        jumlahItem += jumlah;
+        totalNilai += (parseInt(item.harga) || 0) * jumlah;
+        await item.update({ statusPembelian: "Batal" }, { transaction: t });
+      }
+
+      await pembatalanModel.create({ jenis: "pembelian", faktur, alasan, jumlahItem, totalNilai }, { transaction: t });
+      await catatJejak(req, { aksi: "batal_pembelian", referensi: faktur, alasan, detail: { jumlahItem, totalNilai } }, t);
+    });
+
+    res.status(200).json({ msg: "Faktur pembelian berhasil dibatalkan, stok sudah disesuaikan" });
+  } catch (error) {
+    console.error(error);
+    res.status(error.status || 400).json({ msg: error.status ? error.message : "Gagal Membatalkan Faktur: " + error });
+  }
+};
+
 module.exports = {
+  batalPembelian,
   getPembelian,
   getPembelianId,
   getPembelianById,
@@ -610,6 +801,7 @@ module.exports = {
   getJoinPenAnBarangRetur,
   tambahPembelian,
   editPembelian,
+  checkoutPembelian,
   hapusPembelian,
   findTransaksi,
 };

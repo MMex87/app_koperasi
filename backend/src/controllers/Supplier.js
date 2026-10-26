@@ -1,5 +1,7 @@
 const { Op } = require("sequelize");
 const supplierModel = require("../model/SupplierModel.js");
+const barangModel = require("../model/BarangModel.js");
+const transPembelianModel = require("../model/TransPembelianModel.js");
 
 const getSupplier = async (req, res) => {
   try {
@@ -148,6 +150,13 @@ const editSupplier = async (req, res) => {
 
 const hapusSupplier = async (req, res) => {
   try {
+    // Tolak jika supplier masih punya barang atau transaksi pembelian
+    const jumlahBarang = await barangModel.count({ where: { supplierId: req.params.id } });
+    const jumlahPembelian = await transPembelianModel.count({ where: { supplierId: req.params.id } });
+    if (jumlahBarang > 0 || jumlahPembelian > 0) {
+      return res.status(409).json({ msg: `Supplier tidak bisa dihapus: masih punya ${jumlahBarang} barang dan ${jumlahPembelian} transaksi pembelian` });
+    }
+
     await supplierModel.destroy({
       where: {
         id: req.params.id,

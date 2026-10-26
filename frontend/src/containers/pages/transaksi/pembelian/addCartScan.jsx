@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import ActionType from "../../../../redux/reducer/globalActionType";
 import getBarang from "../../../../utils/barang/getBarang";
+import FieldsBarang from "./fieldsBarang";
 
 const addCartScan = (props) => {
   const [barang, setBarang] = useState([]);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // GET /barang mengembalikan { barang, count }, bukan array
     getBarang().then((data) => {
-      setBarang(data);
+      setBarang(data.barang || []);
     });
   }, []);
 
@@ -41,139 +43,42 @@ const addCartScan = (props) => {
 
   return (
     <>
-      <div className="col-12">
-        <label htmlFor="kodeBarangScan" className="form-label">
+      <div className="col-md-6">
+        <label htmlFor="kodeBarangScan" className="form-label fw-semibold">
           Kode Barang
         </label>
-        <input
-          type="text"
-          className="form-control"
-          id="kodeBarangScan"
-          value={props.kodeBarang}
-          autoFocus={true}
-          onChange={handleScan}
-        />
+        <div className="input-group">
+          <span className="input-group-text bg-white">
+            <i className="bi bi-upc-scan" />
+          </span>
+          <input type="text" className="form-control" id="kodeBarangScan" placeholder="Scan barcode barang..." value={props.kodeBarang} autoFocus={true} onChange={handleScan} />
+        </div>
       </div>
+      <div className="col-md-6 d-flex align-items-end">
+        {visible &&
+          (props.barangId ? (
+            <div className="alert alert-info py-2 px-3 mb-0 w-100">
+              <i className="bi bi-check-circle me-2" />
+              Barang terdaftar — data terisi otomatis (restock)
+            </div>
+          ) : (
+            <div className="alert alert-success py-2 px-3 mb-0 w-100">
+              <i className="bi bi-plus-circle me-2" />
+              Kode baru — lengkapi data untuk membuat barang baru
+            </div>
+          ))}
+      </div>
+
       {visible && (
-        <div className="row">
-          <div className="col-md-6">
-            <label htmlFor="kodeBarang" className="form-label">
-              Kode Barang
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="kodeBarang"
-              value={props.kodeBarang}
-              disabled
-            />
-          </div>
-          <div className="col-md-2">
-            <label htmlFor="jumlah" className="form-label">
-              Jumlah
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="jumlah"
-              value={props.jumlah}
-              onChange={(e) => props.handleJumlah(e.target.value)}
-            />
-          </div>
-          <div className="col-md-2">
-            <label htmlFor="jenis" className="form-label">
-              Jenis
-            </label>
-            <select
-              onChange={(e) => props.handlejenisBarang(e.target.value)}
-              className="form-select"
-            >
-              <option value="">-- Pilih Jenis --</option>
-              <option
-                name="Makanan"
-                value={"Makanan"}
-                selected={props.jenis == "Makanan" ? true : ""}
-              >
-                Makanan
-              </option>
-              <option
-                name="Minuman"
-                value={"Minuman"}
-                selected={props.jenis == "Minuman" ? true : ""}
-              >
-                Minuman
-              </option>
-              <option
-                name="Barang"
-                value={"Barang"}
-                selected={props.jenis == "Barang" ? true : ""}
-              >
-                Barang
-              </option>
-            </select>
-          </div>
-          <div className="col-md-2">
-            <label htmlFor="satuan" className="form-label">
-              Satuan
-            </label>
-            <select
-              onChange={(e) => props.handleSatuanBarang(e.target.value)}
-              className="form-select"
-            >
-              <option value="">-- Pilih Satuan --</option>
-              <option
-                name="Pcs"
-                value={"Pcs"}
-                selected={props.satuan == "Pcs" ? true : ""}
-              >
-                Pcs
-              </option>
-              <option
-                name="Box"
-                value={"Box"}
-                selected={props.satuan == "Box" ? true : ""}
-              >
-                Box
-              </option>
-            </select>
-          </div>
-          <div className="col-md-6">
-            <label htmlFor="namabarang" className="form-label">
+        <>
+          <div className="col-12">
+            <label htmlFor="namabarang" className="form-label fw-semibold">
               Nama Barang
             </label>
-            <input
-              type="text"
-              className="form-control"
-              id="namabarang"
-              value={props.namaBarang}
-              onChange={(e) => props.handleNamaBarang(e.target.value)}
-            />
+            <input type="text" className="form-control" id="namabarang" placeholder="Min. 3 karakter" value={props.namaBarang} onChange={(e) => props.handleNamaBarang(e.target.value)} />
           </div>
-          <div className="col-md-3">
-            <label htmlFor="harga" className="form-label">
-              Harga Beli
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="harga"
-              value={props.harga}
-              onChange={(e) => props.handleHargaBarang(e.target.value)}
-            />
-          </div>
-          <div className="col-md-3">
-            <label htmlFor="harga" className="form-label">
-              Harga Jual
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="harga"
-              value={props.harga_jual}
-              onChange={(e) => props.handleHargaJualBarang(e.target.value)}
-            />
-          </div>
-        </div>
+          <FieldsBarang {...props} />
+        </>
       )}
     </>
   );
@@ -228,4 +133,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(addCartScan);
+export default connect(mapStateToProps, mapDispatchToProps)(addCartScan);

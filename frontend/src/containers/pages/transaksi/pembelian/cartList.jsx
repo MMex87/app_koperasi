@@ -7,7 +7,6 @@ import convertRupiah from "rupiah-format";
 import getTransPembelianJoin from "../../../../utils/transaksiPembelian/getTransPembelianJoin";
 import hapusTransaksiPembelian from "../../../../utils/transaksiPembelian/hapusTransaksiPembelian";
 import editTransaksiCartListPembelian from "../../../../utils/transaksiPembelian/editTransaksiCartListPembelian";
-import axios from "../../../../api/axios";
 
 const CartList = (props) => {
   /* ================= ALERT ================= */
@@ -85,29 +84,38 @@ const CartList = (props) => {
   };
 
   const save = async () => {
-    editTransaksiCartListPembelian({
-      harga: editHargaBeli,
-      jumlah,
-      id: idEdit,
-    });
+    const jumlahInt = parseInt(jumlah);
+    const hargaBeliInt = parseInt(editHargaBeli);
+    const hargaJualInt = parseInt(editHargaJual);
 
-    const resTrans = await axios.get(`/transPembelian/${idEdit}`);
-    const resBarang = await axios.get(`/barang/${resTrans.data.barangId}`);
+    if (!jumlahInt || jumlahInt <= 0) {
+      return Swal.fire("Gagal!", "Jumlah harus lebih dari 0", "warning");
+    }
+    if (!hargaBeliInt || hargaBeliInt <= 0 || !hargaJualInt || hargaJualInt <= 0) {
+      return Swal.fire("Gagal!", "Harga beli dan harga jual harus lebih dari 0", "warning");
+    }
+    if (hargaJualInt < hargaBeliInt) {
+      return Swal.fire("Gagal!", "Harga jual tidak boleh lebih kecil dari harga beli", "warning");
+    }
 
-    const selisih = jumlah - resTrans.data.jumlah;
-    // console.log(idEdit);
+    try {
+      await editTransaksiCartListPembelian({
+        id: idEdit,
+        jumlah: jumlahInt,
+        harga: hargaBeliInt,
+        hargaJual: hargaJualInt,
+      });
 
-    await axios.put(`/barang/${resTrans.data.barangId}`, {
-      hargaBeli: editHargaBeli,
-      hargaJual: editHargaJual,
-      jumlah: resBarang.data.jumlah + selisih,
-    });
-
-    batal();
-    setTimeout(() => setRefresh(!refresh), 100);
+      // Stok dan harga barang baru diperbarui saat Simpan Pembelian (checkout)
+      batal();
+      setTimeout(() => setRefresh(!refresh), 100);
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Gagal!", err.response?.data?.msg || "Gagal menyimpan perubahan", "error");
+    }
   };
 
-  const handleHapusTransaksi = (idTrans, barangId, qty) => {
+  const handleHapusTransaksi = (idTrans) => {
     Toast.fire({
       title: "Apa Kamu Yakin?",
       text: "Kamu akan Menghapus Data Pembelian!",
@@ -119,95 +127,168 @@ const CartList = (props) => {
     }).then(async (result) => {
       if (!result.isConfirmed) return;
 
-      await hapusTransaksiPembelian(idTrans);
-      const resBarang = await axios.get(`/barang/${barangId}`);
-
-      await axios.put(`/barang/${barangId}`, {
-        jumlah: resBarang.data.jumlah - qty,
-      });
-
-      setRefresh(!refresh);
-      Toast.fire("Terhapus!", "Data Pembelian Sudah Terhapus.", "success");
+      // Item di keranjang belum menambah stok, jadi stok barang tidak perlu dikurangi
+      try {
+        await hapusTransaksiPembelian(idTrans);
+        setRefresh(!refresh);
+        Toast.fire("Terhapus!", "Data Pembelian Sudah Terhapus.", "success");
+      } catch (err) {
+        console.error(err);
+        Swal.fire("Gagal!", err.response?.data?.msg || "Gagal menghapus data", "error");
+      }
     });
   };
 
   /* ================= JSX ================= */
+  const items = transaksi.filter((v) => v.faktur === props.faktur);
+  const hargaJualItem = (v) => v.hargaJual || v.barang.hargaJual;
+  const totalItem = items.reduce((sum, v) => sum + (parseInt(v.jumlah) || 0), 0);
+  const totalBeli = items.reduce((sum, v) => sum + (parseInt(v.harga) || 0) * (parseInt(v.jumlah) || 0), 0);
+  const totalJual = items.reduce((sum, v) => sum + (parseInt(hargaJualItem(v)) || 0) * (parseInt(v.jumlah) || 0), 0);
+  const supplierList = [...new Set(items.map((v) => v.supplier?.nama).filter(Boolean))];
+
   return (
-    <>
-      <div className="row mb-3">
-        <div className="col-md-8">
-          <h1 className="card-title fw-bold">Faktur : {props.faktur}</h1>
+    <div className="row g-4">
+      {/* TABLE KERANJANG */}
+      <div className="col-xl-8">
+        <div className="card border-0 shadow-sm h-100">
+          <div className="card-body p-4">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h5 className="fw-bold mb-0">
+                <i className="bi bi-box-seam me-2" />
+                Daftar Pembelian
+              </h5>
+              <span className="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2">{items.length} barang</span>
+            </div>
+
+            <div className="table-responsive">
+              <table className="table table-hover align-middle mb-0 cart-table">
+                <thead className="table-light">
+                  <tr>
+                    <th className="text-center" style={{ width: "50px" }}>
+                      #
+                    </th>
+                    <th style={{ minWidth: "180px" }}>Barang</th>
+                    <th className="text-center" style={{ width: "110px" }}>
+                      Jumlah
+                    </th>
+                    <th className="text-end">Harga Beli</th>
+                    <th className="text-end">Harga Jual</th>
+                    <th className="text-end">Subtotal</th>
+                    <th className="text-center" style={{ width: "110px" }}>
+                      Aksi
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {items.length === 0 ? (
+                    <tr>
+                      <td colSpan="7" className="text-center text-muted py-5">
+                        <i className="bi bi-inbox fs-1 d-block mb-2" />
+                        Belum ada barang yang dibeli
+                        <small className="d-block">Tambahkan barang melalui form di atas</small>
+                      </td>
+                    </tr>
+                  ) : (
+                    items.map((v, i) => {
+                      const sedangEdit = displayEdit && v.id === idEdit;
+                      const jualInvalid = sedangEdit && editHargaJual < editHargaBeli;
+                      return (
+                        <tr key={v.id} className={sedangEdit ? "table-warning" : ""}>
+                          <td className="text-center text-muted">{i + 1}</td>
+                          <td>
+                            <div className="fw-semibold">{v.barang.nama}</div>
+                            <small className="text-muted">{v.supplier.nama}</small>
+                          </td>
+
+                          {sedangEdit ? (
+                            <>
+                              <td>
+                                <input type="number" min="1" className="form-control form-control-sm text-center" value={jumlah} autoFocus onChange={(e) => setJumlah(+e.target.value)} />
+                              </td>
+                              <td>
+                                <input type="number" min="1" className="form-control form-control-sm text-end" value={editHargaBeli} onChange={(e) => setEditHargaBeli(+e.target.value)} />
+                              </td>
+                              <td>
+                                <input type="number" min="1" className={`form-control form-control-sm text-end ${jualInvalid ? "is-invalid" : ""}`} value={editHargaJual} onChange={(e) => setEditHargaJual(+e.target.value)} />
+                              </td>
+                              <td className="text-end fw-bold text-nowrap">{convertRupiah.convert(jumlah * editHargaBeli)}</td>
+                            </>
+                          ) : (
+                            <>
+                              <td className="text-center">{v.jumlah}</td>
+                              <td className="text-end text-nowrap">{convertRupiah.convert(v.harga)}</td>
+                              <td className="text-end text-nowrap">{convertRupiah.convert(hargaJualItem(v))}</td>
+                              <td className="text-end fw-bold text-nowrap">{convertRupiah.convert(v.harga * v.jumlah)}</td>
+                            </>
+                          )}
+
+                          <td className="text-center text-nowrap">
+                            {sedangEdit ? (
+                              <>
+                                <button className="btn btn-sm btn-success me-1" title="Simpan" disabled={jualInvalid} onClick={save}>
+                                  <i className="bi bi-check-lg" />
+                                </button>
+                                <button className="btn btn-sm btn-secondary" title="Batal" onClick={batal}>
+                                  <i className="bi bi-x-lg" />
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button className="btn btn-sm btn-outline-warning me-1" title="Ubah" onClick={() => handleEditJumlah(v.id, v.jumlah, v.harga, hargaJualItem(v))}>
+                                  <i className="bi bi-pencil" />
+                                </button>
+                                <button className="btn btn-sm btn-outline-danger" title="Hapus" onClick={() => handleHapusTransaksi(v.id)}>
+                                  <i className="bi bi-trash" />
+                                </button>
+                              </>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
 
-      <table className="table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Supplier</th>
-            <th>Barang</th>
-            <th>Jumlah</th>
-            <th>Harga Beli</th>
-            <th>Harga Jual</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {transaksi
-            .filter((v) => v.faktur === props.faktur)
-            .map((v, i) => (
-              <tr key={v.id}>
-                <td>{i + 1}</td>
-                <td>{v.supplier.nama}</td>
-                <td>{v.barang.nama}</td>
-
-                {displayEdit && v.id === idEdit ? (
-                  <>
-                    <td>
-                      <input type="number" className="form-control" value={jumlah} onChange={(e) => setJumlah(+e.target.value)} />
-                    </td>
-                    <td>
-                      <input type="number" className="form-control" value={editHargaBeli} onChange={(e) => setEditHargaBeli(+e.target.value)} />
-                    </td>
-                    <td>
-                      <input type="number" className="form-control" value={editHargaJual} onChange={(e) => setEditHargaJual(+e.target.value)} />
-                    </td>
-                  </>
-                ) : (
-                  <>
-                    <td>{v.jumlah}</td>
-                    <td>{convertRupiah.convert(v.barang.hargaBeli)}</td>
-                    <td>{convertRupiah.convert(v.barang.hargaJual)}</td>
-                  </>
-                )}
-
-                <td>
-                  {displayEdit && v.id === idEdit ? (
-                    <>
-                      <button className="btn btn-success me-2" onClick={save}>
-                        Save
-                      </button>
-                      <button className="btn btn-warning" onClick={batal}>
-                        Batal
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button className="btn btn-warning me-2" onClick={() => handleEditJumlah(v.id, v.jumlah, v.harga, v.barang.hargaJual)}>
-                        Edit
-                      </button>
-                      <button className="btn btn-danger" onClick={() => handleHapusTransaksi(v.id, v.barangId, v.jumlah)}>
-                        Hapus
-                      </button>
-                    </>
-                  )}
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
-    </>
+      {/* RINGKASAN */}
+      <div className="col-xl-4">
+        <div className="card border-0 shadow-sm sticky-xl-top summary-card">
+          <div className="card-body p-4">
+            <h5 className="fw-bold mb-3">
+              <i className="bi bi-receipt me-2" />
+              Ringkasan
+            </h5>
+            <dl className="row small mb-0">
+              <dt className="col-5 text-muted fw-normal">Faktur</dt>
+              <dd className="col-7 text-end fw-semibold text-break">{props.faktur}</dd>
+              <dt className="col-5 text-muted fw-normal">Supplier</dt>
+              <dd className="col-7 text-end fw-semibold">{supplierList.join(", ") || props.supplier || "-"}</dd>
+              <dt className="col-5 text-muted fw-normal">Jumlah Item</dt>
+              <dd className="col-7 text-end fw-semibold">{totalItem}</dd>
+              <dt className="col-5 text-muted fw-normal">Estimasi Nilai Jual</dt>
+              <dd className="col-7 text-end fw-semibold">{convertRupiah.convert(totalJual)}</dd>
+              <dt className="col-5 text-muted fw-normal">Estimasi Margin</dt>
+              <dd className={`col-7 text-end fw-semibold ${totalJual - totalBeli < 0 ? "text-danger" : "text-success"}`}>{convertRupiah.convert(totalJual - totalBeli)}</dd>
+            </dl>
+            <hr />
+            <div className="text-muted small">Total Pembelian</div>
+            <div className="total-amount fw-bold text-primary mb-3 text-break">{convertRupiah.convert(totalBeli)}</div>
+            <button className="btn btn-success w-100 py-2" disabled={items.length === 0 || displayEdit} onClick={props.onSimpan}>
+              <i className="bi bi-save me-2" />
+              Simpan Pembelian
+            </button>
+            {displayEdit && <small className="text-muted d-block text-center mt-2">Selesaikan edit terlebih dahulu</small>}
+            <small className="text-muted d-block text-center mt-2">Stok dan harga barang diperbarui setelah pembelian disimpan</small>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

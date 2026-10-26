@@ -6,6 +6,10 @@ const create = async (req, res) => {
   try {
     const { qty, qty_awal, qty_baru, keterangan, barangId, faktur } = req.body;
 
+    if (!Number.isInteger(parseInt(qty)) || parseInt(qty) <= 0 || !barangId) {
+      return res.status(400).json({ msg: "qty harus lebih dari 0 dan barangId wajib diisi" });
+    }
+
     await LogPenjualan.create({
       qty,
       qty_awal,

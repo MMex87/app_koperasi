@@ -10,7 +10,6 @@ import getSupplier from "../../../../utils/supplier/getSupplier";
 import getTransPembelian, { cariTransaksi } from "../../../../utils/transaksiPembelian/getTransaksiPembelian";
 import Swal from "sweetalert2";
 import getBarangJoin from "../../../../utils/barang/getBarangJoin";
-import barangTerbeli from "../../../../utils/barang/barangTerbeli";
 import { findBarang } from "../../../../utils/barang/getBarang";
 
 const TransaksiPembalian = (props) => {
@@ -75,8 +74,27 @@ const TransaksiPembalian = (props) => {
       const barangSupplierBeda = barang.find((b) => (b.nama.toLowerCase() === props.namaBarang.toLowerCase() || b.kodeBarang === props.kodeBarang) && b.supplier?.nama !== props.supplier);
 
       /* ================= VALIDASI ================= */
+      const jumlahInt = parseInt(jumlah);
+      const hargaInt = parseInt(harga);
+      const hargaJualInt = parseInt(hargaJual);
+
       if (!jumlah || !harga || !hargaJual) {
         Swal.fire("Gagal!", "Tolong isi semua data", "warning");
+        return;
+      }
+
+      if (!jumlahInt || jumlahInt <= 0) {
+        Swal.fire("Gagal!", "Jumlah harus lebih dari 0", "warning");
+        return;
+      }
+
+      if (!hargaInt || hargaInt <= 0 || !hargaJualInt || hargaJualInt <= 0) {
+        Swal.fire("Gagal!", "Harga beli dan harga jual harus lebih dari 0", "warning");
+        return;
+      }
+
+      if (hargaJualInt < hargaInt) {
+        Swal.fire("Gagal!", "Harga jual tidak boleh lebih kecil dari harga beli", "warning");
         return;
       }
 
@@ -85,8 +103,10 @@ const TransaksiPembalian = (props) => {
         return;
       }
 
-      if (barangNamaSama && !props.barangId) {
-        Swal.fire("Gagal!", "Nama barang sudah ada pada supplier yang sama", "warning");
+      // Nama + kode sama dengan barang yang ada = restock (boleh, tidak perlu pilih dari autocomplete).
+      // Nama sama tapi kode berbeda = duplikat nama, ditolak.
+      if (barangNamaSama && String(barangNamaSama.kodeBarang) !== String(props.kodeBarang)) {
+        Swal.fire("Gagal!", `Nama barang sudah dipakai barang lain (kode ${barangNamaSama.kodeBarang}) pada supplier yang sama`, "warning");
         return;
       }
 
@@ -97,7 +117,9 @@ const TransaksiPembalian = (props) => {
 
       /* ================= PROSES ================= */
       const cariBarangDb = await findBarang(props.kodeBarang, idSupplier);
-      const trans = await cariTransaksi(fakturLokal, props.barangId);
+      // Pakai id dari database (bukan dari state form) agar tidak salah mengubah barang lain
+      const barangIdDb = cariBarangDb ? cariBarangDb.id : null;
+      const trans = barangIdDb ? await cariTransaksi(fakturLokal, barangIdDb) : null;
 
       // ================= BARANG BARU =================
       if (!trans) {
@@ -108,16 +130,16 @@ const TransaksiPembalian = (props) => {
             jenisBarang: props.jenis,
             satuan: props.satuan,
             jumlah: 0,
-            hargaBeli: harga,
-            hargaJual,
+            hargaBeli: hargaInt,
+            hargaJual: hargaJualInt,
             supplierId: idSupplier,
           });
 
           await axios.post("/transPembelian", {
-            jumlah,
+            jumlah: jumlahInt,
             faktur: fakturLokal,
-            harga,
-            hargaJual,
+            harga: hargaInt,
+            hargaJual: hargaJualInt,
             supplierId: idSupplier,
             barangId: resBarang.data.barangId,
             statusPembelian: "onProcess",
@@ -126,20 +148,19 @@ const TransaksiPembalian = (props) => {
 
         // ================= BARANG SUDAH ADA =================
         else {
-          await axios.put(`/barang/${props.barangId}`, {
+          // Harga beli/jual baru disimpan di transaksi dan baru diterapkan ke barang saat Simpan Pembelian
+          await axios.put(`/barang/${barangIdDb}`, {
             jenisBarang: props.jenis,
             satuan: props.satuan,
-            hargaBeli: harga,
-            hargaJual,
           });
 
           await axios.post("/transPembelian", {
-            jumlah,
+            jumlah: jumlahInt,
             faktur: fakturLokal,
-            harga,
-            hargaJual,
+            harga: hargaInt,
+            hargaJual: hargaJualInt,
             supplierId: idSupplier,
-            barangId: props.barangId,
+            barangId: barangIdDb,
             statusPembelian: "onProcess",
           });
         }
@@ -148,7 +169,7 @@ const TransaksiPembalian = (props) => {
       // ================= TRANSAKSI SUDAH ADA =================
       else {
         await axios.put(`/transPembelian/${trans.id}`, {
-          jumlah: parseInt(trans.jumlah) + parseInt(jumlah),
+          jumlah: parseInt(trans.jumlah) + jumlahInt,
         });
       }
 
@@ -162,28 +183,27 @@ const TransaksiPembalian = (props) => {
       props.handleSupplier("");
     } catch (err) {
       console.error(err);
-      Swal.fire("Error!", "Terjadi kesalahan sistem", "error");
+      Swal.fire("Error!", err.response?.data?.msg || "Terjadi kesalahan sistem", "error");
     }
   };
 
-  const getBarangById = async (id) => {
-    const res = await axios.get(`/barang/${id}`);
-    return res.data;
-  };
+  const simpan = async () => {
+    // Ambil data terbaru: keranjang bisa sudah diedit/dihapus di CartList
+    let terbaru;
+    try {
+      terbaru = await getTransPembelian();
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error!", "Gagal mengambil data keranjang", "error");
+      return;
+    }
+    setTransaksi(terbaru);
+    const data = terbaru.filter((v) => v.statusPembelian === "onProcess" && v.faktur === props.faktur);
 
-  const simpanLogStok = async ({ faktur, barangId, qty_awal, qty, qty_baru }) => {
-    await axios.post("/logPembelian", {
-      qty: qty,
-      qty_awal: qty_awal,
-      qty_baru: qty_baru,
-      keterangan: "Pembelian (+)",
-      barangId: barangId,
-      faktur: faktur,
-    });
-  };
-
-  const simpan = () => {
-    const data = transaksi.filter((v) => v.statusPembelian === "onProcess");
+    if (data.length === 0) {
+      Swal.fire("Gagal!", "Keranjang pembelian masih kosong", "warning");
+      return;
+    }
 
     Toast.fire({
       title: "Simpan Data ?",
@@ -197,117 +217,120 @@ const TransaksiPembalian = (props) => {
       if (!result.isConfirmed) return;
 
       try {
-        for (const v of data) {
-          // ===== AMBIL STOK BARANG =====
-          const barangDb = await getBarangById(v.barangId);
-          const qty_awal = parseInt(barangDb.jumlah);
-          const qty_baru = qty_awal + parseInt(v.jumlah);
-
-          // ===== UPDATE STOK BARANG (DI SINI BARU TAMBAH) =====
-          await axios.put(`/barang/${v.barangId}`, {
-            jumlah: qty_baru,
-          });
-
-          // ===== SIMPAN LOG =====
-          await simpanLogStok({
-            qty: v.jumlah,
-            qty_awal,
-            qty_baru,
-            barangId: v.barangId,
-            faktur: v.faktur,
-          });
-
-          // ===== UPDATE STATUS TRANSAKSI =====
-          await axios.put(`/transPembelian/${v.id}`, {
-            statusPembelian: "Done",
-          });
-        }
+        // Tambah stok, simpan log, dan ubah status ke Done diproses backend
+        // dalam satu DB transaction: jika satu item gagal, semuanya dibatalkan.
+        await axios.post("/checkoutPembelian", { faktur: props.faktur });
 
         props.handleSupplier("");
         Toast.fire("Berhasil!", "Pembelian & Stok Berhasil Disimpan", "success");
       } catch (err) {
         console.error(err);
-        Swal.fire("Error!", "Gagal menyimpan data", "error");
+        Swal.fire("Error!", err.response?.data?.msg || "Gagal menyimpan data", "error");
       }
     });
   };
 
   /* ================= JSX ================= */
+  const supplierFiltered = suppliers.filter(({ nama }) => nama.toLowerCase().includes((props.supplier || "").toLowerCase()));
+
   return (
-    <main id="main" className="main">
-      <div className="pagetile text-center">
-        <h1 className="fw-bold fs-2">Transaksi Pembelian</h1>
+    <main id="main" className="main pembelian-page">
+      <div className="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <div>
+          <h1 className="fs-2 fw-bold mb-1">Transaksi Pembelian</h1>
+          <small className="text-muted">Catat barang masuk dari supplier, lalu simpan untuk menambah stok</small>
+        </div>
+        <span className="badge bg-primary bg-opacity-10 text-primary fs-6 px-3 py-2">
+          <i className="bi bi-receipt me-1" />
+          {props.faktur}
+        </span>
       </div>
 
       <section className="section">
-        <div className="row">
-          <div className="col-lg-12">
-            <div className="card">
-              <div className="card-body row">
-                <div className="col-md-3">
-                  <h1 className="card-title mt-1 fw-bolder">Faktur : {props.faktur}</h1>
+        {/* FORM */}
+        <div className="card border-0 shadow-sm mb-4">
+          <div className="card-body p-4">
+            <form className="row g-3" onSubmit={handlecart}>
+              <div className="col-md-8 position-relative">
+                <label className="form-label fw-semibold">Nama Supplier</label>
+                <div className="input-group">
+                  <span className="input-group-text bg-white">
+                    <i className="bi bi-shop" />
+                  </span>
+                  <input type="text" className="form-control" placeholder="Ketik nama supplier..." autoComplete="off" value={props.supplier} onChange={(e) => props.handleSupplier(e.target.value)} onClick={() => setDisplaySupplier(!displaySupplier)} />
                 </div>
 
-                <form className="row g-3" onSubmit={handlecart}>
-                  <div className="col-md-6">
-                    <label className="form-label">Nama Supplier</label>
-                    <input type="text" className="form-control" value={props.supplier} onChange={(e) => props.handleSupplier(e.target.value)} onClick={() => setDisplaySupplier(!displaySupplier)} />
-
-                    {displaySupplier && (
-                      <div className="bodyAutoComplate">
-                        <ul className="list-group">
-                          {suppliers
-                            .filter(({ nama }) => nama.toLowerCase().includes(props.supplier.toLowerCase()))
-                            .map((v) => (
-                              <li key={v.id} className="list-group-item listAutoComplate" onClick={() => handleAutoAnggota(v.nama)}>
-                                {v.nama}
-                              </li>
-                            ))}
-                        </ul>
-                      </div>
+                {displaySupplier && (
+                  <ul className="list-group autocomplete-menu shadow">
+                    {supplierFiltered.length ? (
+                      supplierFiltered.map((v) => (
+                        <li key={v.id} className="list-group-item list-group-item-action" onClick={() => handleAutoAnggota(v.nama)}>
+                          {v.nama}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="list-group-item text-muted small">Supplier tidak ditemukan</li>
                     )}
-                  </div>
-
-                  <div className="col-12">
-                    <label className="form-label">Jenis Input</label>
-                    <select className="form-select" onChange={handleVisiInput}>
-                      <option value="manual">Manual</option>
-                      <option value="scan">Scan Barcode</option>
-                    </select>
-                  </div>
-
-                  {visiJenisInput ? <AddCartScan /> : <AddCartManual />}
-
-                  <div className="text-lg-end">
-                    <button type="submit" className="btn btn-primary btn-sm px-3">
-                      Tambah
-                    </button>
-                  </div>
-                </form>
+                  </ul>
+                )}
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <section className="section">
-        <div className="row">
-          <div className="col-lg-12">
-            <div className="card">
-              <div className="card-body">
-                <CartList />
-                <div className="d-flex justify-content-end">
-                  <button className="btn btn-success btn-sm px-3" onClick={simpan}>
-                    Simpan
+              <div className="col-md-4">
+                <label className="form-label fw-semibold d-block">Jenis Input</label>
+                <div className="btn-group w-100">
+                  <button type="button" className={`btn ${!visiJenisInput ? "btn-primary" : "btn-outline-primary"}`} onClick={() => handleVisiInput({ target: { value: "manual" } })}>
+                    <i className="bi bi-keyboard me-1" />
+                    Manual
+                  </button>
+                  <button type="button" className={`btn ${visiJenisInput ? "btn-primary" : "btn-outline-primary"}`} onClick={() => handleVisiInput({ target: { value: "scan" } })}>
+                    <i className="bi bi-upc-scan me-1" />
+                    Scan
                   </button>
                 </div>
               </div>
-            </div>
+
+              <div className="col-12">
+                <hr className="my-1" />
+              </div>
+
+              {visiJenisInput ? <AddCartScan /> : <AddCartManual />}
+
+              <div className="col-12 text-end">
+                <button type="submit" className="btn btn-primary px-4">
+                  <i className="bi bi-plus-lg me-1" />
+                  Tambah ke Daftar
+                </button>
+              </div>
+            </form>
           </div>
         </div>
+
+        {/* DAFTAR + RINGKASAN */}
+        <CartList onSimpan={simpan} />
       </section>
 
-      <div style={{ height: 200 }} />
+      <style>{`
+        /* Template memberi tiap .card & .pagetitle h1 margin-left -90px; geser sekali di level halaman */
+        .pembelian-page .card { margin: 0; border-radius: 14px; }
+        .pembelian-page .pagetitle h1 { margin-left: 0; }
+        @media (min-width: 1200px) {
+          .pembelian-page .pagetitle,
+          .pembelian-page .section { margin-left: -90px; }
+          /* hanya saat sticky; .card position:relative akan tergeser jika top berlaku di layar kecil */
+          .pembelian-page .summary-card { top: 80px; }
+        }
+        .pembelian-page .autocomplete-menu {
+          position: absolute; left: calc(var(--bs-gutter-x) * .5); right: calc(var(--bs-gutter-x) * .5);
+          top: 100%; z-index: 1050; margin-top: 2px;
+          max-height: 240px; overflow-y: auto; border-radius: 8px;
+        }
+        .pembelian-page .autocomplete-menu .list-group-item { cursor: pointer; }
+        .pembelian-page .cart-table thead th {
+          font-size: .75rem; text-transform: uppercase; letter-spacing: .03em;
+          color: #6c757d; white-space: nowrap;
+        }
+        .pembelian-page .total-amount { font-size: 2rem; line-height: 1.2; }
+      `}</style>
     </main>
   );
 };

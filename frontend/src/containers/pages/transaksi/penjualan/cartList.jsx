@@ -127,11 +127,20 @@ const CartList = (props) => {
       const item = transaksi.find((v) => v.id === idEdit);
       if (!item) return;
 
+      const jumlahInt = parseInt(jumlah);
+      if (!jumlahInt || jumlahInt <= 0) {
+        Swal.fire({
+          icon: "warning",
+          title: "Jumlah harus lebih dari 0",
+        });
+        return;
+      }
+
       // 🔥 Validasi stok lagi via backend (stok realtime)
       const res = await axios.get(`/barang/${item.barang.id}`);
       const stokTerbaru = res.data?.jumlah || 0;
 
-      if (parseInt(jumlah) > stokTerbaru) {
+      if (jumlahInt > stokTerbaru) {
         Swal.fire({
           icon: "error",
           title: "Stok Tidak Cukup",
@@ -143,8 +152,8 @@ const CartList = (props) => {
       // UPDATE CART
       await editTransaksiCartListPenjualan({
         id: idEdit,
-        jumlah: parseInt(jumlah),
-        harga: hargaSatuan * parseInt(jumlah),
+        jumlah: jumlahInt,
+        harga: hargaSatuan * jumlahInt,
       });
 
       batalEdit();
@@ -153,7 +162,8 @@ const CartList = (props) => {
       console.error(err);
       Swal.fire({
         icon: "error",
-        title: "Gagal validasi stok dengan server",
+        title: "Gagal menyimpan perubahan",
+        text: err.response?.data?.msg,
       });
     }
   };
@@ -167,122 +177,186 @@ const CartList = (props) => {
       confirmButtonText: "Hapus",
       cancelButtonText: "Batal",
       reverseButtons: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        hapusTransaksiPenjualan(id);
+    }).then(async (result) => {
+      if (!result.isConfirmed) return;
+      try {
+        await hapusTransaksiPenjualan(id);
         setRefresh((v) => !v);
-        Toast.fire("Terhapus!", "Data Penjualan Sudah Terhapus.", "success");
-      } else {
-        Toast.fire("Dibatalkan", "Data Batal Dihapus", "error");
+        Toast.fire("Terhapus!", "Barang sudah dihapus dari keranjang.", "success");
+      } catch (err) {
+        console.error(err);
+        Toast.fire("Gagal!", err.response?.data?.msg || "Gagal menghapus barang", "error");
       }
     });
   };
+  // Hapus semua item keranjang faktur aktif (stok belum berkurang, jadi aman dihapus)
+  const kosongkanKeranjang = async () => {
+    const items = transaksi.filter((v) => v.faktur === props.faktur && v.statusPenjualan === "onProcess");
+    const result = await Toast.fire({
+      title: "Kosongkan keranjang?",
+      text: `${items.length} barang akan dihapus dari keranjang.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Kosongkan",
+      cancelButtonText: "Batal",
+      reverseButtons: true,
+    });
+    if (!result.isConfirmed) return;
+
+    try {
+      for (const item of items) {
+        await hapusTransaksiPenjualan(item.id);
+      }
+      batalEdit();
+      setRefresh((v) => !v);
+      Toast.fire("Berhasil", "Keranjang sudah dikosongkan.", "success");
+    } catch (err) {
+      console.error(err);
+      setRefresh((v) => !v);
+      Toast.fire("Gagal!", err.response?.data?.msg || "Sebagian barang gagal dihapus", "error");
+    }
+  };
+
   /* ======================================================
      RENDER
   ====================================================== */
 
   const transaksiByFaktur = transaksi.filter((v) => v.faktur === props.faktur);
+  const totalItem = transaksiByFaktur.reduce((sum, v) => sum + (parseInt(v.jumlah) || 0), 0);
+  const melebihiStok = displayEdit && jumlah > stokBarang;
 
   return (
     <>
-      <div className="col-lg-12">
-        <div className="row">
-          <div className="col-md-9">
-            <h1 className="card-title mt-1 fw-bold">Faktur : {props.faktur}</h1>
+      <div className="row g-4">
+        {/* TABLE KERANJANG */}
+        <div className="col-xl-8">
+          <div className="card border-0 shadow-sm h-100">
+            <div className="card-body p-4">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <h5 className="fw-bold mb-0">
+                  <i className="bi bi-cart3 me-2" />
+                  Keranjang
+                </h5>
+                <div className="d-flex align-items-center gap-2">
+                  <span className="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2">{transaksiByFaktur.length} barang</span>
+                  {transaksiByFaktur.length > 0 && (
+                    <button className="btn btn-sm btn-outline-danger" onClick={kosongkanKeranjang} disabled={displayEdit}>
+                      <i className="bi bi-trash3 me-1" />
+                      Kosongkan
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div className="table-responsive">
+                <table className="table table-hover align-middle mb-0 cart-table">
+                  <thead className="table-light">
+                    <tr>
+                      <th className="text-center" style={{ width: "50px" }}>
+                        #
+                      </th>
+                      <th>Barang</th>
+                      <th className="text-end">Harga</th>
+                      <th className="text-center" style={{ width: "150px" }}>
+                        Jumlah
+                      </th>
+                      <th className="text-end">Subtotal</th>
+                      <th className="text-center" style={{ width: "120px" }}>
+                        Aksi
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {transaksiByFaktur.length === 0 ? (
+                      <tr>
+                        <td colSpan="6" className="text-center text-muted py-5">
+                          <i className="bi bi-cart-x fs-1 d-block mb-2" />
+                          Keranjang masih kosong
+                          <small className="d-block">Tambahkan barang melalui form di atas</small>
+                        </td>
+                      </tr>
+                    ) : (
+                      transaksiByFaktur.map((val, index) => {
+                        const sedangEdit = displayEdit && val.id === idEdit;
+                        return (
+                          <tr key={val.id} className={sedangEdit ? "table-warning" : ""}>
+                            <td className="text-center text-muted">{index + 1}</td>
+                            <td className="fw-semibold">{val.barang.nama}</td>
+                            <td className="text-end text-nowrap">{convertRupiah.convert(val.barang.hargaJual)}</td>
+
+                            {/* EDIT JUMLAH + VALIDASI STOK */}
+                            <td className="text-center">
+                              {sedangEdit ? (
+                                <>
+                                  <input type="number" min="1" className={`form-control form-control-sm text-center ${melebihiStok ? "is-invalid" : ""}`} value={jumlah} autoFocus onChange={(e) => setJumlah(parseInt(e.target.value) || 0)} />
+                                  <small className={melebihiStok ? "text-danger" : "text-muted"}>Stok: {stokBarang}</small>
+                                </>
+                              ) : (
+                                val.jumlah
+                              )}
+                            </td>
+
+                            <td className="text-end fw-bold text-nowrap">{convertRupiah.convert((sedangEdit ? jumlah : val.jumlah) * val.barang.hargaJual)}</td>
+
+                            {/* EDIT & HAPUS BUTTON */}
+                            <td className="text-center text-nowrap">
+                              {sedangEdit ? (
+                                <>
+                                  <button className="btn btn-sm btn-success me-1" title="Simpan" disabled={melebihiStok || jumlah <= 0} onClick={() => saveEdit(val.barang.hargaJual)}>
+                                    <i className="bi bi-check-lg" />
+                                  </button>
+                                  <button className="btn btn-sm btn-secondary" title="Batal" onClick={batalEdit}>
+                                    <i className="bi bi-x-lg" />
+                                  </button>
+                                </>
+                              ) : (
+                                <>
+                                  <button className="btn btn-sm btn-outline-warning me-1" title="Ubah jumlah" onClick={() => handleEditJumlah(val.id, val.jumlah)}>
+                                    <i className="bi bi-pencil" />
+                                  </button>
+                                  <button className="btn btn-sm btn-outline-danger" title="Hapus dari keranjang" onClick={() => handleHapusTransaksi(val.id)}>
+                                    <i className="bi bi-trash" />
+                                  </button>
+                                </>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* TABLE */}
-      <table className="table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Anggota</th>
-            <th>Barang</th>
-            <th>Jumlah</th>
-            <th>Harga</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {transaksiByFaktur.map((val, index) => {
-            return (
-              <tr key={val.id}>
-                <th>{index + 1}</th>
-                <td>{val.anggota.nama}</td>
-                <td>{val.barang.nama}</td>
-
-                {/* EDIT JUMLAH + VALIDASI STOK */}
-                <td>
-                  {displayEdit && val.id === idEdit ? (
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={jumlah}
-                      onChange={(e) => {
-                        const newJumlah = parseInt(e.target.value) || 0;
-
-                        // VALIDASI REALTIME (stok dari backend)
-                        if (newJumlah > stokBarang) {
-                          Swal.fire({
-                            icon: "warning",
-                            title: "Jumlah Melebihi Stok",
-                            text: `Stok tersedia hanya ${stokBarang}`,
-                          });
-                          return;
-                        }
-
-                        setJumlah(newJumlah);
-                      }}
-                    />
-                  ) : (
-                    val.jumlah
-                  )}
-                </td>
-
-                <td>{convertRupiah.convert(val.barang.hargaJual)}</td>
-
-                {/* EDIT & HAPUS BUTTON */}
-                <td>
-                  {displayEdit && val.id === idEdit ? (
-                    <>
-                      <button className="btn btn-warning me-2" onClick={batalEdit}>
-                        Batal
-                      </button>
-
-                      <button className="btn btn-success" onClick={() => saveEdit(val.barang.hargaJual)}>
-                        Save
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button className="bx bx-edit btn btn-warning me-1" onClick={() => handleEditJumlah(val.id, val.jumlah)}></button>
-
-                      <button className="bx bx-trash btn btn-danger" onClick={() => handleHapusTransaksi(val.id)} />
-                    </>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-
-      {/* TOTAL */}
-      <div className="col-lg-12 sticky-footer">
-        <div className="card" id="card_total">
-          <div className="card-body text-end row">
-            <div className="col-md-7">
-              <h1 className="fw-bold fs-1">TOTAL :</h1>
-            </div>
-            <div className="col-md-5">
-              <h1 className="fw-bold fs-1">{convertRupiah.convert(hargaJual)}</h1>
-            </div>
-
-            <div className="col-md-12">
-              <button className="btn mt-auto fs-3 fw-normal btn-success bx bx-printer" data-bs-toggle="modal" data-bs-target="#exampleModal" onClick={() => setRefresh((v) => !v)} />
+        {/* RINGKASAN */}
+        <div className="col-xl-4">
+          <div className="card border-0 shadow-sm sticky-xl-top summary-card">
+            <div className="card-body p-4">
+              <h5 className="fw-bold mb-3">
+                <i className="bi bi-receipt me-2" />
+                Ringkasan
+              </h5>
+              <dl className="row small mb-0">
+                <dt className="col-5 text-muted fw-normal">Faktur</dt>
+                <dd className="col-7 text-end fw-semibold text-break">{props.faktur}</dd>
+                <dt className="col-5 text-muted fw-normal">Anggota</dt>
+                <dd className="col-7 text-end fw-semibold text-truncate">{props.anggota || "-"}</dd>
+                <dt className="col-5 text-muted fw-normal">Pembayaran</dt>
+                <dd className="col-7 text-end fw-semibold">{props.typePembayaran || "-"}</dd>
+                <dt className="col-5 text-muted fw-normal">Jumlah Item</dt>
+                <dd className="col-7 text-end fw-semibold">{totalItem}</dd>
+              </dl>
+              <hr />
+              <div className="text-muted small">Total Bayar</div>
+              <div className="total-amount fw-bold text-primary mb-3 text-break">{convertRupiah.convert(hargaJual)}</div>
+              <button className="btn btn-success w-100 py-2" data-bs-toggle="modal" data-bs-target="#exampleModal" disabled={transaksiByFaktur.length === 0} onClick={() => setRefresh((v) => !v)}>
+                <i className="bi bi-printer me-2" />
+                Bayar &amp; Cetak Struk
+              </button>
             </div>
           </div>
         </div>

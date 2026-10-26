@@ -64,14 +64,21 @@ const TransPenjualan = () => {
       let selectedAnggota = anggotas.find((a) => a.nama === anggota);
       let selectedBarang = barang.find((b) => b.nama === namaBarang && b.supplierId === supplierId);
 
-      if (!selectedAnggota || !selectedBarang || !jumlah || !harga || !typePembayaran) {
+      const jumlahInt = parseInt(jumlah);
+      const hargaInt = parseInt(harga);
+
+      if (!selectedAnggota || !selectedBarang || !typePembayaran) {
         Swal.fire("Gagal menambahkan data!!", "Tolong isi semua Data", "warning");
         return;
       }
 
-      // Stok tidak cukup
-      if (selectedBarang.jumlah - jumlah < 0) {
-        Swal.fire("Gagal menambahkan data!!", "Stok Barang Tidak cukup!!", "warning");
+      if (!jumlahInt || jumlahInt <= 0) {
+        Swal.fire("Gagal menambahkan data!!", "Jumlah harus lebih dari 0", "warning");
+        return;
+      }
+
+      if (!hargaInt || hargaInt <= 0) {
+        Swal.fire("Gagal menambahkan data!!", "Harga harus lebih dari 0", "warning");
         return;
       }
 
@@ -86,13 +93,21 @@ const TransPenjualan = () => {
       });
 
       const trans = res.data;
+      const jumlahDiKeranjang = trans ? parseInt(trans.jumlah) : 0;
+      const jumlahBaru = jumlahDiKeranjang + jumlahInt;
+
+      // Stok tidak cukup (termasuk jumlah yang sudah ada di keranjang)
+      if (selectedBarang.jumlah - jumlahBaru < 0) {
+        Swal.fire("Gagal menambahkan data!!", "Stok Barang Tidak cukup!!", "warning");
+        return;
+      }
 
       if (!trans) {
         // Insert baru
         await axios.post("/transPenjualan", {
-          jumlah,
+          jumlah: jumlahInt,
           faktur,
-          harga: parseInt(harga) * parseInt(jumlah),
+          harga: hargaInt * jumlahInt,
           typePembayaran,
           anggotaId: anggotaIdLokal,
           barangId: barangIdLokal,
@@ -100,11 +115,9 @@ const TransPenjualan = () => {
         });
       } else {
         // Update (jumlah bertambah)
-        let jumlahBaru = parseInt(trans.jumlah) + parseInt(jumlah);
-        console.log(jumlahBaru);
         await axios.put(`/transPenjualan/${trans.id}`, {
           jumlah: jumlahBaru,
-          harga: parseInt(harga) * jumlahBaru,
+          harga: hargaInt * jumlahBaru,
         });
       }
       // Reset input
@@ -114,7 +127,7 @@ const TransPenjualan = () => {
       dispatch({ type: ActionType.SET_HARGA_PENJUALAN, index: "" });
     } catch (err) {
       console.error(err);
-      Swal.fire("Error!", "Gagal memproses data", "error");
+      Swal.fire("Error!", err.response?.data?.msg || "Gagal memproses data", "error");
     }
   };
 
@@ -130,91 +143,119 @@ const TransPenjualan = () => {
     dispatch({ type: ActionType.SET_ANGGOTA_PENJUALAN, index: val });
   };
 
+  const anggotaFiltered = anggotas.filter((v) => v.nama.toLowerCase().includes((anggota || "").toLowerCase()));
+
   return (
-    <main id="main" className="main">
-      <div className="pagetitle text-center">
-        <h1 className="fw-bold fs-2">Transaksi Penjualan</h1>
+    <main id="main" className="main penjualan-page">
+      <div className="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <div>
+          <h1 className="fs-2 fw-bold mb-1">Transaksi Penjualan</h1>
+          <small className="text-muted">Tambahkan barang ke keranjang, lalu lakukan pembayaran</small>
+        </div>
+        <span className="badge bg-primary bg-opacity-10 text-primary fs-6 px-3 py-2">
+          <i className="bi bi-receipt me-1" />
+          {faktur}
+        </span>
       </div>
 
       <section className="section">
-        <div className="row">
-          <div className="col-lg-12">
-            <div className="card">
-              <div className="card-body row">
-                <div className="col-md-3">
-                  <h1 className="card-title mt-1 fw-bolder">Faktur : {faktur}</h1>
+        {/* FORM */}
+        <div className="card border-0 shadow-sm mb-4">
+          <div className="card-body p-4">
+            <form className="row g-3" onSubmit={handleCart}>
+              {/* Input Anggota */}
+              <div className="col-md-6 position-relative">
+                <label className="form-label fw-semibold">Nama Anggota</label>
+                <div className="input-group">
+                  <span className="input-group-text bg-white">
+                    <i className="bi bi-person" />
+                  </span>
+                  <input type="text" className="form-control" placeholder="Ketik nama anggota..." autoComplete="off" value={anggota} onChange={(e) => dispatch({ type: ActionType.SET_ANGGOTA_PENJUALAN, index: e.target.value })} onClick={() => setDisplayAnggota(!displayAnggota)} />
                 </div>
 
-                {/* FORM */}
-                <form className="row g-3" onSubmit={handleCart}>
-                  {/* Input Anggota */}
-                  <div className="col-md-6">
-                    <label className="form-label">Nama Anggota</label>
-                    <input type="text" className="form-control" value={anggota} onChange={(e) => dispatch({ type: ActionType.SET_ANGGOTA_PENJUALAN, index: e.target.value })} onClick={() => setDisplayAnggota(!displayAnggota)} />
-
-                    {displayAnggota && (
-                      <div className="bodyAutoComplate">
-                        <ul className="list-group list-group-flush">
-                          {anggotas
-                            .filter((v) => v.nama.toLowerCase().includes(anggota.toLowerCase()))
-                            .map((v, i) => (
-                              <li key={i} onClick={() => handleAutoAnggota(v.nama)} className="list-group-item listAutoComplate">
-                                {v.nama}
-                              </li>
-                            ))}
-                        </ul>
-                      </div>
+                {displayAnggota && (
+                  <ul className="list-group autocomplete-menu shadow">
+                    {anggotaFiltered.length ? (
+                      anggotaFiltered.map((v, i) => (
+                        <li key={i} onClick={() => handleAutoAnggota(v.nama)} className="list-group-item list-group-item-action">
+                          {v.nama}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="list-group-item text-muted small">Anggota tidak ditemukan</li>
                     )}
-                  </div>
-
-                  {/* Type Pembayaran */}
-                  <div className="col-md-6">
-                    <label className="form-label">Type Pembayaran</label>
-                    <select className="form-select" value={typePembayaran} onChange={(e) => dispatch({ type: ActionType.SET_TYPE_BAYAR_PENJUALAN, index: e.target.value })}>
-                      <option value="">-- Pilih Type Pembayaran --</option>
-                      <option value="Tunai">TUNAI</option>
-                      <option value="QRIS">QRIS</option>
-                    </select>
-                  </div>
-
-                  {/* Jenis Input */}
-                  <div className="col-12">
-                    <label className="form-label">Jenis Input</label>
-                    <select className="form-select" onChange={handleVisiInput}>
-                      <option value="manual">Manual</option>
-                      <option value="scan">Scan Barcode</option>
-                    </select>
-                  </div>
-
-                  {/* Input Barang */}
-                  {visiJenisInput ? <AddCartScan /> : <AddCartManual />}
-
-                  <div className="text-lg-end">
-                    <button type="submit" className="btn btn-primary btn-sm px-3">
-                      Tambah
-                    </button>
-                  </div>
-                </form>
+                  </ul>
+                )}
               </div>
-            </div>
+
+              {/* Type Pembayaran */}
+              <div className="col-sm-6 col-md-3">
+                <label className="form-label fw-semibold">Pembayaran</label>
+                <select className="form-select" value={typePembayaran} onChange={(e) => dispatch({ type: ActionType.SET_TYPE_BAYAR_PENJUALAN, index: e.target.value })}>
+                  <option value="">-- Pilih --</option>
+                  <option value="Tunai">Tunai</option>
+                  <option value="QRIS">QRIS</option>
+                </select>
+              </div>
+
+              {/* Jenis Input */}
+              <div className="col-sm-6 col-md-3">
+                <label className="form-label fw-semibold d-block">Jenis Input</label>
+                <div className="btn-group w-100">
+                  <button type="button" className={`btn ${typeInput === "manual" ? "btn-primary" : "btn-outline-primary"}`} onClick={() => handleVisiInput({ target: { value: "manual" } })}>
+                    <i className="bi bi-keyboard me-1" />
+                    Manual
+                  </button>
+                  <button type="button" className={`btn ${typeInput === "scan" ? "btn-primary" : "btn-outline-primary"}`} onClick={() => handleVisiInput({ target: { value: "scan" } })}>
+                    <i className="bi bi-upc-scan me-1" />
+                    Scan
+                  </button>
+                </div>
+              </div>
+
+              <div className="col-12">
+                <hr className="my-1" />
+              </div>
+
+              {/* Input Barang */}
+              {visiJenisInput ? <AddCartScan /> : <AddCartManual />}
+
+              <div className="col-12 text-end">
+                <button type="submit" className="btn btn-primary px-4">
+                  <i className="bi bi-cart-plus me-1" />
+                  Tambah ke Keranjang
+                </button>
+              </div>
+            </form>
           </div>
         </div>
+
+        {/* KERANJANG + RINGKASAN */}
+        <CartList />
       </section>
 
-      {/* LIST */}
-      <section className="section">
-        <div className="row">
-          <div className="col-lg-12">
-            <div className="card">
-              <div className="card-body">
-                <CartList />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div style={{ height: 200 }} />
+      <style>{`
+        /* Template memberi tiap .card & .pagetitle h1 margin-left -90px; geser sekali di level halaman */
+        .penjualan-page .card { margin: 0; border-radius: 14px; }
+        .penjualan-page .pagetitle h1 { margin-left: 0; }
+        @media (min-width: 1200px) {
+          .penjualan-page .pagetitle,
+          .penjualan-page .section { margin-left: -90px; }
+          /* hanya saat sticky; .card position:relative akan tergeser jika top berlaku di layar kecil */
+          .penjualan-page .summary-card { top: 80px; }
+        }
+        .penjualan-page .autocomplete-menu {
+          position: absolute; left: calc(var(--bs-gutter-x) * .5); right: calc(var(--bs-gutter-x) * .5);
+          top: 100%; z-index: 1050; margin-top: 2px;
+          max-height: 240px; overflow-y: auto; border-radius: 8px;
+        }
+        .penjualan-page .autocomplete-menu .list-group-item { cursor: pointer; }
+        .penjualan-page .cart-table thead th {
+          font-size: .75rem; text-transform: uppercase; letter-spacing: .03em;
+          color: #6c757d; white-space: nowrap;
+        }
+        .penjualan-page .total-amount { font-size: 2rem; line-height: 1.2; }
+      `}</style>
     </main>
   );
 };

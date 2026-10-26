@@ -22,16 +22,45 @@ const addCartScan = (props) => {
       props.handlejenisBarang(barangs.jenisBarang);
       props.handleHargaBarang(barangs.hargaJual);
       props.handleSupplierIdPenjualan(barangs.supplierId);
+    } else {
+      // Kode tidak dikenal: kosongkan data barang sebelumnya agar tidak tertambah salah
+      props.handleNamaBarang("");
+      props.handlejenisBarang("");
+      props.handleHargaBarang("");
+      props.handleSupplierIdPenjualan("");
     }
   };
 
   return (
     <>
-      <div className="col-12">
-        <label htmlFor="kodeBarangScan" className="form-label">
+      <div className="col-md-6">
+        <label htmlFor="kodeBarangScan" className="form-label fw-semibold">
           Kode Barang
         </label>
-        <input type="number" className="form-control" id="kodeBarangScan" value={props.kodeBarang} autoFocus={true} onChange={handleScan} />
+        <div className="input-group">
+          <span className="input-group-text bg-white">
+            <i className="bi bi-upc-scan" />
+          </span>
+          <input type="number" className="form-control" id="kodeBarangScan" placeholder="Scan barcode barang..." value={props.kodeBarang} autoFocus={true} onChange={handleScan} />
+        </div>
+      </div>
+      <div className="col-md-6 d-flex align-items-end">
+        {props.namaBarang ? (
+          <div className="alert alert-success py-2 px-3 mb-0 w-100 d-flex justify-content-between align-items-center">
+            <span>
+              <i className="bi bi-check-circle me-2" />
+              <b>{props.namaBarang}</b>
+            </span>
+            <span>Rp {Number(props.harga || 0).toLocaleString("id-ID")}</span>
+          </div>
+        ) : (
+          props.kodeBarang && (
+            <div className="alert alert-warning py-2 px-3 mb-0 w-100">
+              <i className="bi bi-exclamation-circle me-2" />
+              Kode barang tidak dikenali
+            </div>
+          )
+        )}
       </div>
     </>
   );

@@ -1,16 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
 import { connect } from "react-redux";
-import { jsPDF } from "jspdf";
-import "jspdf-autotable";
-import barangTerjual from "../../../../utils/barang/barangTerjual";
 import axios from "../../../../api/axios";
+import { buatStruk, cetakStruk, formatTanggalStruk, rupiahStruk } from "../../../../utils/struk";
 import ActionType from "../../../../redux/reducer/globalActionType";
 import Swal from "sweetalert2";
 import convertRupiah from "rupiah-format";
 
 const ModalCheckout = (props) => {
   const [pembayaran, setPembayaran] = useState("");
+  const [bayarFinal, setBayarFinal] = useState(0);
   const inputRef = useRef(null);
+  const checkoutModalRef = useRef(null);
+  const kembalianModalRef = useRef(null);
 
   const getTotal = (faktur) => {
     return props.transaksiProps.filter((val) => val.faktur === faktur).reduce((acc, val) => acc + parseInt(val.harga), 0);
@@ -30,139 +31,73 @@ const ModalCheckout = (props) => {
     }
 
     const total = getTotal(props.faktur);
-    if (parseInt(pembayaran) < total && props.typePembayaran === "Cash") {
+    // Non-tunai (QRIS) dibayar pas sesuai total
+    const bayarInt = props.typePembayaran === "Tunai" ? parseInt(pembayaran) : total;
+
+    if (!props.typePembayaran) {
+      return Swal.fire("Pembayaran Belum Dipilih", "Pilih jenis pembayaran terlebih dahulu!", "warning");
+    }
+
+    if (props.typePembayaran === "Tunai" && !bayarInt) {
+      return Swal.fire("Pembayaran Belum Diisi", "Isi nominal pembayaran terlebih dahulu!", "warning");
+    }
+
+    if (props.typePembayaran === "Tunai" && bayarInt < total) {
       return Swal.fire("Pembayaran Kurang", "Nominal pembayaran lebih kecil dari total!", "warning");
     }
 
-    // ==================================================
-    // ========== VALIDASI STOK BEFORE PRINT ============
-    // ==================================================
-
-    for (let trans of transaksi) {
-      const barangId = trans.barangId || trans.barang?.id;
-
-      try {
-        const res = await axios.get(`/barang/${barangId}`);
-        const stokServer = res.data?.jumlah ?? 0;
-
-        if (trans.jumlah > stokServer) {
-          return Swal.fire({
-            icon: "error",
-            title: "Stok Tidak Cukup!",
-            text: `Barang "${trans.barang?.nama}" hanya tersisa ${stokServer}, tetapi pembelian adalah ${trans.jumlah}.`,
-          });
-        }
-      } catch (err) {
-        console.error(err);
-        return Swal.fire({
-          icon: "error",
-          title: "Gagal Memeriksa Stok!",
-          text: `Tidak dapat mengambil stok barang "${trans.barang?.nama}".`,
-        });
-      }
-    }
-
     // ===============================
-    // ========== LANJUT CHECKOUT ====
+    // ========== CHECKOUT ===========
     // ===============================
+    // Cek stok, kurangi stok, simpan log, dan ubah status diproses backend
+    // dalam satu DB transaction: jika satu item gagal, semuanya dibatalkan.
 
     try {
-      // ================================
-      // ========== UPDATE STOK =========
-      // ========== + SIMPAN LOG ========
-      // ================================
-      for (let trans of transaksi) {
-        const barangId = trans.barangId || trans.barang?.id;
+      await axios.post("/checkoutPenjualan", {
+        faktur: props.faktur,
+        typePembayaran: props.typePembayaran,
+      });
+    } catch (err) {
+      console.error(err);
+      return Swal.fire("Checkout Gagal!", err.response?.data?.msg || "Terjadi kesalahan saat proses checkout!", "error");
+    }
 
-        // 1. Ambil stok awal
-        const barangRes = await axios.get(`/barang/${barangId}`);
-        const stokAwal = barangRes.data?.jumlah ?? 0;
+    // Modal kembalian hanya dibuka setelah checkout berhasil
+    setBayarFinal(bayarInt);
+    window.bootstrap.Modal.getOrCreateInstance(checkoutModalRef.current).hide();
+    window.bootstrap.Modal.getOrCreateInstance(kembalianModalRef.current).show();
 
-        // 2. Hitung stok akhir
-        const stokAkhir = stokAwal - trans.jumlah;
-
-        // 3. Update stok (fungsi existing)
-        barangTerjual(barangId, trans.jumlah);
-
-        // 4. Simpan LOG stok
-        try {
-          await axios.post("/logPenjualan", {
-            qty: trans.jumlah,
-            qty_awal: stokAwal,
-            qty_baru: stokAkhir,
-            keterangan: "Penjualan (-)",
-            barangId: barangId,
-            faktur: props.faktur,
-          });
-        } catch (err) {
-          console.error("Gagal menyimpan log:", err);
-          Swal.fire("Error", "Gagal menyimpan log perubahan stok!", "error");
-          return;
-        }
-        await axios.put(`/transPenjualan/${trans.id}`, {
-          statusPenjualan: props.typePembayaran === "Bon" ? "Bon" : "Selesai",
-        });
-      }
-
+    try {
       // ===============================
       // ========== CETAK PDF ==========
       // ===============================
 
-      const doc = new jsPDF("p", "mm", [48, 120]);
-
-      let today = new Date();
-      const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "July", "Agustus", "September", "Oktober", "November", "Desember"];
-      today = String(today.getDate()).padStart(2, "0") + " - " + months[today.getMonth()] + " - " + today.getFullYear();
-
-      doc.setFontSize(12);
-      doc.text(`Cafe-Wijaya`, 5, 5);
-      doc.setFontSize(7);
-
-      doc.text(`Faktur : ${props.faktur}`, 1, 11);
-      doc.text(`Tanggal : ${today}`, 1, 15);
-      doc.text(`Pembayaran : ${props.typePembayaran}`, 1, 19);
-      doc.text(`Anggota : ${props.anggota}`, 1, 23);
-      doc.line(1, 26, 46, 26);
-
-      doc.autoTable({
-        body: transaksi.map((val) => [val.barang?.nama, val.barang?.hargaJual, val.jumlah, val.jumlah * val.barang?.hargaJual]),
-        styles: { fontSize: 7 },
-        startY: 28,
-        margin: { left: 0, right: 3 },
-        theme: "plain",
-      });
-
-      let heightTable = doc.lastAutoTable.finalY;
-
-      const bayar = parseInt(pembayaran);
+      const bayar = bayarInt;
       const kembali = bayar - total;
 
-      doc.line(1, heightTable + 1, 46, heightTable + 1);
-
-      doc.text(`Total : ${total}`, 1, heightTable + 6);
-      doc.text(`Bayar : ${bayar}`, 1, heightTable + 10);
-      doc.text(`Kembali : ${kembali}`, 1, heightTable + 14);
-
-      doc.autoPrint();
-
-      const pdf = doc.output("bloburl");
-      const iframe = document.createElement("iframe");
-      iframe.style.display = "none";
-      iframe.src = pdf;
-
-      iframe.onload = () => {
-        try {
-          iframe.contentWindow.focus();
-          iframe.contentWindow.print();
-        } catch (error) {
-          console.error("Gagal mencetak PDF:", error);
-        }
-      };
-
-      document.body.appendChild(iframe);
+      const doc = buatStruk({
+        info: [
+          { label: "Faktur", value: props.faktur },
+          { label: "Tanggal", value: formatTanggalStruk(new Date()) },
+          { label: "Pembayaran", value: props.typePembayaran },
+          { label: "Anggota", value: (props.anggota || "-").trim() },
+        ],
+        items: transaksi.map((val) => ({
+          nama: val.barang?.nama,
+          qty: val.jumlah,
+          harga: val.barang?.hargaJual,
+          subtotal: val.jumlah * val.barang?.hargaJual,
+        })),
+        totals: [
+          { label: "TOTAL", value: rupiahStruk(total), bold: true },
+          { label: "Bayar", value: rupiahStruk(bayar) },
+          { label: "Kembali", value: rupiahStruk(kembali) },
+        ],
+      });
+      cetakStruk(doc);
     } catch (error) {
       console.error(error);
-      Swal.fire("Error", "Terjadi kesalahan saat proses checkout!", "error");
+      Swal.fire("Error", "Checkout berhasil, tetapi struk gagal dicetak!", "error");
     }
   };
 
@@ -182,6 +117,7 @@ const ModalCheckout = (props) => {
     props.handleFakturPenjualan("");
     props.refreshAutoFokus();
     setPembayaran("");
+    setBayarFinal(0);
   };
 
   // ======================================================
@@ -203,74 +139,102 @@ const ModalCheckout = (props) => {
     }, 400);
   }, [props.refresh]);
 
+  const items = props.transaksiProps.filter((v) => v.faktur === props.faktur);
+  const total = props.totalHarga || 0;
+  const tunai = props.typePembayaran === "Tunai";
+  const bayarInt = parseInt(pembayaran) || 0;
+  const selisih = bayarInt - total;
+
+  // Pilihan nominal cepat: uang pas + pembulatan ke pecahan umum
+  const nominalCepat = [...new Set([total, Math.ceil(total / 5000) * 5000, Math.ceil(total / 10000) * 10000, 20000, 50000, 100000])].filter((v) => v >= total && v > 0).slice(0, 5);
+
   return (
     <>
       {/* MODAL CHECKOUT */}
-      <div className="modal fade" id="exampleModal" tabIndex="-1">
-        <div className="modal-dialog modal-lg">
-          <div className="modal-content">
+      <div className="modal fade" id="exampleModal" tabIndex="-1" ref={checkoutModalRef}>
+        <div className="modal-dialog modal-lg modal-dialog-centered">
+          <div className="modal-content border-0">
             <div className="modal-header">
-              <h1 className="modal-title fs-5">Daftar Barang</h1>
-              <button className="btn-close" data-bs-dismiss="modal"></button>
+              <div>
+                <h1 className="modal-title fs-5 fw-bold">Pembayaran</h1>
+                <small className="text-muted">
+                  {props.faktur} · {props.anggota || "-"}
+                </small>
+              </div>
+              <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
             <form onSubmit={print}>
               <div className="modal-body">
                 {/* TABEL */}
-                <div className="overflow-auto" style={{ height: 300 }}>
-                  <table className="table">
-                    <thead>
+                <div className="table-responsive border rounded" style={{ maxHeight: 260 }}>
+                  <table className="table table-sm align-middle mb-0">
+                    <thead className="table-light sticky-top">
                       <tr>
-                        <th>#</th>
-                        <th>Anggota</th>
-                        <th>Barang</th>
-                        <th>Jumlah</th>
-                        <th>Harga</th>
-                        <th>Total</th>
+                        <th className="ps-3">Barang</th>
+                        <th className="text-end">Harga</th>
+                        <th className="text-center">Jumlah</th>
+                        <th className="text-end pe-3">Subtotal</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {props.transaksiProps
-                        .filter((v) => v.faktur === props.faktur)
-                        .map((val, i) => (
-                          <tr key={i}>
-                            <td>{i + 1}</td>
-                            <td>{val.anggota?.nama}</td>
-                            <td>{val.barang?.nama}</td>
-                            <td>{val.jumlah}</td>
-                            <td>{convertRupiah.convert(val.barang?.hargaJual)}</td>
-                            <td>{convertRupiah.convert(val.jumlah * val.barang?.hargaJual)}</td>
-                          </tr>
-                        ))}
+                      {items.map((val, i) => (
+                        <tr key={i}>
+                          <td className="ps-3">{val.barang?.nama}</td>
+                          <td className="text-end text-nowrap">{convertRupiah.convert(val.barang?.hargaJual)}</td>
+                          <td className="text-center">{val.jumlah}</td>
+                          <td className="text-end text-nowrap pe-3">{convertRupiah.convert(val.jumlah * val.barang?.hargaJual)}</td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
 
-                <div className="mt-3 d-flex justify-content-end">
-                  <h3>Total: {convertRupiah.convert(props.totalHarga)}</h3>
+                <div className="d-flex justify-content-between align-items-center bg-light rounded p-3 mt-3">
+                  <span className="text-muted">
+                    Total Bayar <span className="badge bg-secondary ms-1">{props.typePembayaran || "Belum dipilih"}</span>
+                  </span>
+                  <span className="fs-3 fw-bold text-primary">{convertRupiah.convert(total)}</span>
                 </div>
 
-                <div className="mt-3 row">
-                  <div className="col-6">
-                    <label className="form-label">Nominal Pembayaran</label>
-                    <input type="number" className="form-control" value={pembayaran} onChange={(e) => setPembayaran(e.target.value)} ref={inputRef} />
+                {tunai ? (
+                  <div className="row g-3 mt-1">
+                    <div className="col-md-6">
+                      <label className="form-label fw-semibold">Nominal Pembayaran</label>
+                      <div className="input-group input-group-lg">
+                        <span className="input-group-text">Rp</span>
+                        <input type="number" className="form-control" value={pembayaran} onChange={(e) => setPembayaran(e.target.value)} ref={inputRef} />
+                      </div>
+                      <div className="d-flex flex-wrap gap-1 mt-2">
+                        {nominalCepat.map((n, i) => (
+                          <button key={n} type="button" className="btn btn-sm btn-outline-secondary" onClick={() => setPembayaran(String(n))}>
+                            {i === 0 ? "Uang Pas" : `${n.toLocaleString("id-ID")}`}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="col-md-6">
+                      <label className="form-label fw-semibold">{selisih < 0 ? "Kurang" : "Kembalian"}</label>
+                      <div className={`form-control form-control-lg fw-bold ${!bayarInt ? "text-muted" : selisih < 0 ? "text-danger" : "text-success"}`}>{bayarInt ? convertRupiah.convert(Math.abs(selisih)) : "-"}</div>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  props.typePembayaran && (
+                    <div className="alert alert-info mt-3 mb-0">
+                      <i className="bi bi-qr-code me-2" />
+                      Pastikan pembayaran {props.typePembayaran} sebesar <b>{convertRupiah.convert(total)}</b> sudah diterima sebelum mencetak struk.
+                    </div>
+                  )
+                )}
               </div>
 
               <div className="modal-footer">
-                <button className="btn btn-secondary" data-bs-dismiss="modal">
-                  Close
+                <button type="button" className="btn btn-light border" data-bs-dismiss="modal">
+                  Batal
                 </button>
-
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  data-bs-target={props.transaksiProps.some((v) => v.faktur === props.faktur) ? "#exampleModalToggle2" : ""}
-                  data-bs-toggle={props.transaksiProps.some((v) => v.faktur === props.faktur) ? "modal" : ""}
-                  data-bs-dismiss={props.transaksiProps.some((v) => v.faktur === props.faktur) ? "" : "modal"}
-                >
-                  Print
+                <button type="submit" className="btn btn-success px-4" disabled={items.length === 0 || (tunai && selisih < 0)}>
+                  <i className="bi bi-printer me-2" />
+                  Bayar &amp; Cetak
                 </button>
               </div>
             </form>
@@ -279,25 +243,22 @@ const ModalCheckout = (props) => {
       </div>
 
       {/* MODAL KEMBALIAN */}
-      <div className="modal fade" id="exampleModalToggle2" tabIndex="-1">
+      <div className="modal fade" id="exampleModalToggle2" tabIndex="-1" data-bs-backdrop="static" ref={kembalianModalRef}>
         <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h1 className="modal-title fs-5">Total Kembalian</h1>
-            </div>
-
-            <div className="modal-body">
-              <h1>
-                {(parseInt(pembayaran) - props.totalHarga).toLocaleString("id-ID", {
-                  style: "currency",
-                  currency: "IDR",
-                })}
-              </h1>
+          <div className="modal-content border-0 text-center">
+            <div className="modal-body p-4">
+              <i className="bi bi-check-circle-fill text-success" style={{ fontSize: "3.5rem" }} />
+              <h5 className="fw-bold mt-2">Transaksi Berhasil</h5>
+              <div className="text-muted small">Kembalian</div>
+              <div className="display-6 fw-bold text-success">{convertRupiah.convert(Math.max(bayarFinal - total, 0))}</div>
+              <div className="text-muted small mt-1">
+                Bayar {convertRupiah.convert(bayarFinal)} · Total {convertRupiah.convert(total)}
+              </div>
             </div>
 
             <form onSubmit={reset}>
-              <div className="modal-footer">
-                <button className="btn btn-primary" data-bs-dismiss="modal">
+              <div className="modal-footer justify-content-center border-0 pt-0">
+                <button className="btn btn-primary px-5" data-bs-dismiss="modal">
                   Oke
                 </button>
               </div>

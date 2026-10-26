@@ -15,6 +15,12 @@ const baseUrl = () => {
     }
 }
 
+// ID data tetap yang dipakai laporan (bisa diubah lewat .env)
+const idSupplierLaporan = process.env.ID_SUPPLIER_LAPORAN || "1" // supplier "waserda"
+const idAnggotaCustomer = process.env.ID_ANGGOTA_CUSTOMER || "354" // anggota "costumer" (pelanggan umum)
+
 module.exports = {
-    baseUrl
+    baseUrl,
+    idSupplierLaporan,
+    idAnggotaCustomer
 }

@@ -10,8 +10,16 @@ const penjualanBon = require("../controllers/PenjualanBon.js");
 const pembayaranCicilan = require("../controllers/PembayaranCicilan.js");
 const logPembelian = require("../controllers/LogPembelian.js");
 const logPenjualan = require("../controllers/LogPenjualan.js");
+const dashboard = require("../controllers/Dashboard.js");
+const { wajibAdmin, verifikasiAdmin } = require("../middleware/adminPin.js");
 
 const router = express.Router();
+
+// admin (PIN, tanpa login): cek PIN sebelum membuka mode admin di frontend
+router.post("/admin/verifikasi", verifikasiAdmin);
+
+// dashboard
+router.get("/dashboard", dashboard.getDashboard);
 
 // barang
 router.get("/barang", barang.getBarang);
@@ -21,10 +29,11 @@ router.get("/barangJoin", barang.getBarangJoin);
 router.get("/barangJoinAuto", barang.getBarangJoinAutoComplate);
 router.get("/cariBarang", barang.findBarang);
 router.post("/barang", barang.tambahBarang);
-router.put("/barangTerjual/:id", barang.barangTerjual);
-router.put("/barangTerbeli/:id", barang.barangTerbeli);
 router.put("/barang/:id", barang.editBarang);
-router.delete("/barang/:id", barang.hapusBarang);
+router.get("/barang/:id/hapus-info", barang.getHapusInfoBarang);
+router.get("/barang/:id/detail", barang.getDetailBarang);
+router.post("/barang/:id/penyesuaian", wajibAdmin, barang.penyesuaianStok);
+router.delete("/barang/:id", wajibAdmin, barang.hapusBarang);
 router.get("/lapBarang", barang.lapBarang);
 router.get("/lapBarangDownload", barang.getLapBarang);
 
@@ -56,6 +65,8 @@ router.get("/transPembelianJoinLaporan", transPembelian.getJoinPemBarangLapor);
 router.get("/transPembelianJoinRetur", transPembelian.getJoinPenAnBarangRetur); /// Data Retur
 router.get("/cariPembelian", transPembelian.findTransaksi);
 router.post("/transPembelian", transPembelian.tambahPembelian);
+router.post("/checkoutPembelian", transPembelian.checkoutPembelian);
+router.post("/batalPembelian", wajibAdmin, transPembelian.batalPembelian);
 router.put("/transPembelian/:id", transPembelian.editPembelian);
 router.delete("/transPembelian/:id", transPembelian.hapusPembelian);
 
@@ -74,6 +85,8 @@ router.get("/transPenjualanJoinSearchAnggota", transPenjualan.getJoinPembelianAn
 router.get("/transPenjualanJoinSearchCustomer", transPenjualan.getJoinPembelianCustomer); /// Laporan Penjualan Bulanan Anggota
 router.get("/transPenjualanJoinRetur", transPenjualan.getJoinPenAnBarangRetur); /// Data Retur
 router.post("/transPenjualan", transPenjualan.tambahPenjualan);
+router.post("/checkoutPenjualan", transPenjualan.checkoutPenjualan);
+router.post("/batalPenjualan", wajibAdmin, transPenjualan.batalPenjualan);
 router.put("/transPenjualan/:id", transPenjualan.editPenjualan);
 router.delete("/transPenjualan/:id", transPenjualan.hapusPenjualan);
 
@@ -82,6 +95,7 @@ router.get("/returnPembelian", returnTransPembelian.getReturnPembelian);
 router.get("/returnPembelian/:id", transPembelian.getPembelianById);
 router.get("/returnPembelianLaporan", returnTransPembelian.getReturnPembelianLaporan);
 router.post("/returnPembelian", returnTransPembelian.tambahReturnPembelian);
+router.post("/prosesReturPembelian", returnTransPembelian.prosesReturPembelian);
 router.put("/returnPembelian/:id", returnTransPembelian.editReturnPembelian);
 router.delete("/returnPembelian/:id", returnTransPembelian.hapusReturnPembelian);
 
@@ -89,6 +103,7 @@ router.delete("/returnPembelian/:id", returnTransPembelian.hapusReturnPembelian)
 router.get("/returnPenjualan", returnTransPenjualan.getReturnPenjualan);
 router.get("/returnPenjualan/:id", transPenjualan.getPenjualanById);
 router.post("/returnPenjualan", returnTransPenjualan.tambahReturnPenjualan);
+router.post("/prosesReturPenjualan", returnTransPenjualan.prosesReturPenjualan);
 router.put("/returnPenjualan/:id", returnTransPenjualan.editReturnPenjualan);
 router.delete("/returnPenjualan/:id", returnTransPenjualan.hapusReturnPenjualan);
 
