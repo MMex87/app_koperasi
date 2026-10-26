@@ -1,174 +1,254 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "../../../api/axios.jsx";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import getSearchSupplier from "../../../utils/supplier/getSearchSupplier.jsx";
 
-export default class Supplier extends Component {
-  state = {
-    supplier: [],
-    page: 0,
-    search: "",
-    limit: 10,
-    pages: 0,
-    rows: 0,
+const inisial = (nama = "") =>
+  nama
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((k) => k.charAt(0).toUpperCase())
+    .join("") || "?";
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 2500,
+  timerProgressBar: true,
+});
+
+const Supplier = () => {
+  const [supplier, setSupplier] = useState([]);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(0);
+  const [limit] = useState(10);
+  const [pages, setPages] = useState(0);
+  const [rows, setRows] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  // edit state
+  const [supplierId, setSupplierId] = useState(0);
+  const [namaSupplier, setNamaSupplier] = useState("");
+  const [noHp, setNoHp] = useState("");
+  const [alamat, setAlamat] = useState("");
+
+  useEffect(() => {
+    loadSupplier();
+  }, [page, search]);
+
+  const loadSupplier = async () => {
+    setLoading(true);
+    try {
+      const data = await getSearchSupplier(encodeURIComponent(search), limit, page);
+      setSupplier(data.result);
+      setPages(data.totalPage);
+      setRows(data.totalRows);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  componentDidMount() {
-    getSearchSupplier(this.state.search, this.state.limit, this.state.page).then((data) => {
-      this.setState({ pages: data.totalPage });
-      this.setState({ rows: data.totalRows });
-      this.setState({ page: data.page });
-      this.setState({ supplier: data.result });
-    });
-  }
+  const changePage = ({ selected }) => {
+    setPage(selected);
+  };
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.search != this.state.search || prevState.page != this.state.page) {
-      getSearchSupplier(this.state.search, this.state.limit, this.state.page).then((data) => {
-        this.setState({ pages: data.totalPage });
-        this.setState({ rows: data.totalRows });
-        this.setState({ page: data.page });
-        this.setState({ supplier: data.result });
-      });
+  const cari = (e) => {
+    setSearch(e.target.value);
+    setPage(0);
+  };
+
+  const edit = (id, nama, noHp, alamat) => {
+    setSupplierId(id);
+    setNamaSupplier(nama || "");
+    setNoHp(noHp || "");
+    setAlamat(alamat || "");
+  };
+
+  const batal = () => {
+    setSupplierId(0);
+    setNamaSupplier("");
+    setNoHp("");
+    setAlamat("");
+  };
+
+  const save = async () => {
+    if (!namaSupplier.trim()) {
+      return Swal.fire("Gagal!", "Nama supplier tidak boleh kosong", "warning");
     }
-  }
+    try {
+      await axios.put(`/supplier/${supplierId}`, {
+        nama: namaSupplier.trim(),
+        noHP: noHp,
+        alamat: alamat,
+      });
+      batal();
+      loadSupplier();
+      Toast.fire({ icon: "success", title: "Data supplier diperbarui" });
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Gagal!", error.response?.data?.msg || "Gagal menyimpan data supplier", "error");
+    }
+  };
 
-  render() {
-    const Toast = Swal.mixin({
-      customClass: {
-        confirmButton: "btn btn-success",
-        cancelButton: "btn btn-danger",
-      },
-      buttonsStyling: false,
-    });
-
-    // handel page
-    const changePage = (selected) => {
-      this.setState({ page: selected.selected });
-    };
-
-    const handleHapus = (val) => {
-      try {
-        Toast.fire({
-          title: "Hapus Data?",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonText: "Hapus!",
-          cancelButtonText: "Batal!",
-          reverseButtons: true,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            axios.delete(`/supplier/${val}`);
-            Toast.fire("Berhasil!", "Data Supplier Terhapus.", "success");
-            getSearchSupplier(this.state.search, this.state.limit, this.state.page).then((data) => {
-              this.setState({ pages: data.totalPage });
-              this.setState({ rows: data.totalRows });
-              this.setState({ page: data.page });
-              this.setState({ supplier: data.result });
-            });
-          } else if (
-            /* Read more about handling dismissals below */
-            result.dismiss === Swal.DismissReason.cancel
-          ) {
-            Toast.fire("Gagal", "Data Supplier Aman", "error");
-          }
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    return (
-      <main id="main" className="main">
-        <div className="pagetitle">
-          <h1 className="text-center fs-2 fw-bold">Data Supplier</h1>
+  return (
+    <main id="main" className="main app-page">
+      <div className="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <div>
+          <h1 className="fs-2 fw-bold mb-1">Data Supplier</h1>
+          <small className="text-muted">Daftar pemasok barang koperasi</small>
         </div>
-        <section className="section">
-          <div className="card">
-            <div className="card-body">
-              <div className="col-lg-12">
-                <div className="row">
-                  <div className="col-md-8"></div>
-                  <div className="col-md-3">
-                    <div className="search-bar text-center mt-3">
-                      <form className="search-form d-flex align-items-center" method="POST" action="#">
-                        <div className="input-group mb-3">
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="query"
-                            placeholder="Cari Supplier"
-                            title="Enter search keyword"
-                            aria-label="Recipient's username"
-                            aria-describedby="button-addon2"
-                            onChange={ (e) => this.setState({ search: e.target.value }) }
-                          />
-                        </div>
-                      </form>
-                    </div>
-                  </div>
+        <Link to="/supplier/tambah" className="btn btn-primary px-3">
+          <i className="bi bi-plus-lg me-1" />
+          Tambah Supplier
+        </Link>
+      </div>
 
-                  <div className="col-md-1">
-                    <Link to="/supplier/tambah">
-                      <img src={ "assets/img/add.svg" } alt="" id="add" />
-                    </Link>
-                  </div>
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nama Supplier</th>
-                        <th scope="col">Nomor Handphone</th>
-                        <th scope="col">Alamat</th>
-                        <th scope="col">Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      { this.state.supplier.map((val, index) => (
-                        <tr key={ index }>
-                          <th>{ index + 1 }</th>
-                          <td>{ val.nama }</td>
-                          <td>{ val.noHP }</td>
-                          <td>{ val.alamat }</td>
+      <section className="section">
+        <div className="card border-0 shadow-sm">
+          <div className="card-body p-4">
+            <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+              <div className="input-group" style={{ maxWidth: "340px" }}>
+                <span className="input-group-text bg-white">
+                  <i className="bi bi-search" />
+                </span>
+                <input type="text" className="form-control" placeholder="Cari nama supplier..." value={search} onChange={cari} />
+              </div>
+              <span className="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2">{rows} supplier</span>
+            </div>
+
+            <div className="table-responsive">
+              <table className="table table-hover align-middle mb-0 data-table">
+                <thead className="table-light">
+                  <tr>
+                    <th className="text-center" style={{ width: "60px" }}>
+                      No
+                    </th>
+                    <th>Nama</th>
+                    <th>No HP</th>
+                    <th>Alamat</th>
+                    <th className="text-center" style={{ width: "140px" }}>
+                      Aksi
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td colSpan="5" className="text-center py-5">
+                        <div className="spinner-border spinner-border-sm text-primary me-2" />
+                        <span className="text-muted">Memuat data...</span>
+                      </td>
+                    </tr>
+                  ) : supplier.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="text-center text-muted py-5">
+                        <i className="bi bi-shop fs-1 d-block mb-2" />
+                        {search ? `Tidak ada supplier bernama "${search}"` : "Belum ada data supplier"}
+                      </td>
+                    </tr>
+                  ) : (
+                    supplier.map((val, index) => {
+                      const sedangEdit = supplierId === val.id;
+                      return (
+                        <tr key={val.id} className={sedangEdit ? "table-warning" : ""}>
+                          <td className="text-center text-muted">{page * limit + index + 1}</td>
                           <td>
-                            <Link className="btn btn-warning bx bx-edit-alt text-black-50 me-2" to={ `edit/${val.id}` } />
-                            {/* <button className="bx bx-trash btn btn-danger " onClick={ () => handleHapus(val.id) } /> */ }
+                            {sedangEdit ? (
+                              <input type="text" className="form-control form-control-sm" value={namaSupplier} autoFocus onChange={(e) => setNamaSupplier(e.target.value)} />
+                            ) : (
+                              <div className="d-flex align-items-center gap-2">
+                                <span className="avatar">{inisial(val.nama)}</span>
+                                {val.nama ? <span className="fw-semibold">{val.nama}</span> : <span className="text-muted fst-italic">(tanpa nama)</span>}
+                              </div>
+                            )}
+                          </td>
+                          <td>
+                            {sedangEdit ? (
+                              <input type="tel" className="form-control form-control-sm" placeholder="08xxxxxxxxxx" value={noHp} onChange={(e) => setNoHp(e.target.value.replace(/[^0-9+]/g, ""))} />
+                            ) : val.noHP ? (
+                              <span>
+                                <i className="bi bi-telephone text-muted me-2" />
+                                {val.noHP}
+                              </span>
+                            ) : (
+                              <span className="text-muted">-</span>
+                            )}
+                          </td>
+                          <td>
+                            {sedangEdit ? (
+                              <input type="text" className="form-control form-control-sm" value={alamat} onChange={(e) => setAlamat(e.target.value)} />
+                            ) : val.alamat ? (
+                              <span>
+                                <i className="bi bi-geo-alt text-muted me-2" />
+                                {val.alamat}
+                              </span>
+                            ) : (
+                              <span className="text-muted">-</span>
+                            )}
+                          </td>
+                          <td className="text-center text-nowrap">
+                            {sedangEdit ? (
+                              <>
+                                <button className="btn btn-sm btn-success me-1" title="Simpan" onClick={save}>
+                                  <i className="bi bi-check-lg" />
+                                </button>
+                                <button className="btn btn-sm btn-secondary" title="Batal" onClick={batal}>
+                                  <i className="bi bi-x-lg" />
+                                </button>
+                              </>
+                            ) : (
+                              <button className="btn btn-sm btn-outline-warning" onClick={() => edit(val.id, val.nama, val.noHP, val.alamat)}>
+                                <i className="bi bi-pencil me-1" />
+                                Edit
+                              </button>
+                            )}
                           </td>
                         </tr>
-                      )) }
-                    </tbody>
-                  </table>
-                  <div className="p-3">
-                    <div className="d-flex justify-content-between">
-                      <p className="text-center">
-                        Total Anggota: { this.state.rows } Page: { this.state.rows ? this.state.page + 1 : 0 } of { this.state.pages }
-                      </p>
-                      <nav aria-label="Page navigate example justify-content-end">
-                        <ReactPaginate
-                          previousLabel={ "< Prev" }
-                          nextLabel={ "Next >" }
-                          pageCount={ this.state.pages }
-                          onPageChange={ changePage }
-                          containerClassName={ "pagination" }
-                          pageLinkClassName={ "page-link" }
-                          pageClassName={ "page-item" }
-                          previousLinkClassName={ "page-link" }
-                          previousClassName={ "page-item" }
-                          nextClassName={ "page-item" }
-                          nextLinkClassName={ "page-link" }
-                          activeClassName={ "active" }
-                        />
-                      </nav>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
             </div>
+
+            {pages > 1 && (
+              <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+                <small className="text-muted">
+                  Halaman <b>{page + 1}</b> dari <b>{pages}</b>
+                </small>
+                <ReactPaginate
+                  previousLabel={"‹"}
+                  nextLabel={"›"}
+                  pageCount={pages}
+                  forcePage={page}
+                  onPageChange={changePage}
+                  marginPagesDisplayed={1}
+                  pageRangeDisplayed={3}
+                  containerClassName={"pagination pagination-sm m-0"}
+                  pageClassName={"page-item"}
+                  pageLinkClassName={"page-link"}
+                  previousClassName={"page-item"}
+                  previousLinkClassName={"page-link"}
+                  nextClassName={"page-item"}
+                  nextLinkClassName={"page-link"}
+                  breakClassName={"page-item"}
+                  breakLinkClassName={"page-link"}
+                  activeClassName={"active"}
+                />
+              </div>
+            )}
           </div>
-        </section>
-      </main>
-    );
-  }
-}
+        </div>
+      </section>
+    </main>
+  );
+};
+
+export default Supplier;

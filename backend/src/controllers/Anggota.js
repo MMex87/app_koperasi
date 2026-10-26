@@ -1,5 +1,7 @@
 const { Op, Sequelize } = require("sequelize");
 const anggotaModel = require("../model/AnggotaModel.js");
+const transPenjualanModel = require("../model/TransPenjualanModel.js");
+const PenjualanBonModel = require("../model/PenjualanBonModel.js");
 
 const getAnggota = async (req, res) => {
   try {
@@ -151,12 +153,6 @@ const editAnggota = async (req, res) => {
       return res.status(400).json({ msg: "Nama tidak boleh kosong!" });
     }
 
-    // Cek apakah nama sudah ada di database
-    const existingAnggota = await anggotaModel.findOne({ where: { nama } });
-    if (existingAnggota) {
-      return res.status(400).json({ msg: "Nama sudah terdaftar, gunakan nama lain!" });
-    }
-
     await anggotaModel.update(
       {
         nama,
@@ -177,6 +173,13 @@ const editAnggota = async (req, res) => {
 
 const hapusAnggota = async (req, res) => {
   try {
+    // Tolak jika anggota masih punya riwayat transaksi, agar laporan tidak kehilangan data anggota
+    const jumlahTransaksi = await transPenjualanModel.count({ where: { anggotaId: req.params.id } });
+    const jumlahBon = await PenjualanBonModel.count({ where: { anggotaId: req.params.id } });
+    if (jumlahTransaksi > 0 || jumlahBon > 0) {
+      return res.status(409).json({ msg: `Anggota tidak bisa dihapus: masih punya ${jumlahTransaksi} transaksi penjualan dan ${jumlahBon} bon` });
+    }
+
     await anggotaModel.destroy({
       where: {
         id: req.params.id,

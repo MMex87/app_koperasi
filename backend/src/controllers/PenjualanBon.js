@@ -119,6 +119,7 @@ const hapusPenBon = async (req, res) => {
                 id: req.params.id
             }
         })
+        res.status(200).json({ msg: 'Data Berhasil diHapus!' })
     } catch (error) {
         console.error(error)
         res.status(400).json({ msg: 'Data Gagal di Hapus dengan error: ' + error })

@@ -1,0 +1,29 @@
+/* Gaya bersama halaman yang memakai <main className="main app-page"> */
+
+/* Template (style.css) memberi tiap .card & .pagetitle h1 margin-left -90px; pada grid multi-kolom
+   card jadi saling menimpa. Geser satu kali di level halaman, lalu nolkan per elemen. */
+.app-page .card { margin: 0; border-radius: 14px; }
+.app-page .pagetitle h1 { margin-left: 0; }
+@media (min-width: 1200px) {
+  .app-page .pagetitle,
+  .app-page .section { margin-left: -90px; }
+}
+
+.app-page .data-table thead th {
+  font-size: .75rem; text-transform: uppercase; letter-spacing: .03em;
+  color: #6c757d; white-space: nowrap;
+}
+.app-page .data-table td { white-space: nowrap; }
+
+/* Inisial nama dalam lingkaran (anggota/supplier) */
+.app-page .avatar {
+  width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: .8rem; font-weight: 700;
+  background: rgba(13, 110, 253, .1); color: var(--bs-primary);
+}
+
+.app-page .form-icon {
+  width: 52px; height: 52px; flex-shrink: 0; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+}

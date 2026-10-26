@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import ActionType from "../../../../redux/reducer/globalActionType";
 import getBarangJoinAutoComplate from "../../../../utils/barang/getBarangJoinAutoComplate";
+import FieldsBarang from "./fieldsBarang";
 
 const addCartManual = (props) => {
   const [barang, setBarang] = useState([]);
@@ -46,8 +47,11 @@ const addCartManual = (props) => {
       props.handleBarangId(barangs.id);
       props.handlejenisBarang(barangs.jenisBarang);
       props.handleSatuanBarang(barangs.satuan);
-      props.handleHargaBarang(barangs.hargaJual);
-      props.handleHargaJualBarang(barangs.hargaBeli);
+      props.handleHargaBarang(barangs.hargaBeli);
+      props.handleHargaJualBarang(barangs.hargaJual);
+    } else {
+      // Kode tidak cocok: lepas barangId lama agar tidak mengubah barang lain
+      props.handleBarangId("");
     }
   };
 
@@ -59,8 +63,11 @@ const addCartManual = (props) => {
       props.handlejenisBarang(barangs.jenisBarang);
       props.handleBarangId(barangs.id);
       props.handleSatuanBarang(barangs.satuan);
-      props.handleHargaBarang(barangs.hargaJual);
-      props.handleHargaJualBarang(barangs.hargaBeli);
+      props.handleHargaBarang(barangs.hargaBeli);
+      props.handleHargaJualBarang(barangs.hargaJual);
+    } else {
+      // Nama tidak cocok: lepas barangId lama agar tidak mengubah barang lain
+      props.handleBarangId("");
     }
   };
 
@@ -86,168 +93,53 @@ const addCartManual = (props) => {
     }
   }, [props.namaBarang, props.kodeBarang]);
 
+  const kodeFiltered = barangKode.filter(({ kodeBarang }) => (kodeBarang || "").toLowerCase().includes(props.kodeBarang.toLowerCase()));
+  const namaFiltered = barang.filter(({ nama }) => (nama || "").toLowerCase().includes(props.namaBarang.toLowerCase()));
+
+  const AutoItem = ({ judul, v, onClick }) => (
+    <li onClick={onClick} className="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-2">
+      <span className="text-truncate">
+        {judul} <small className="text-muted">({v.supplier?.nama})</small>
+      </span>
+      <span className="badge bg-light text-dark border">Stok {v.jumlah}</span>
+    </li>
+  );
+
   return (
     <>
-      <div className="col-md-6">
-        <label htmlFor="kodeBarang" className="form-label">
+      <div className="col-md-4 position-relative">
+        <label htmlFor="kodeBarang" className="form-label fw-semibold">
           Kode Barang
         </label>
-        <input
-          type="text"
-          className="form-control"
-          id="kodeBarang"
-          value={props.kodeBarang}
-          onChange={handleChangeKodeBarang}
-          onClick={() => setDisplayKode(!displayKode)}
-        />
-        {displayKode && (
-          <div className="flex-container flex-column pos-rel bodyAutoComplate">
-            <ul className="list-group list-group-flush">
-              {barangKode
-                .filter(
-                  ({ kodeBarang }) => kodeBarang.indexOf(props.kodeBarang) > -1
-                )
-                .map((v, i) => (
-                  <li
-                    key={i}
-                    onClick={() => {
-                      handleAutoKodeBarang(v.kodeBarang);
-                    }}
-                    className="list-group-item listAutoComplate"
-                  >
-                    {v.kodeBarang}
-                  </li>
-                ))}
-            </ul>
-          </div>
+        <input type="text" className="form-control" id="kodeBarang" placeholder="Min. 3 karakter" autoComplete="off" value={props.kodeBarang} onChange={handleChangeKodeBarang} onClick={() => setDisplayKode(!displayKode)} />
+        {displayKode && props.kodeBarang.length > 2 && (
+          <ul className="list-group autocomplete-menu shadow">
+            {kodeFiltered.length ? (
+              kodeFiltered.map((v, i) => <AutoItem key={i} judul={v.kodeBarang} v={v} onClick={() => handleAutoKodeBarang(v.kodeBarang)} />)
+            ) : (
+              <li className="list-group-item text-muted small">Kode belum terdaftar — akan dibuat sebagai barang baru</li>
+            )}
+          </ul>
         )}
       </div>
-      <div className="col-md-2">
-        <label htmlFor="jumlah" className="form-label">
-          Jumlah
-        </label>
-        <input
-          type="text"
-          className="form-control"
-          id="jumlah"
-          value={props.jumlah}
-          onChange={(e) => props.handleJumlah(e.target.value)}
-        />
-      </div>
-      <div className="col-md-2">
-        <label htmlFor="jenis" className="form-label">
-          Jenis
-        </label>
-        <select
-          onChange={(e) => props.handlejenisBarang(e.target.value)}
-          className="form-select"
-        >
-          <option value="">-- Pilih Jenis --</option>
-          <option
-            name="Makanan"
-            value={"Makanan"}
-            selected={props.jenis == "Makanan" ? true : ""}
-          >
-            Makanan
-          </option>
-          <option
-            name="Minuman"
-            value={"Minuman"}
-            selected={props.jenis == "Minuman" ? true : ""}
-          >
-            Minuman
-          </option>
-          <option
-            name="Barang"
-            value={"Barang"}
-            selected={props.jenis == "Barang" ? true : ""}
-          >
-            Barang
-          </option>
-        </select>
-      </div>
-      <div className="col-md-2">
-        <label htmlFor="satuan" className="form-label">
-          Satuan
-        </label>
-        <select
-          onChange={(e) => props.handleSatuanBarang(e.target.value)}
-          className="form-select"
-        >
-          <option value="">-- Pilih Satuan --</option>
-          <option
-            name="Pcs"
-            value={"Pcs"}
-            selected={props.satuan == "Pcs" ? true : ""}
-          >
-            Pcs
-          </option>
-          <option
-            name="Box"
-            value={"Box"}
-            selected={props.satuan == "Box" ? true : ""}
-          >
-            Box
-          </option>
-        </select>
-      </div>
-      <div className="col-md-6">
-        <label htmlFor="namabarang" className="form-label">
+      <div className="col-md-8 position-relative">
+        <label htmlFor="namabarang" className="form-label fw-semibold d-flex justify-content-between">
           Nama Barang
+          {props.namaBarang.length > 2 && (props.barangId ? <span className="badge bg-info bg-opacity-10 text-info">Barang terdaftar · restock</span> : <span className="badge bg-success bg-opacity-10 text-success">Barang baru</span>)}
         </label>
-        <input
-          type="text"
-          className="form-control"
-          id="namabarang"
-          value={props.namaBarang}
-          onChange={handleChangeNamaBarang}
-          onClick={() => setDisplayNama(!displayNama)}
-        />
-        {displayNama && (
-          <div className="flex-container flex-column pos-rel bodyAutoComplate">
-            <ul className="list-group list-group-flush">
-              {barang
-                .filter(({ nama }) => nama.indexOf(props.namaBarang) > -1)
-                .map((v, i) => (
-                  <li
-                    key={i}
-                    onClick={() => {
-                      handleAutoNamaBarang(v.nama);
-                    }}
-                    className="list-group-item listAutoComplate"
-                  >
-                    {" "}
-                    {v.nama}
-                  </li>
-                ))}
-            </ul>
-          </div>
+        <input type="text" className="form-control" id="namabarang" placeholder="Min. 3 karakter" autoComplete="off" value={props.namaBarang} onChange={handleChangeNamaBarang} onClick={() => setDisplayNama(!displayNama)} />
+        {displayNama && props.namaBarang.length > 2 && (
+          <ul className="list-group autocomplete-menu shadow">
+            {namaFiltered.length ? (
+              namaFiltered.map((v, i) => <AutoItem key={i} judul={v.nama} v={v} onClick={() => handleAutoNamaBarang(v.nama)} />)
+            ) : (
+              <li className="list-group-item text-muted small">Nama belum terdaftar — akan dibuat sebagai barang baru</li>
+            )}
+          </ul>
         )}
       </div>
-      <div className="col-md-3">
-        <label htmlFor="harga" className="form-label">
-          Harga Beli
-        </label>
-        <input
-          type="text"
-          className="form-control"
-          id="harga"
-          value={props.harga}
-          onChange={(e) => props.handleHargaBarang(e.target.value)}
-        />
-      </div>
-      <div className="col-md-3">
-        <label htmlFor="harga" className="form-label">
-          Harga Jual
-        </label>
-        <input
-          type="text"
-          className="form-control"
-          id="harga"
-          value={props.harga_jual}
-          onChange={(e) => props.handleHargaJualBarang(e.target.value)}
-        />
-      </div>
+
+      <FieldsBarang {...props} />
     </>
   );
 };
@@ -301,4 +193,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(addCartManual);
+export default connect(mapStateToProps, mapDispatchToProps)(addCartManual);

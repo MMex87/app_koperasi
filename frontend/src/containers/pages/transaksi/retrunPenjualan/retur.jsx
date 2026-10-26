@@ -1,26 +1,32 @@
 import axios from "../../../../api/axios";
-import {useState, useEffect} from "react";
-import {useParams, useNavigate } from "react-router-dom";
-import barangTerbeli from "../../../../utils/barang/barangTerbeli";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import convertRupiah from "rupiah-format";
+import ProsesRetur from "../ProsesRetur";
+
+const formatTanggal = (v) => new Date(v).toLocaleString("id-ID", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
 const RPenjualan = () => {
-  const [dataPenjualan, setDataPenjualan] = useState([]);
-  const [barang, setBarang] = useState(0);
-  const [jumlah, setJumlah] = useState(0);
-  const [retur, setRetur] = useState("");
+  const [dataPenjualan, setDataPenjualan] = useState(null);
+  const [retur, setRetur] = useState(1);
+  const [submitting, setSubmitting] = useState(false);
+
   const navigate = useNavigate();
-  const {id} = useParams()
+  const { id } = useParams();
 
   useEffect(() => {
     getData();
-  },[]);
+  }, [id]);
 
   const getData = async () => {
-    const response = await axios.get(`http://localhost:8800/returnPenjualan/${id}`);
-    setBarang(response.data.barang.nama);
-    setJumlah(response.data.jumlah);
-    setDataPenjualan(response.data);
+    try {
+      const response = await axios.get(`/returnPenjualan/${id}`);
+      setDataPenjualan(response.data);
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", "Gagal mengambil data penjualan", "error");
+    }
   };
 
   const Toast = Swal.mixin({
@@ -31,96 +37,89 @@ const RPenjualan = () => {
     timerProgressBar: true,
   });
 
-
   const save = async (e) => {
-    e.preventDefault()
-    const response = await axios.get(`/returnPenjualan/${id}`)
-    const trans = response.data
-    try {
-      if ((trans.jumlah - retur) < 0) {
-        return Swal.fire(
-          'Retur Gagal!!',
-          'Retur yang dikembalikan terlalu besar!!',
-          'warning'
-        )
-      } else {
-        await axios.post('/returnPenjualan', {
-          jumlah: retur,
-          faktur: trans.faktur,
-          transPenjualanId: trans.id,
-          anggotaId: trans.anggotaId,
-          barangId: trans.barangId
-        })
-        let jumlahRetur = retur
-        await axios.put(`/transPenjualan/${id}`, {
-          statusPenjualan: 'Retur',
-          jumlah: trans.jumlah - retur
-        })
-        barangTerbeli(trans.barangId, jumlahRetur)
-        Toast.fire({
-            icon: "success",
-            title: "Retur Berhasil!",
-          });
-          navigate('/retrunPenjualan')
-      }
-    } catch (error) {
-      console.error(error)
+    e.preventDefault();
+
+    const returInt = parseInt(retur);
+
+    if (!returInt || returInt <= 0) {
+      return Swal.fire("Peringatan", "Jumlah retur harus lebih dari 0", "warning");
     }
-  }
 
+    const trans = dataPenjualan;
 
-//   console.log(jumlahRetur)
+    if (trans.jumlah - returInt < 0) {
+      return Swal.fire("Retur Gagal!", "Jumlah retur melebihi jumlah penjualan", "warning");
+    }
 
-    return (
-      <main id="main">
-        <div className="pagetitle text-center">
-          <h1 className="fw-bold fs-2">Retur Penjualan</h1>
-        </div>
-        <section className="section">
-          <div className="card p-3">
-            <div className="col-lg-12">
-              <div className="col-md-12">
-                <div className="mt-3">
-                    <form onSubmit={save}>
-                        <div className="row pt-4">
-                            <div className="row col-md-12 pt-3">
-                            <div className="col-md-2">
-                                <label className="col-form-label">Nama</label>
-                            </div>
-                            <div className="col-md-10">
-                                <h4>
-                                    {barang}
-                                </h4>
-                            </div>
-                            <div className="col-md-2">
-                                <label className="col-form-label">Jumlah</label>
-                            </div>
-                            <div className="col-md-10">
-                                <h4>
-                                    {jumlah}
-                                </h4>
-                            </div>
-                            <div className="col-md-2">
-                                <label className="col-form-label">Retur</label>
-                            </div>
-                            <div className="col-md-10">
-                                <input className="form-control" type="text" value={retur} 
-                                 onChange={(e) => setRetur(e.target.value)}/>
-                            </div>
-                            </div>
-                        </div>
-                        <div className="d-flex justify-content-end mt-3 me-4">
-                            <button className="btn btn-warning me-3" type="button">Batal</button>
-                            <button className="btn btn-success" type="submit">Retur</button>
-                        </div>
-                    </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
-    );
-  }
+    const konfirmasi = await Swal.fire({
+      title: "Proses retur?",
+      html: `<b>${returInt} ${trans.barang?.satuan || ""}</b> ${trans.barang?.nama} dikembalikan dan stok bertambah.<br/>Retur tidak dapat dibatalkan.`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Ya, proses",
+      cancelButtonText: "Batal",
+      reverseButtons: true,
+    });
+    if (!konfirmasi.isConfirmed) return;
+
+    setSubmitting(true);
+    try {
+      // Catat retur, kurangi jumlah transaksi, tambah stok, dan simpan log
+      // diproses backend dalam satu DB transaction.
+      await axios.post("/prosesReturPenjualan", {
+        transPenjualanId: trans.id,
+        jumlah: returInt,
+      });
+
+      Toast.fire({
+        icon: "success",
+        title: "Retur Berhasil!",
+      });
+
+      navigate("/retrunPenjualan");
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", error.response?.data?.msg || "Retur gagal diproses", "error");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (!dataPenjualan) return null;
+
+  const d = dataPenjualan;
+  const jumlah = parseInt(d.jumlah) || 0;
+  // harga transaksi penjualan = total baris
+  const hargaSatuan = jumlah ? Math.round((parseInt(d.harga) || 0) / jumlah) : 0;
+
+  return (
+    <ProsesRetur
+      title="Proses Retur Penjualan"
+      subtitle="Barang dikembalikan oleh pembeli — stok akan bertambah"
+      backTo="/retrunPenjualan"
+      barang={d.barang || {}}
+      info={[
+        { label: "Faktur", value: d.faktur },
+        { label: "Tanggal", value: formatTanggal(d.createdAt) },
+        { label: "Pembeli", value: d.anggota?.nama || "-" },
+        { label: "Pembayaran", value: d.typePembayaran || "-" },
+        { label: "Harga Satuan", value: convertRupiah.convert(hargaSatuan) },
+        { label: "Jumlah Terjual", value: `${jumlah} ${d.barang?.satuan || ""}` },
+        { label: "Total Transaksi", value: convertRupiah.convert(d.harga) },
+      ]}
+      maks={["onProcess", "Batal"].includes(d.statusPenjualan) ? 0 : jumlah}
+      catatan={d.statusPenjualan === "onProcess" ? "Transaksi masih di keranjang dan belum dibayar." : d.statusPenjualan === "Batal" ? "Faktur ini sudah dibatalkan, stok sudah dikembalikan." : ""}
+      stokSaatIni={parseInt(d.barang?.jumlah) || 0}
+      arahStok={1}
+      hargaSatuan={hargaSatuan}
+      labelNilai="Nilai dikembalikan ke pembeli"
+      retur={retur}
+      setRetur={setRetur}
+      onSubmit={save}
+      submitting={submitting}
+    />
+  );
+};
 
 export default RPenjualan;

@@ -1,5 +1,5 @@
-const { where } = require("../config/database")
 const PembayaranCicilanModel = require("../model/PembayaranCicilanModel")
+const PenjualanBonModel = require("../model/PenjualanBonModel")
 
 
 const getCicilan = async (req, res) => {
@@ -19,13 +19,20 @@ const getCicilan = async (req, res) => {
 const tambahCicilan = async (req, res) => {
     const { jumlahBayar, penjualanbonId, anggotaId } = req.body
     try {
+        if (!Number.isInteger(parseInt(jumlahBayar)) || parseInt(jumlahBayar) <= 0) {
+            return res.status(400).json({ msg: 'Jumlah bayar harus lebih dari 0' })
+        }
+        if (!penjualanbonId || !(await PenjualanBonModel.findByPk(penjualanbonId))) {
+            return res.status(404).json({ msg: 'Data bon tidak ditemukan' })
+        }
+
         await PembayaranCicilanModel.create({
             jumlahBayar, penjualanbonId, anggotaId
         })
         res.status(200).json({ msg: 'Data Berhasil Ditambahkan!' })
     } catch (error) {
         console.error(error)
-        res.status(200).json({ msg: 'gagal mendapatakan data dengan error: ' + error })
+        res.status(400).json({ msg: 'gagal menambahkan data dengan error: ' + error })
     }
 }
 
@@ -53,6 +60,7 @@ const hapusCicilan = async (req, res) => {
                 id: req.params.id
             }
         })
+        res.status(200).json({ msg: 'Data Berhasil diHapus!' })
     } catch (error) {
         console.error(error)
         res.status(400).json({ msg: 'gagal hapus data dengan error: ' + error })

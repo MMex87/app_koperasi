@@ -1,178 +1,134 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "../../../api/axios.jsx";
 import Swal from "sweetalert2";
-import withRouter from "../../../config/withRouter.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import getAnggotaId from "../../../utils/anggota/getAnggotaId.jsx";
 
-class TambahAnggota extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      nama: "",
-      noHP: "",
-      error: ""
-    };
-  }
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+});
 
-  componentDidMount() {
-    if (this.props.params.id) {
-      getAnggotaId(this.props.params.id).then((data) => {
-        this.setState({
-          nama: data.nama,
-          noHP: data.noHP,
-        });
+const TambahAnggota = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const isEdit = id !== undefined;
+
+  const [nama, setNama] = useState("");
+  const [noHP, setNoHP] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isEdit) {
+      getAnggotaId(id).then((data) => {
+        setNama(data.nama || "");
+        setNoHP(data.noHP || "");
       });
+    } else {
+      setNama("");
+      setNoHP("");
     }
-  }
+  }, [id]);
 
-  render() {
-    // alert
-    const Toast = Swal.mixin({
-      toast: true,
-      position: "top-end",
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-    });
-    // Definition params dan navigate
-    const params = this.props.params;
-    const navigate = this.props.navigate;
+  const simpan = async (e) => {
+    e.preventDefault();
+    if (!nama.trim()) {
+      return Swal.fire("Gagal!", "Nama anggota tidak boleh kosong", "warning");
+    }
 
-    // Params Judul
-    const jenis = params.jenis;
-    const tempJenis = jenis.charAt(0).toUpperCase();
-    const tempJenis2 = jenis.slice(1);
-    const judul = tempJenis + tempJenis2;
-
-    // params id
-    const id = params.id;
-
-  const tambahAnggota = async (e) => {
-  e.preventDefault();
-
-  if (id === undefined) {
+    setSubmitting(true);
     try {
-      await axios.post("/anggota", {
-        nama: this.state.nama,
-        noHP: this.state.noHP,
-      });
-
-      Toast.fire({
-        icon: "success",
-        title: "Data Berhasil di Tambahkan!",
-      });
-
+      const body = { nama: nama.trim(), noHP };
+      if (isEdit) {
+        await axios.put(`/anggota/${id}`, body);
+      } else {
+        await axios.post("/anggota", body);
+      }
+      Toast.fire({ icon: "success", title: isEdit ? "Data anggota berhasil diubah!" : "Anggota berhasil ditambahkan!" });
       navigate("/anggota");
     } catch (error) {
-      const msg = error.response?.data?.msg || "Gagal menambahkan data!";
-
       Swal.fire({
         icon: "error",
         title: "Terjadi Kesalahan",
-        text: msg,
-        confirmButtonText: "OK",
+        text: error.response?.data?.msg || (isEdit ? "Gagal mengubah data!" : "Gagal menambahkan data!"),
       });
+    } finally {
+      setSubmitting(false);
     }
-  } else {
-    try {
-      await axios.put(`/anggota/${id}`, {
-        nama: this.state.nama,
-        noHP: this.state.noHP,
-      });
+  };
 
-      Toast.fire({
-        icon: "success",
-        title: "Data Berhasil di Ubah!",
-      });
-
-      this.setState({
-        nama: "",
-        noHP: "",
-      });
-
-      navigate("/anggota");
-    } catch (error) {
-      const msg = error.response?.data?.msg || "Gagal mengubah data!";
-      Swal.fire({
-        icon: "error",
-        title: "Terjadi Kesalahan",
-        text: msg,
-        confirmButtonText: "OK",
-      });
-    }
-  }
-};
-
-
-    return (
-      <main id="main" className="main">
-        <div className="pagetitle">
-          <nav>
-            <ol className="breadcrumb">
-              <li className="breadcrumb-item " id="li">
-                { " " }
-                <Link to="/anggota">Data Anggota</Link>{ " " }
-              </li>
-              { judul == "Tambah" ? (
-                <li className="breadcrumb-item"> Input Anggota </li>
-              ) : (
-                <li className="breadcrumb-item">
-                  { " " }
-                  <Link
-                    to="/anggota/tambah"
-                    onClick={ () =>
-                      this.setState({
-                        nama: "",
-                        noHP: "",
-                      })
-                    }
-                  >
-                    Input Anggota
-                  </Link>{ " " }
-                </li>
-              ) }
-              { judul == "Edit" && <li className="breadcrumb-item"> Edit Anggota</li> }
-            </ol>
-          </nav>
+  return (
+    <main id="main" className="main app-page">
+      <div className="pagetitle d-flex align-items-center gap-3 mb-4">
+        <Link to="/anggota" className="btn btn-light btn-sm border" title="Kembali">
+          <i className="bi bi-arrow-left" />
+        </Link>
+        <div>
+          <h1 className="fs-2 fw-bold mb-0">{isEdit ? "Edit Anggota" : "Tambah Anggota"}</h1>
+          <small className="text-muted">
+            <Link to="/anggota" className="text-decoration-none">
+              Data Anggota
+            </Link>{" "}
+            / {isEdit ? "Edit" : "Tambah"}
+          </small>
         </div>
-        <section className="section">
-          <div className="card">
-            <div className="card-body">
-              <div className="row">
-                <div className="col-lg-12">
-                  <h1 className="card-title  fs-2 text-center">{ judul } Anggota</h1>
-                  <form onSubmit={ tambahAnggota }>
-                    <div className="row mb-3">
-                      <label htmlFor="nama" className="col-sm-2 col-form-label">
-                        Nama Anggota
-                      </label>
-                      <div className="col-sm-10">
-                        <input type="text" value={ this.state.nama } className="form-control" id="nama" onChange={ (e) => this.setState({ nama: e.target.value }) } />
-                      </div>
-                    </div>
-                    <div className="row mb-3">
-                      <label htmlFor="noHP" className="col-sm-2 col-form-label">
-                        Nomor Handphone
-                      </label>
-                      <div className="col-sm-10">
-                        <input type="number" value={ this.state.noHP } className="form-control" id="noHP" onChange={ (e) => this.setState({ noHP: e.target.value }) } />
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <button type="submit" className="btn btn-primary">
-                        SIMPAN
-                      </button>
-                    </div>
-                  </form>
-                </div>
+      </div>
+
+      <section className="section">
+        <div className="card border-0 shadow-sm" style={{ maxWidth: "720px" }}>
+          <form className="card-body p-4" onSubmit={simpan}>
+            <div className="d-flex align-items-center gap-3 mb-4">
+              <div className="form-icon bg-primary bg-opacity-10 text-primary">
+                <i className="bi bi-person-badge" />
+              </div>
+              <div>
+                <h5 className="fw-bold mb-0">Data Anggota</h5>
+                <small className="text-muted">Nama anggota harus unik</small>
               </div>
             </div>
-          </div>
-        </section>
-      </main>
-    );
-  }
-}
 
-export default withRouter(TambahAnggota);
+            <div className="mb-3">
+              <label htmlFor="nama" className="form-label fw-semibold">
+                Nama Anggota <span className="text-danger">*</span>
+              </label>
+              <div className="input-group">
+                <span className="input-group-text bg-white">
+                  <i className="bi bi-person" />
+                </span>
+                <input type="text" className="form-control" id="nama" placeholder="Nama lengkap anggota" value={nama} autoFocus required onChange={(e) => setNama(e.target.value)} />
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label htmlFor="noHP" className="form-label fw-semibold">
+                Nomor Handphone
+              </label>
+              <div className="input-group">
+                <span className="input-group-text bg-white">
+                  <i className="bi bi-telephone" />
+                </span>
+                <input type="tel" className="form-control" id="noHP" placeholder="08xxxxxxxxxx" value={noHP} onChange={(e) => setNoHP(e.target.value.replace(/[^0-9+]/g, ""))} />
+              </div>
+              <small className="text-muted">Opsional</small>
+            </div>
+
+            <div className="d-flex justify-content-end gap-2">
+              <Link to="/anggota" className="btn btn-light border">
+                Batal
+              </Link>
+              <button type="submit" className="btn btn-primary px-4" disabled={submitting}>
+                {submitting ? <span className="spinner-border spinner-border-sm me-2" /> : <i className="bi bi-save me-2" />}
+                Simpan
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+  );
+};
+
+export default TambahAnggota;

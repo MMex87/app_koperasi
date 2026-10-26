@@ -1,342 +1,263 @@
-import React, { Component } from "react";
+// TransPenjualan.jsx — Versi Perbaikan & Refactor (Functional Component)
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "../../../../api/axios";
 import { generateFaktur } from "../../../../components/faktur/generateFaktur";
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ActionType from "../../../../redux/reducer/globalActionType";
 import AddCartManual from "./addCartManual";
 import AddCartScan from "./addCartScan";
 import CartList from "./cartList";
 import getAnggotaAutoComplate from "../../../../utils/anggota/getAnggotaAutoComplate";
-import getTransPenjualan from "../../../../utils/transaksiPenjualan/getTransPenjualan";
-import Swal from "sweetalert2";
 import getBarangJoinAutoComplate from "../../../../utils/barang/getBarangJoinAutoComplate";
+import getTransPenjualanJoin from "../../../../utils/transaksiPenjualan/getTransPenjualanJoin";
+import Swal from "sweetalert2";
 
-class TransPenjualan extends Component {
-  state = {
-    penjualan: [],
-    visiJenisInput: false,
-    displayAnggota: false,
-    anggotas: [],
-    barang: [],
-    typeInput: '',
-  };
+const TransPenjualan = () => {
+  const dispatch = useDispatch();
 
-  componentDidMount() {
-    if (this.props.faktur == "") {
-      this.props.handleFakturPenjualan(generateFaktur("FKJ"));
-    }
-    getAnggotaAutoComplate(this.props.anggota).then((data) => {
-      this.setState({ anggotas: data });
-    });
-    if (this.props.namaBarang == "") {
-      getBarangJoinAutoComplate(this.props.kodeBarang).then((data) => {
-        this.setState({ barang: data });
-      });
-    } else {
-      getBarangJoinAutoComplate(this.props.namaBarang).then((data) => {
-        this.setState({ barang: data });
-      });
+  // Global Redux state
+  const anggota = useSelector((s) => s.anggota);
+  const typePembayaran = useSelector((s) => s.typePembayaran);
+  const kodeBarang = useSelector((s) => s.kodeBarang);
+  const namaBarang = useSelector((s) => s.namaBarang);
+  const jumlah = useSelector((s) => s.jumlah);
+  const harga = useSelector((s) => s.harga);
+  const faktur = useSelector((s) => s.faktur);
+  const supplierId = useSelector((s) => s.supplierId);
 
-    }
-    // getTransPenjualan().then((data) => {
-    //   this.setState({ penjualan: data });
-    // });
-  }
+  // Local state
+  const [penjualan, setPenjualan] = useState([]);
+  const [visiJenisInput, setVisiJenisInput] = useState(false);
+  const [displayAnggota, setDisplayAnggota] = useState(false);
+  const [anggotas, setAnggotas] = useState([]);
+  const [barang, setBarang] = useState([]);
+  const [typeInput, setTypeInput] = useState("manual");
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.namaBarang != this.props.namaBarang) {
-      getBarangJoinAutoComplate(this.props.namaBarang).then((data) => {
-        this.setState({ barang: data });
-      });
-    }
+  const loadTransaksi = useCallback(async () => {
+    const data = await getTransPenjualanJoin();
+    setPenjualan(data);
+  });
 
-    if (prevProps.kodeBarang != this.props.kodeBarang) {
-      getBarangJoinAutoComplate(this.props.kodeBarang).then((data) => {
-        this.setState({ barang: data });
-      });
-    }
+  // Load faktur saat pertama kali
+  useEffect(() => {
+    loadTransaksi();
+    if (!faktur) dispatch({ type: ActionType.SET_FAKTUR_PENJUALAN, index: generateFaktur("FKJ") });
+  }, [faktur, dispatch]);
 
-    if (prevProps.anggota != this.props.anggota) {
-      getAnggotaAutoComplate(this.props.anggota).then((data) => {
-        this.setState({ anggotas: data });
-      });
-    }
-  }
+  // Auto-complete anggota
+  useEffect(() => {
+    getAnggotaAutoComplate(anggota).then(setAnggotas);
+  }, [anggota]);
 
-  render() {
-    const handlecart = async (e) => {
-      e.preventDefault();
-      let anggota = this.state.anggotas.find(
-        ({ nama }) => nama == this.props.anggota
-      );
-      let barang = this.state.barang.find(
-        ({ nama, supplierId }) =>
-          nama == this.props.namaBarang && supplierId == this.props.supplierId
-      );
-      let anggotaIdLokal;
-      let barangIdLokal;
-      let jumlahScan;
-      let fakturLokal = this.props.faktur;
-      let jumlah = this.props.jumlah;
-      let typePembayaran = this.props.typePembayaran;
-      let harga = this.props.harga;
-      if (anggota != undefined) {
-        anggotaIdLokal = this.state.anggotas.find(
-          ({ nama }) => nama == this.props.anggota
-        ).id;
+  // Auto-complete barang
+  useEffect(() => {
+    const param = namaBarang ? namaBarang : kodeBarang;
+    getBarangJoinAutoComplate(param).then(setBarang);
+  }, [namaBarang, kodeBarang]);
+
+  // Submit Tambah Cart
+  const handleCart = async (e) => {
+    e.preventDefault();
+    try {
+      await loadTransaksi();
+
+      let selectedAnggota = anggotas.find((a) => a.nama === anggota);
+      let selectedBarang = barang.find((b) => b.nama === namaBarang && b.supplierId === supplierId);
+
+      const jumlahInt = parseInt(jumlah);
+      const hargaInt = parseInt(harga);
+
+      if (!selectedAnggota || !selectedBarang || !typePembayaran) {
+        Swal.fire("Gagal menambahkan data!!", "Tolong isi semua Data", "warning");
+        return;
       }
-      if (barang != undefined) {
-        barangIdLokal = this.state.barang.find(
-          ({ nama, supplierId }) =>
-            nama == this.props.namaBarang && supplierId == this.props.supplierId
-        ).id;
-      }
-      let trans = this.state.penjualan.find(({ faktur, barangId, anggotaId }) => faktur == fakturLokal && barangId == barangIdLokal && anggotaId == anggotaIdLokal)
 
-      try {
-        if (
-          jumlah == "" ||
-          fakturLokal == "" ||
-          harga == "" ||
-          typePembayaran == "" ||
-          anggota == undefined ||
-          barang == undefined
-        ) {
-          // ketika barang kurang lengkap di isinya
-          Swal.fire(
-            "Gagal menambahkan data!!",
-            "Tolong isi semua Data",
-            "warning"
-          );
-        } else {
-          if (barang.jumlah - jumlah < 0) {
-            // ketika stok barang tidak mencukupi
-            Swal.fire(
-              "Gagal menambahkan data!!",
-              "Stok Barang Tidak cukup!!",
-              "warning"
-            );
-          } else {
-            if (trans == undefined) {
-              await axios.post("/transPenjualan", {
-                jumlah,
-                faktur: fakturLokal,
-                harga: parseInt(harga) * parseInt(jumlah),
-                typePembayaran,
-                anggotaId: anggotaIdLokal,
-                barangId: barangIdLokal,
-                statusPenjualan: "onProcess",
-              });
-            } else {
-              jumlahScan = parseInt(trans.jumlah) + parseInt(jumlah);
-              await axios.put(`/transPenjualan/${trans.id}`, {
-                jumlah: jumlahScan,
-                harga: parseInt(harga) * parseInt(jumlahScan),
-              });
-            }
-          }
-          this.props.handleKodeBarang("");
-          this.props.handlejenisBarang("");
-          this.props.handleHargaBarang("");
-          this.props.handleJumlah("");
-          this.props.handleNamaBarang("");
-        }
-      } catch (error) {
-        console.error(error.response);
+      if (!jumlahInt || jumlahInt <= 0) {
+        Swal.fire("Gagal menambahkan data!!", "Jumlah harus lebih dari 0", "warning");
+        return;
       }
-    };
 
-    const handleVisiInput = (e) => {
-      let handle = e.target.value;
-      this.setState({ typeInput: handle });
-      if (handle == "scan") {
-        this.setState({ visiJenisInput: true });
+      if (!hargaInt || hargaInt <= 0) {
+        Swal.fire("Gagal menambahkan data!!", "Harga harus lebih dari 0", "warning");
+        return;
+      }
+
+      let anggotaIdLokal = Number(selectedAnggota.id);
+      let barangIdLokal = Number(selectedBarang.id);
+
+      const res = await axios.get("/transPenjualan/on-process", {
+        params: {
+          barangId: barangIdLokal,
+          faktur,
+        },
+      });
+
+      const trans = res.data;
+      const jumlahDiKeranjang = trans ? parseInt(trans.jumlah) : 0;
+      const jumlahBaru = jumlahDiKeranjang + jumlahInt;
+
+      // Stok tidak cukup (termasuk jumlah yang sudah ada di keranjang)
+      if (selectedBarang.jumlah - jumlahBaru < 0) {
+        Swal.fire("Gagal menambahkan data!!", "Stok Barang Tidak cukup!!", "warning");
+        return;
+      }
+
+      if (!trans) {
+        // Insert baru
+        await axios.post("/transPenjualan", {
+          jumlah: jumlahInt,
+          faktur,
+          harga: hargaInt * jumlahInt,
+          typePembayaran,
+          anggotaId: anggotaIdLokal,
+          barangId: barangIdLokal,
+          statusPenjualan: "onProcess",
+        });
       } else {
-        this.setState({ visiJenisInput: false });
+        // Update (jumlah bertambah)
+        await axios.put(`/transPenjualan/${trans.id}`, {
+          jumlah: jumlahBaru,
+          harga: hargaInt * jumlahBaru,
+        });
       }
-    };
+      // Reset input
+      dispatch({ type: ActionType.SET_KODE_BARANG_PENJUALAN, index: "" });
+      dispatch({ type: ActionType.SET_NAMA_BARANG_PENJUALAN, index: "" });
+      dispatch({ type: ActionType.SET_JUMLAH_PENJUALAN, index: "" });
+      dispatch({ type: ActionType.SET_HARGA_PENJUALAN, index: "" });
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error!", err.response?.data?.msg || "Gagal memproses data", "error");
+    }
+  };
 
-    const handleAutoAnggota = (val) => {
-      this.setState({ displayAnggota: false });
-      this.props.handleAnggota(val);
-    };
+  // Jenis input (manual / scan)
+  const handleVisiInput = (e) => {
+    const value = e.target.value;
+    setTypeInput(value);
+    setVisiJenisInput(value === "scan");
+  };
 
-    return (
-      <main id="main" className="main">
-        <div className="pagetitle text-center">
-          <h1 className="fw-bold fs-2">Transaksi Penjualan</h1>
+  const handleAutoAnggota = (val) => {
+    setDisplayAnggota(false);
+    dispatch({ type: ActionType.SET_ANGGOTA_PENJUALAN, index: val });
+  };
+
+  const anggotaFiltered = anggotas.filter((v) => v.nama.toLowerCase().includes((anggota || "").toLowerCase()));
+
+  return (
+    <main id="main" className="main penjualan-page">
+      <div className="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <div>
+          <h1 className="fs-2 fw-bold mb-1">Transaksi Penjualan</h1>
+          <small className="text-muted">Tambahkan barang ke keranjang, lalu lakukan pembayaran</small>
         </div>
-        <section className="section">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="card">
-                <div className="card-body row">
-                  <div className="col-md-3">
-                    <h1 className="card-title mt-1 fw-bolder">
-                      Faktur : {this.props.faktur}{" "}
-                    </h1>
-                  </div>
-                  <form className="row g-3" onSubmit={handlecart}>
-                    <div className="col-md-6">
-                      <label htmlFor="namaAnggota" className="form-label">
-                        Nama Anggota
-                      </label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="namaAnggota"
-                        value={this.props.anggota}
-                        autoComplete="false"
-                        onChange={(e) =>
-                          this.props.handleAnggota(e.target.value)
-                        }
-                        onClick={() =>
-                          this.setState({
-                            displayAnggota: !this.state.displayAnggota,
-                          })
-                        }
-                      />
-                      {this.state.displayAnggota && (
-                        <div className="flex-container flex-column pos-rel bodyAutoComplate">
-                          <ul className="list-group list-group-flush">
-                            {this.state.anggotas
-                              .filter(
-                                ({ nama }) =>
-                                  nama.indexOf(this.props.anggota) > -1
-                              )
-                              .map((v, i) => (
-                                <li
-                                  key={i}
-                                  onClick={() => {
-                                    handleAutoAnggota(v.nama);
-                                  }}
-                                  className="list-group-item listAutoComplate"
-                                >
-                                  {" "}
-                                  {v.nama}
-                                </li>
-                              ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                    <div className="col-md-6">
-                      <label htmlFor="typePembayaran" className="form-label">
-                        Type Pembayaran
-                      </label>
-                      <select
-                        id="typePembayaran"
-                        className="form-select"
-                        onChange={(e) =>
-                          this.props.handleTypeBayar(e.target.value)
-                        }
-                      >
-                        <option selected value="">
-                          -- Pilih Type Pembayaran --
-                        </option>
-                        <option
-                          selected={
-                            this.props.typePembayaran == "Tunai" ? true : false
-                          }
-                          value={"Tunai"}
-                        >
-                          TUNAI
-                        </option>
-                        {/* <option selected={ this.props.typePembayaran == "Bon" ? true : false } value={ "Bon" }>
-                          BON
-                        </option> */}
-                        <option selected={this.props.typePembayaran == "QRIS" ? true : false} value={"QRIS"}>
-                          QRIS
-                        </option>
-                      </select>
-                    </div>
-                    <div className="col-12">
-                      <label htmlFor="jenisInput" className="form-label">
-                        Jenis Input
-                      </label>
-                      <select
-                        id="jenisInput"
-                        className="form-select"
-                        onChange={handleVisiInput}
-                      >
-                        <option value={"manual"}>Manual</option>
-                        <option value={"scan"}>Scan Barcode</option>
-                      </select>
-                    </div>
-                    {this.state.visiJenisInput ? (
-                      <AddCartScan />
+        <span className="badge bg-primary bg-opacity-10 text-primary fs-6 px-3 py-2">
+          <i className="bi bi-receipt me-1" />
+          {faktur}
+        </span>
+      </div>
+
+      <section className="section">
+        {/* FORM */}
+        <div className="card border-0 shadow-sm mb-4">
+          <div className="card-body p-4">
+            <form className="row g-3" onSubmit={handleCart}>
+              {/* Input Anggota */}
+              <div className="col-md-6 position-relative">
+                <label className="form-label fw-semibold">Nama Anggota</label>
+                <div className="input-group">
+                  <span className="input-group-text bg-white">
+                    <i className="bi bi-person" />
+                  </span>
+                  <input type="text" className="form-control" placeholder="Ketik nama anggota..." autoComplete="off" value={anggota} onChange={(e) => dispatch({ type: ActionType.SET_ANGGOTA_PENJUALAN, index: e.target.value })} onClick={() => setDisplayAnggota(!displayAnggota)} />
+                </div>
+
+                {displayAnggota && (
+                  <ul className="list-group autocomplete-menu shadow">
+                    {anggotaFiltered.length ? (
+                      anggotaFiltered.map((v, i) => (
+                        <li key={i} onClick={() => handleAutoAnggota(v.nama)} className="list-group-item list-group-item-action">
+                          {v.nama}
+                        </li>
+                      ))
                     ) : (
-                      <AddCartManual />
+                      <li className="list-group-item text-muted small">Anggota tidak ditemukan</li>
                     )}
-                    <div className="text-lg-end">
-                      <button type="submit" className="btn btn-primary">
-                        Tambah
-                      </button>
-                    </div>
-                  </form>
+                  </ul>
+                )}
+              </div>
+
+              {/* Type Pembayaran */}
+              <div className="col-sm-6 col-md-3">
+                <label className="form-label fw-semibold">Pembayaran</label>
+                <select className="form-select" value={typePembayaran} onChange={(e) => dispatch({ type: ActionType.SET_TYPE_BAYAR_PENJUALAN, index: e.target.value })}>
+                  <option value="">-- Pilih --</option>
+                  <option value="Tunai">Tunai</option>
+                  <option value="QRIS">QRIS</option>
+                </select>
+              </div>
+
+              {/* Jenis Input */}
+              <div className="col-sm-6 col-md-3">
+                <label className="form-label fw-semibold d-block">Jenis Input</label>
+                <div className="btn-group w-100">
+                  <button type="button" className={`btn ${typeInput === "manual" ? "btn-primary" : "btn-outline-primary"}`} onClick={() => handleVisiInput({ target: { value: "manual" } })}>
+                    <i className="bi bi-keyboard me-1" />
+                    Manual
+                  </button>
+                  <button type="button" className={`btn ${typeInput === "scan" ? "btn-primary" : "btn-outline-primary"}`} onClick={() => handleVisiInput({ target: { value: "scan" } })}>
+                    <i className="bi bi-upc-scan me-1" />
+                    Scan
+                  </button>
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
-        <section className="section">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="card">
-                <div className="card-body">
-                  <CartList />
-                </div>
+
+              <div className="col-12">
+                <hr className="my-1" />
               </div>
-            </div>
+
+              {/* Input Barang */}
+              {visiJenisInput ? <AddCartScan /> : <AddCartManual />}
+
+              <div className="col-12 text-end">
+                <button type="submit" className="btn btn-primary px-4">
+                  <i className="bi bi-cart-plus me-1" />
+                  Tambah ke Keranjang
+                </button>
+              </div>
+            </form>
           </div>
-        </section>
-        <div style={{ height: 200 }} />
-      </main>
-    );
-  }
-}
+        </div>
 
-const mapStateToProps = (state) => {
-  return {
-    anggota: state.anggota,
-    typePembayaran: state.typePembayaran,
-    kodeBarang: state.kodeBarang,
-    namaBarang: state.namaBarang,
-    jumlah: state.jumlah,
-    jenis: state.jenis,
-    harga: state.harga,
-    faktur: state.faktur,
-    supplierId: state.supplierId,
-  };
+        {/* KERANJANG + RINGKASAN */}
+        <CartList />
+      </section>
+
+      <style>{`
+        /* Template memberi tiap .card & .pagetitle h1 margin-left -90px; geser sekali di level halaman */
+        .penjualan-page .card { margin: 0; border-radius: 14px; }
+        .penjualan-page .pagetitle h1 { margin-left: 0; }
+        @media (min-width: 1200px) {
+          .penjualan-page .pagetitle,
+          .penjualan-page .section { margin-left: -90px; }
+          /* hanya saat sticky; .card position:relative akan tergeser jika top berlaku di layar kecil */
+          .penjualan-page .summary-card { top: 80px; }
+        }
+        .penjualan-page .autocomplete-menu {
+          position: absolute; left: calc(var(--bs-gutter-x) * .5); right: calc(var(--bs-gutter-x) * .5);
+          top: 100%; z-index: 1050; margin-top: 2px;
+          max-height: 240px; overflow-y: auto; border-radius: 8px;
+        }
+        .penjualan-page .autocomplete-menu .list-group-item { cursor: pointer; }
+        .penjualan-page .cart-table thead th {
+          font-size: .75rem; text-transform: uppercase; letter-spacing: .03em;
+          color: #6c757d; white-space: nowrap;
+        }
+        .penjualan-page .total-amount { font-size: 2rem; line-height: 1.2; }
+      `}</style>
+    </main>
+  );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    handleAnggota: (anggota) =>
-      dispatch({ type: ActionType.SET_ANGGOTA_PENJUALAN, index: anggota }),
-    handleTypeBayar: (typeBayar) =>
-      dispatch({ type: ActionType.SET_TYPE_BAYAR_PENJUALAN, index: typeBayar }),
-    handleKodeBarang: (kodeBarang) =>
-      dispatch({
-        type: ActionType.SET_KODE_BARANG_PENJUALAN,
-        index: kodeBarang,
-      }),
-    handleNamaBarang: (namaBarang) =>
-      dispatch({
-        type: ActionType.SET_NAMA_BARANG_PENJUALAN,
-        index: namaBarang,
-      }),
-    handleJumlah: (jumlah) =>
-      dispatch({ type: ActionType.SET_JUMLAH_PENJUALAN, index: jumlah }),
-    handlejenisBarang: (jenisBarang) =>
-      dispatch({ type: ActionType.SET_JENIS_PENJUALAN, index: jenisBarang }),
-    handleHargaBarang: (hargaBarang) =>
-      dispatch({ type: ActionType.SET_HARGA_PENJUALAN, index: hargaBarang }),
-    handleFakturPenjualan: (faktur) =>
-      dispatch({ type: ActionType.SET_FAKTUR_PENJUALAN, index: faktur }),
-    handleSupplierIdPenjualan: (supplier) =>
-      dispatch({ type: ActionType.SET_ID_SUPPLIER_PENJUALAN, index: supplier }),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(TransPenjualan);
+export default TransPenjualan;

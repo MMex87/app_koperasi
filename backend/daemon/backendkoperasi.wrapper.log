@@ -1,0 +1,2326 @@
+2025-11-09 22:13:53 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-09 22:13:53 - Started 5396
+2025-11-09 22:14:04 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-09 22:14:04 - Started 628
+2025-11-10 14:53:17 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-10 14:53:17 - Started 4708
+2025-11-10 15:35:24 - Stopping backendkoperasi.exe
+2025-11-10 15:35:24 - ProcessKill 4708
+2025-11-10 15:35:24 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-10 19:50:22 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-10 19:50:22 - Started 5088
+2025-11-11 01:33:55 - Stopping backendkoperasi.exe
+2025-11-11 01:33:55 - ProcessKill 5088
+2025-11-11 01:33:55 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-11 18:14:56 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-11 18:14:57 - Started 6120
+2025-11-12 01:45:45 - Stopping backendkoperasi.exe
+2025-11-12 01:45:45 - ProcessKill 6120
+2025-11-12 01:45:45 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-12 18:16:54 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-12 18:16:54 - Started 4156
+2025-11-13 00:53:47 - Stopping backendkoperasi.exe
+2025-11-13 00:53:47 - ProcessKill 4156
+2025-11-13 00:53:47 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-13 08:12:12 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-13 08:12:12 - Started 6064
+2025-11-13 15:12:59 - Stopping backendkoperasi.exe
+2025-11-13 15:12:59 - ProcessKill 6064
+2025-11-13 15:13:00 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-13 19:55:25 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-13 19:55:26 - Started 5568
+2025-11-13 22:02:30 - Stopping backendkoperasi.exe
+2025-11-13 22:02:30 - ProcessKill 5568
+2025-11-13 22:02:30 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-13 22:02:59 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-13 22:02:59 - Started 5304
+2025-11-13 22:04:21 - Stopping backendkoperasi.exe
+2025-11-13 22:04:21 - ProcessKill 5304
+2025-11-13 22:04:21 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-13 22:04:51 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-13 22:04:51 - Started 5676
+2025-11-13 23:54:49 - Stopping backendkoperasi.exe
+2025-11-13 23:54:49 - ProcessKill 5676
+2025-11-13 23:54:50 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-14 07:44:08 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-14 07:44:08 - Started 6004
+2025-11-14 15:34:26 - Stopping backendkoperasi.exe
+2025-11-14 15:34:26 - ProcessKill 6004
+2025-11-14 15:34:27 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-14 18:07:17 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-14 18:07:17 - Started 6104
+2025-11-14 21:18:00 - Stopping backendkoperasi.exe
+2025-11-14 21:18:00 - ProcessKill 6104
+2025-11-14 21:18:00 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-14 23:58:26 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-14 23:58:26 - Started 5744
+2025-11-15 00:19:11 - Stopping backendkoperasi.exe
+2025-11-15 00:19:11 - ProcessKill 5744
+2025-11-15 00:19:11 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-15 07:35:16 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-15 07:35:16 - Started 5832
+2025-11-15 13:24:58 - Stopping backendkoperasi.exe
+2025-11-15 13:24:58 - ProcessKill 5832
+2025-11-15 13:24:58 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-16 21:31:07 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-16 21:31:07 - Started 6072
+2025-11-16 22:54:09 - Stopping backendkoperasi.exe
+2025-11-16 22:54:09 - ProcessKill 6072
+2025-11-16 22:54:09 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-17 07:52:47 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-17 07:52:47 - Started 6336
+2025-11-17 11:29:57 - Stopping backendkoperasi.exe
+2025-11-17 11:29:57 - ProcessKill 6336
+2025-11-17 11:29:58 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-17 11:30:23 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-17 11:30:23 - Started 2720
+2025-11-17 14:09:55 - Stopping backendkoperasi.exe
+2025-11-17 14:09:55 - ProcessKill 2720
+2025-11-17 14:09:55 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-17 14:35:37 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-17 14:35:38 - Started 4176
+2025-11-17 15:19:46 - Stopping backendkoperasi.exe
+2025-11-17 15:19:46 - ProcessKill 4176
+2025-11-17 15:19:46 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-17 18:54:14 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-17 18:54:14 - Started 5872
+2025-11-18 00:11:05 - Stopping backendkoperasi.exe
+2025-11-18 00:11:05 - ProcessKill 5872
+2025-11-18 00:11:05 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-18 08:39:54 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-18 08:39:54 - Started 6264
+2025-11-18 09:10:11 - Stopping backendkoperasi.exe
+2025-11-18 09:10:11 - ProcessKill 6264
+2025-11-18 09:10:11 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-18 20:13:06 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-18 20:13:06 - Started 5828
+2025-11-19 00:08:28 - Stopping backendkoperasi.exe
+2025-11-19 00:08:28 - ProcessKill 5828
+2025-11-19 00:08:29 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-19 00:08:54 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-19 00:08:54 - Started 6184
+2025-11-19 07:39:45 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-19 07:39:45 - Started 6044
+2025-11-19 13:43:15 - Stopping backendkoperasi.exe
+2025-11-19 13:43:15 - ProcessKill 6044
+2025-11-19 13:43:16 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-19 14:40:34 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-19 14:40:34 - Started 5864
+2025-11-19 15:27:47 - Stopping backendkoperasi.exe
+2025-11-19 15:27:47 - ProcessKill 5864
+2025-11-19 15:27:47 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-19 20:33:39 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-19 20:33:39 - Started 6016
+2025-11-19 23:30:44 - Stopping backendkoperasi.exe
+2025-11-19 23:30:44 - ProcessKill 6016
+2025-11-19 23:30:44 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-20 09:07:57 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-20 09:07:57 - Started 6072
+2025-11-20 15:58:16 - Stopping backendkoperasi.exe
+2025-11-20 15:58:16 - ProcessKill 6072
+2025-11-20 15:58:16 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-20 19:07:19 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-20 19:07:19 - Started 6156
+2025-11-20 22:56:13 - Stopping backendkoperasi.exe
+2025-11-20 22:56:13 - ProcessKill 6156
+2025-11-20 22:56:13 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-21 09:25:55 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-21 09:25:55 - Started 6056
+2025-11-21 13:44:41 - Stopping backendkoperasi.exe
+2025-11-21 13:44:41 - ProcessKill 6056
+2025-11-21 13:44:41 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-21 14:58:41 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-21 14:58:41 - Started 5948
+2025-11-21 15:34:03 - Stopping backendkoperasi.exe
+2025-11-21 15:34:03 - ProcessKill 5948
+2025-11-21 15:34:03 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-21 19:26:52 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-21 19:26:52 - Started 5892
+2025-11-21 21:26:14 - Stopping backendkoperasi.exe
+2025-11-21 21:26:14 - ProcessKill 5892
+2025-11-21 21:26:14 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-22 12:41:03 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-22 12:41:03 - Started 6120
+2025-11-22 13:46:00 - Stopping backendkoperasi.exe
+2025-11-22 13:46:00 - ProcessKill 6120
+2025-11-22 13:46:00 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-22 14:23:16 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-22 14:23:16 - Started 5912
+2025-11-22 14:36:44 - Stopping backendkoperasi.exe
+2025-11-22 14:36:44 - ProcessKill 5912
+2025-11-22 14:36:45 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-23 01:03:34 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-23 01:03:34 - Started 6224
+2025-11-23 01:27:06 - Stopping backendkoperasi.exe
+2025-11-23 01:27:06 - ProcessKill 6224
+2025-11-23 01:27:06 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-23 19:44:08 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-23 19:44:08 - Started 6036
+2025-11-23 19:52:21 - Stopping backendkoperasi.exe
+2025-11-23 19:52:21 - ProcessKill 6036
+2025-11-23 19:52:21 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-23 21:13:53 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-23 21:13:53 - Started 5864
+2025-11-23 22:07:03 - Stopping backendkoperasi.exe
+2025-11-23 22:07:03 - ProcessKill 5864
+2025-11-23 22:07:03 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-24 15:11:57 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-24 15:11:57 - Started 6020
+2025-11-24 15:25:06 - Stopping backendkoperasi.exe
+2025-11-24 15:25:06 - ProcessKill 6020
+2025-11-24 15:25:07 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-24 22:04:50 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-24 22:04:50 - Started 5940
+2025-11-24 23:35:08 - Stopping backendkoperasi.exe
+2025-11-24 23:35:08 - ProcessKill 5940
+2025-11-24 23:35:08 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-25 08:21:26 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-25 08:21:26 - Started 5944
+2025-11-25 09:37:02 - Stopping backendkoperasi.exe
+2025-11-25 09:37:02 - ProcessKill 5944
+2025-11-25 09:37:03 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-25 19:06:13 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-25 19:06:13 - Started 5404
+2025-11-25 21:23:49 - Stopping backendkoperasi.exe
+2025-11-25 21:23:49 - ProcessKill 5404
+2025-11-25 21:23:50 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-26 08:49:46 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-26 08:49:46 - Started 5840
+2025-11-26 14:02:40 - Stopping backendkoperasi.exe
+2025-11-26 14:02:40 - ProcessKill 5840
+2025-11-26 14:02:40 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-26 17:07:57 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-26 17:07:57 - Started 5888
+2025-11-26 21:43:09 - Stopping backendkoperasi.exe
+2025-11-26 21:43:09 - ProcessKill 5888
+2025-11-26 21:43:09 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-26 22:42:22 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-26 22:42:22 - Started 6148
+2025-11-27 00:50:00 - Stopping backendkoperasi.exe
+2025-11-27 00:50:00 - ProcessKill 6148
+2025-11-27 00:50:00 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-27 21:35:48 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-27 21:35:48 - Started 6276
+2025-11-28 00:21:01 - Stopping backendkoperasi.exe
+2025-11-28 00:21:01 - ProcessKill 6276
+2025-11-28 00:21:02 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-28 14:59:20 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-28 14:59:20 - Started 6260
+2025-11-28 16:29:53 - Stopping backendkoperasi.exe
+2025-11-28 16:29:53 - ProcessKill 6260
+2025-11-28 16:29:53 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-28 20:04:32 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-28 20:04:32 - Started 5988
+2025-11-29 01:14:21 - Stopping backendkoperasi.exe
+2025-11-29 01:14:21 - ProcessKill 5988
+2025-11-29 01:14:22 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-29 12:19:29 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-29 12:19:29 - Started 6032
+2025-11-29 14:01:46 - Stopping backendkoperasi.exe
+2025-11-29 14:01:46 - ProcessKill 6032
+2025-11-29 14:01:46 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-29 16:44:25 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-29 16:44:25 - Started 5836
+2025-11-29 17:24:58 - Stopping backendkoperasi.exe
+2025-11-29 17:24:58 - ProcessKill 5836
+2025-11-29 17:24:58 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-29 20:41:07 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-29 20:41:07 - Started 5916
+2025-11-29 21:11:18 - Stopping backendkoperasi.exe
+2025-11-29 21:11:18 - ProcessKill 5916
+2025-11-29 21:11:18 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-30 00:42:20 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-30 00:42:20 - Started 6056
+2025-11-30 02:21:34 - Stopping backendkoperasi.exe
+2025-11-30 02:21:34 - ProcessKill 6056
+2025-11-30 02:21:34 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-30 11:57:17 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-30 11:57:17 - Started 6112
+2025-11-30 12:42:22 - Stopping backendkoperasi.exe
+2025-11-30 12:42:22 - ProcessKill 6112
+2025-11-30 12:42:23 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-30 18:56:10 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-30 18:56:10 - Started 5924
+2025-11-30 19:53:20 - Stopping backendkoperasi.exe
+2025-11-30 19:53:20 - ProcessKill 5924
+2025-11-30 19:53:21 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-11-30 22:25:09 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-30 22:25:09 - Started 6032
+2025-11-30 22:41:03 - Stopping backendkoperasi.exe
+2025-11-30 22:41:03 - ProcessKill 6032
+2025-11-30 22:41:03 - Found child process: 6116 Name: conhost.exe
+2025-11-30 22:41:03 - Found child process: 7712 Name: node.exe
+2025-11-30 22:41:04 - Stopping process 6116
+2025-11-30 22:41:04 - Send SIGINT 6116
+2025-11-30 22:41:04 - SIGINT to 6116 failed - Killing as fallback
+2025-11-30 22:41:04 - Stopping process 7712
+2025-11-30 22:41:04 - Send SIGINT 7712
+2025-11-30 22:41:04 - SIGINT to 7712 failed - Killing as fallback
+2025-11-30 22:41:04 - Stopping process 6032
+2025-11-30 22:41:04 - Send SIGINT 6032
+2025-11-30 22:41:04 - SIGINT to 6032 failed - Killing as fallback
+2025-11-30 22:41:04 - Finished backendkoperasi.exe
+2025-11-30 22:42:11 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-11-30 22:42:11 - Started 8564
+2025-11-30 22:47:30 - Stopping backendkoperasi.exe
+2025-11-30 22:47:30 - ProcessKill 8564
+2025-11-30 22:47:30 - Found child process: 13436 Name: conhost.exe
+2025-11-30 22:47:30 - Found child process: 16620 Name: node.exe
+2025-11-30 22:47:30 - Stopping process 13436
+2025-11-30 22:47:30 - Send SIGINT 13436
+2025-11-30 22:47:30 - SIGINT to 13436 failed - Killing as fallback
+2025-11-30 22:47:30 - Stopping process 16620
+2025-11-30 22:47:30 - Send SIGINT 16620
+2025-11-30 22:47:30 - SIGINT to 16620 failed - Killing as fallback
+2025-11-30 22:47:30 - Stopping process 8564
+2025-11-30 22:47:30 - Send SIGINT 8564
+2025-11-30 22:47:30 - SIGINT to 8564 failed - Killing as fallback
+2025-11-30 22:47:30 - Finished backendkoperasi.exe
+2025-12-01 18:05:45 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-01 18:05:45 - Started 6088
+2025-12-01 23:41:00 - Stopping backendkoperasi.exe
+2025-12-01 23:41:00 - ProcessKill 6088
+2025-12-01 23:41:00 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-02 00:44:32 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-02 00:44:32 - Started 6116
+2025-12-02 01:43:00 - Stopping backendkoperasi.exe
+2025-12-02 01:43:00 - ProcessKill 6116
+2025-12-02 01:43:00 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-02 18:49:50 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-02 18:49:50 - Started 5852
+2025-12-02 19:30:42 - Stopping backendkoperasi.exe
+2025-12-02 19:30:42 - ProcessKill 5852
+2025-12-02 19:30:42 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-02 21:54:42 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-02 21:54:42 - Started 6012
+2025-12-02 23:45:22 - Stopping backendkoperasi.exe
+2025-12-02 23:45:22 - ProcessKill 6012
+2025-12-02 23:45:22 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-02 23:47:08 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-02 23:47:09 - Started 1172
+2025-12-02 23:52:51 - Stopping backendkoperasi.exe
+2025-12-02 23:52:51 - ProcessKill 1172
+2025-12-02 23:52:51 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-03 14:58:13 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-03 14:58:13 - Started 6352
+2025-12-03 15:38:42 - Stopping backendkoperasi.exe
+2025-12-03 15:38:42 - ProcessKill 6352
+2025-12-03 15:38:43 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-03 18:16:20 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-03 18:16:20 - Started 6100
+2025-12-04 01:21:31 - Stopping backendkoperasi.exe
+2025-12-04 01:21:31 - ProcessKill 6100
+2025-12-04 01:21:31 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-04 01:21:57 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-04 01:21:57 - Started 5748
+2025-12-04 01:22:06 - Stopping backendkoperasi.exe
+2025-12-04 01:22:06 - ProcessKill 5748
+2025-12-04 01:22:06 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-04 14:33:42 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-04 14:33:42 - Started 6452
+2025-12-04 15:24:36 - Stopping backendkoperasi.exe
+2025-12-04 15:24:36 - ProcessKill 6452
+2025-12-04 15:24:36 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-04 18:01:48 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-04 18:01:48 - Started 5908
+2025-12-04 19:17:29 - Stopping backendkoperasi.exe
+2025-12-04 19:17:29 - ProcessKill 5908
+2025-12-04 19:17:30 - Found child process: 5984 Name: conhost.exe
+2025-12-04 19:17:30 - Found child process: 7972 Name: node.exe
+2025-12-04 19:17:30 - Stopping process 5984
+2025-12-04 19:17:30 - Send SIGINT 5984
+2025-12-04 19:17:30 - SIGINT to 5984 failed - Killing as fallback
+2025-12-04 19:17:30 - Stopping process 7972
+2025-12-04 19:17:30 - Send SIGINT 7972
+2025-12-04 19:17:30 - SIGINT to 7972 failed - Killing as fallback
+2025-12-04 19:17:30 - Stopping process 5908
+2025-12-04 19:17:30 - Send SIGINT 5908
+2025-12-04 19:17:30 - SIGINT to 5908 failed - Killing as fallback
+2025-12-04 19:17:30 - Finished backendkoperasi.exe
+2025-12-05 09:04:56 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-05 09:04:56 - Started 6136
+2025-12-05 09:45:22 - Stopping backendkoperasi.exe
+2025-12-05 09:45:22 - ProcessKill 6136
+2025-12-05 09:45:23 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-05 23:36:02 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-05 23:36:03 - Started 6276
+2025-12-06 00:00:41 - Stopping backendkoperasi.exe
+2025-12-06 00:00:41 - ProcessKill 6276
+2025-12-06 00:00:41 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-06 07:23:01 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-06 07:23:01 - Started 6156
+2025-12-06 07:31:45 - Stopping backendkoperasi.exe
+2025-12-06 07:31:45 - ProcessKill 6156
+2025-12-06 07:31:45 - Found child process: 6240 Name: conhost.exe
+2025-12-06 07:31:45 - Found child process: 7876 Name: node.exe
+2025-12-06 07:31:45 - Stopping process 6240
+2025-12-06 07:31:45 - Send SIGINT 6240
+2025-12-06 07:31:45 - SIGINT to 6240 failed - Killing as fallback
+2025-12-06 07:31:45 - Stopping process 7876
+2025-12-06 07:31:45 - Send SIGINT 7876
+2025-12-06 07:31:45 - SIGINT to 7876 failed - Killing as fallback
+2025-12-06 07:31:45 - Stopping process 6156
+2025-12-06 07:31:45 - Send SIGINT 6156
+2025-12-06 07:31:45 - SIGINT to 6156 failed - Killing as fallback
+2025-12-06 07:31:45 - Finished backendkoperasi.exe
+2025-12-06 10:41:20 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-06 10:41:21 - Started 6224
+2025-12-06 12:03:35 - Stopping backendkoperasi.exe
+2025-12-06 12:03:35 - ProcessKill 6224
+2025-12-06 12:03:35 - Found child process: 6304 Name: conhost.exe
+2025-12-06 12:03:35 - Found child process: 7868 Name: node.exe
+2025-12-06 12:03:35 - Stopping process 6304
+2025-12-06 12:03:35 - Send SIGINT 6304
+2025-12-06 12:03:35 - SIGINT to 6304 failed - Killing as fallback
+2025-12-06 12:03:36 - Stopping process 7868
+2025-12-06 12:03:36 - Send SIGINT 7868
+2025-12-06 12:03:36 - SIGINT to 7868 failed - Killing as fallback
+2025-12-06 12:03:36 - Stopping process 6224
+2025-12-06 12:03:36 - Send SIGINT 6224
+2025-12-06 12:03:36 - SIGINT to 6224 failed - Killing as fallback
+2025-12-06 12:03:36 - Finished backendkoperasi.exe
+2025-12-06 12:03:44 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-06 12:03:44 - Started 6904
+2025-12-06 14:02:40 - Stopping backendkoperasi.exe
+2025-12-06 14:02:40 - ProcessKill 6904
+2025-12-06 14:02:41 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-07 21:35:54 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-07 21:35:54 - Started 5984
+2025-12-07 22:39:18 - Stopping backendkoperasi.exe
+2025-12-07 22:39:18 - ProcessKill 5984
+2025-12-07 22:39:19 - Found child process: 5100 Name: conhost.exe
+2025-12-07 22:39:19 - Found child process: 8076 Name: node.exe
+2025-12-07 22:39:19 - Stopping process 5100
+2025-12-07 22:39:19 - Send SIGINT 5100
+2025-12-07 22:39:19 - SIGINT to 5100 failed - Killing as fallback
+2025-12-07 22:39:19 - Stopping process 8076
+2025-12-07 22:39:19 - Send SIGINT 8076
+2025-12-07 22:39:19 - SIGINT to 8076 failed - Killing as fallback
+2025-12-07 22:39:19 - Stopping process 5984
+2025-12-07 22:39:19 - Send SIGINT 5984
+2025-12-07 22:39:19 - SIGINT to 5984 failed - Killing as fallback
+2025-12-07 22:39:19 - Finished backendkoperasi.exe
+2025-12-08 00:17:01 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-08 00:17:01 - Started 6012
+2025-12-08 01:20:24 - Stopping backendkoperasi.exe
+2025-12-08 01:20:24 - ProcessKill 6012
+2025-12-08 01:20:24 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-08 07:53:45 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-08 07:53:45 - Started 5896
+2025-12-08 11:24:09 - Stopping backendkoperasi.exe
+2025-12-08 11:24:09 - ProcessKill 5896
+2025-12-08 11:24:09 - Found child process: 6096 Name: conhost.exe
+2025-12-08 11:24:09 - Found child process: 7700 Name: node.exe
+2025-12-08 11:24:09 - Stopping process 6096
+2025-12-08 11:24:09 - Send SIGINT 6096
+2025-12-08 11:24:09 - SIGINT to 6096 failed - Killing as fallback
+2025-12-08 11:24:09 - Stopping process 7700
+2025-12-08 11:24:09 - Send SIGINT 7700
+2025-12-08 11:24:09 - SIGINT to 7700 failed - Killing as fallback
+2025-12-08 11:24:09 - Stopping process 5896
+2025-12-08 11:24:09 - Send SIGINT 5896
+2025-12-08 11:24:09 - SIGINT to 5896 failed - Killing as fallback
+2025-12-08 11:24:09 - Finished backendkoperasi.exe
+2025-12-08 14:31:16 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-08 14:31:16 - Started 6180
+2025-12-08 15:04:53 - Stopping backendkoperasi.exe
+2025-12-08 15:04:53 - ProcessKill 6180
+2025-12-08 15:04:53 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-08 19:21:47 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-08 19:21:47 - Started 4856
+2025-12-08 23:09:26 - Stopping backendkoperasi.exe
+2025-12-08 23:09:26 - ProcessKill 4856
+2025-12-08 23:09:26 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-08 23:09:59 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-08 23:09:59 - Started 5972
+2025-12-08 23:52:13 - Stopping backendkoperasi.exe
+2025-12-08 23:52:13 - ProcessKill 5972
+2025-12-08 23:52:13 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-09 14:49:38 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-09 14:49:38 - Started 5940
+2025-12-09 15:32:11 - Stopping backendkoperasi.exe
+2025-12-09 15:32:11 - ProcessKill 5940
+2025-12-09 15:32:11 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-09 16:27:19 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-09 16:27:19 - Started 5700
+2025-12-09 21:10:26 - Stopping backendkoperasi.exe
+2025-12-09 21:10:26 - ProcessKill 5700
+2025-12-09 21:10:26 - Found child process: 6260 Name: conhost.exe
+2025-12-09 21:10:26 - Found child process: 7436 Name: node.exe
+2025-12-09 21:10:26 - Stopping process 6260
+2025-12-09 21:10:26 - Send SIGINT 6260
+2025-12-09 21:10:26 - SIGINT to 6260 failed - Killing as fallback
+2025-12-09 21:10:26 - Stopping process 7436
+2025-12-09 21:10:26 - Send SIGINT 7436
+2025-12-09 21:10:27 - SIGINT to 7436 failed - Killing as fallback
+2025-12-09 21:10:27 - Stopping process 5700
+2025-12-09 21:10:27 - Send SIGINT 5700
+2025-12-09 21:10:27 - SIGINT to 5700 failed - Killing as fallback
+2025-12-09 21:10:27 - Finished backendkoperasi.exe
+2025-12-10 07:59:00 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-10 07:59:00 - Started 6300
+2025-12-10 08:09:39 - Stopping backendkoperasi.exe
+2025-12-10 08:09:39 - ProcessKill 6300
+2025-12-10 08:09:40 - Found child process: 6376 Name: conhost.exe
+2025-12-10 08:09:40 - Found child process: 7968 Name: node.exe
+2025-12-10 08:09:40 - Stopping process 6376
+2025-12-10 08:09:40 - Send SIGINT 6376
+2025-12-10 08:09:40 - SIGINT to 6376 failed - Killing as fallback
+2025-12-10 08:09:40 - Stopping process 7968
+2025-12-10 08:09:40 - Send SIGINT 7968
+2025-12-10 08:09:40 - SIGINT to 7968 failed - Killing as fallback
+2025-12-10 08:09:40 - Stopping process 6300
+2025-12-10 08:09:40 - Send SIGINT 6300
+2025-12-10 08:09:40 - SIGINT to 6300 failed - Killing as fallback
+2025-12-10 08:09:40 - Finished backendkoperasi.exe
+2025-12-10 15:23:11 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-10 15:23:11 - Started 5776
+2025-12-10 16:06:00 - Stopping backendkoperasi.exe
+2025-12-10 16:06:00 - ProcessKill 5776
+2025-12-10 16:06:00 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-10 18:09:40 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-10 18:09:40 - Started 6068
+2025-12-10 20:56:18 - Stopping backendkoperasi.exe
+2025-12-10 20:56:18 - ProcessKill 6068
+2025-12-10 20:56:19 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-10 20:56:44 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-10 20:56:44 - Started 6116
+2025-12-11 00:17:46 - Stopping backendkoperasi.exe
+2025-12-11 00:17:46 - ProcessKill 6116
+2025-12-11 00:17:46 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-11 07:55:51 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-11 07:55:51 - Started 5872
+2025-12-11 14:04:25 - Stopping backendkoperasi.exe
+2025-12-11 14:04:25 - ProcessKill 5872
+2025-12-11 14:04:25 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-11 14:04:51 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-11 14:04:51 - Started 5424
+2025-12-11 14:08:44 - Stopping backendkoperasi.exe
+2025-12-11 14:08:44 - ProcessKill 5424
+2025-12-11 14:08:44 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-11 22:48:54 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-11 22:48:54 - Started 6132
+2025-12-12 00:43:13 - Stopping backendkoperasi.exe
+2025-12-12 00:43:13 - ProcessKill 6132
+2025-12-12 00:43:14 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-12 07:45:26 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-12 07:45:26 - Started 6100
+2025-12-12 07:55:06 - Stopping backendkoperasi.exe
+2025-12-12 07:55:06 - ProcessKill 6100
+2025-12-12 07:55:07 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-12 07:55:32 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-12 07:55:32 - Started 5780
+2025-12-12 14:14:14 - Stopping backendkoperasi.exe
+2025-12-12 14:14:14 - ProcessKill 5780
+2025-12-12 14:14:14 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-12 15:01:57 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-12 15:01:58 - Started 5888
+2025-12-12 16:42:25 - Stopping backendkoperasi.exe
+2025-12-12 16:42:25 - ProcessKill 5888
+2025-12-12 16:42:25 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-12 19:08:10 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-12 19:08:11 - Started 5768
+2025-12-12 21:22:02 - Stopping backendkoperasi.exe
+2025-12-12 21:22:02 - ProcessKill 5768
+2025-12-12 21:22:02 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-12 23:33:26 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-12 23:33:26 - Started 6012
+2025-12-13 00:45:40 - Stopping backendkoperasi.exe
+2025-12-13 00:45:40 - ProcessKill 6012
+2025-12-13 00:45:40 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-13 01:54:15 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-13 01:54:16 - Started 5748
+2025-12-13 02:56:22 - Stopping backendkoperasi.exe
+2025-12-13 02:56:22 - ProcessKill 5748
+2025-12-13 02:56:22 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-13 08:07:23 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-13 08:07:24 - Started 6108
+2025-12-13 11:53:51 - Stopping backendkoperasi.exe
+2025-12-13 11:53:51 - ProcessKill 6108
+2025-12-13 11:53:51 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-13 13:10:07 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-13 13:10:07 - Started 6208
+2025-12-13 14:38:32 - Stopping backendkoperasi.exe
+2025-12-13 14:38:32 - ProcessKill 6208
+2025-12-13 14:38:32 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-13 19:40:11 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-13 19:40:12 - Started 5900
+2025-12-13 20:39:52 - Stopping backendkoperasi.exe
+2025-12-13 20:39:52 - ProcessKill 5900
+2025-12-13 20:39:52 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-14 00:39:50 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-14 00:39:50 - Started 5948
+2025-12-14 01:07:35 - Stopping backendkoperasi.exe
+2025-12-14 01:07:35 - ProcessKill 5948
+2025-12-14 01:07:35 - Found child process: 6024 Name: conhost.exe
+2025-12-14 01:07:35 - Found child process: 7936 Name: node.exe
+2025-12-14 01:07:35 - Stopping process 6024
+2025-12-14 01:07:35 - Send SIGINT 6024
+2025-12-14 01:07:35 - SIGINT to 6024 failed - Killing as fallback
+2025-12-14 01:07:36 - Stopping process 7936
+2025-12-14 01:07:36 - Send SIGINT 7936
+2025-12-14 01:07:36 - SIGINT to 7936 failed - Killing as fallback
+2025-12-14 01:07:36 - Stopping process 5948
+2025-12-14 01:07:36 - Send SIGINT 5948
+2025-12-14 01:07:36 - SIGINT to 5948 failed - Killing as fallback
+2025-12-14 01:07:36 - Finished backendkoperasi.exe
+2025-12-14 13:54:18 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-14 13:54:18 - Started 6156
+2025-12-14 14:17:08 - Stopping backendkoperasi.exe
+2025-12-14 14:17:08 - ProcessKill 6156
+2025-12-14 14:17:08 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-14 19:57:15 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-14 19:57:16 - Started 6028
+2025-12-15 01:33:45 - Stopping backendkoperasi.exe
+2025-12-15 01:33:45 - ProcessKill 6028
+2025-12-15 01:33:46 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-15 07:49:16 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-15 07:49:16 - Started 5916
+2025-12-15 11:07:13 - Stopping backendkoperasi.exe
+2025-12-15 11:07:13 - ProcessKill 5916
+2025-12-15 11:07:13 - Found child process: 6076 Name: conhost.exe
+2025-12-15 11:07:13 - Found child process: 8176 Name: node.exe
+2025-12-15 11:07:13 - Stopping process 6076
+2025-12-15 11:07:13 - Send SIGINT 6076
+2025-12-15 11:07:14 - SIGINT to 6076 failed - Killing as fallback
+2025-12-15 11:07:14 - Stopping process 8176
+2025-12-15 11:07:14 - Send SIGINT 8176
+2025-12-15 11:07:14 - SIGINT to 8176 failed - Killing as fallback
+2025-12-15 11:07:14 - Stopping process 5916
+2025-12-15 11:07:14 - Send SIGINT 5916
+2025-12-15 11:07:14 - SIGINT to 5916 failed - Killing as fallback
+2025-12-15 11:07:14 - Finished backendkoperasi.exe
+2025-12-15 15:58:52 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-15 15:58:52 - Started 6244
+2025-12-15 16:44:01 - Stopping backendkoperasi.exe
+2025-12-15 16:44:01 - ProcessKill 6244
+2025-12-15 16:44:02 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-15 19:02:12 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-15 19:02:12 - Started 5032
+2025-12-15 21:51:47 - Stopping backendkoperasi.exe
+2025-12-15 21:51:47 - ProcessKill 5032
+2025-12-15 21:51:48 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-15 21:52:18 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-15 21:52:18 - Started 7028
+2025-12-16 00:37:15 - Stopping backendkoperasi.exe
+2025-12-16 00:37:15 - ProcessKill 7028
+2025-12-16 00:37:15 - Found child process: 5516 Name: conhost.exe
+2025-12-16 00:37:15 - Found child process: 8020 Name: node.exe
+2025-12-16 00:37:15 - Stopping process 5516
+2025-12-16 00:37:15 - Send SIGINT 5516
+2025-12-16 00:37:15 - SIGINT to 5516 failed - Killing as fallback
+2025-12-16 00:37:15 - Stopping process 8020
+2025-12-16 00:37:15 - Send SIGINT 8020
+2025-12-16 00:37:15 - SIGINT to 8020 failed - Killing as fallback
+2025-12-16 00:37:15 - Stopping process 7028
+2025-12-16 00:37:15 - Send SIGINT 7028
+2025-12-16 00:37:15 - SIGINT to 7028 failed - Killing as fallback
+2025-12-16 00:37:15 - Finished backendkoperasi.exe
+2025-12-16 07:47:55 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-16 07:47:55 - Started 6616
+2025-12-16 08:06:48 - Stopping backendkoperasi.exe
+2025-12-16 08:06:48 - ProcessKill 6616
+2025-12-16 08:06:48 - Found child process: 6664 Name: conhost.exe
+2025-12-16 08:06:48 - Found child process: 8032 Name: node.exe
+2025-12-16 08:06:48 - Stopping process 6664
+2025-12-16 08:06:48 - Send SIGINT 6664
+2025-12-16 08:06:48 - SIGINT to 6664 failed - Killing as fallback
+2025-12-16 08:06:48 - Stopping process 8032
+2025-12-16 08:06:48 - Send SIGINT 8032
+2025-12-16 08:06:48 - SIGINT to 8032 failed - Killing as fallback
+2025-12-16 08:06:48 - Stopping process 6616
+2025-12-16 08:06:48 - Send SIGINT 6616
+2025-12-16 08:06:48 - SIGINT to 6616 failed - Killing as fallback
+2025-12-16 08:06:48 - Finished backendkoperasi.exe
+2025-12-16 18:44:11 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-16 18:44:11 - Started 5856
+2025-12-16 23:47:58 - Stopping backendkoperasi.exe
+2025-12-16 23:47:58 - ProcessKill 5856
+2025-12-16 23:47:59 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-17 00:08:04 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-17 00:08:04 - Started 5540
+2025-12-17 00:56:50 - Stopping backendkoperasi.exe
+2025-12-17 00:56:50 - ProcessKill 5540
+2025-12-17 00:56:50 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-17 07:40:13 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-17 07:40:13 - Started 5796
+2025-12-17 14:26:59 - Stopping backendkoperasi.exe
+2025-12-17 14:26:59 - ProcessKill 5796
+2025-12-17 14:27:00 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-17 15:11:48 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-17 15:11:48 - Started 5904
+2025-12-17 15:24:52 - Stopping backendkoperasi.exe
+2025-12-17 15:24:52 - ProcessKill 5904
+2025-12-17 15:24:52 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-17 22:37:12 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-17 22:37:12 - Started 6184
+2025-12-17 22:44:44 - Stopping backendkoperasi.exe
+2025-12-17 22:44:44 - ProcessKill 6184
+2025-12-17 22:44:45 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-18 07:50:11 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-18 07:50:11 - Started 6188
+2025-12-18 08:21:43 - Stopping backendkoperasi.exe
+2025-12-18 08:21:43 - ProcessKill 6188
+2025-12-18 08:21:43 - Found child process: 6256 Name: conhost.exe
+2025-12-18 08:21:43 - Found child process: 8180 Name: node.exe
+2025-12-18 08:21:43 - Stopping process 6256
+2025-12-18 08:21:43 - Send SIGINT 6256
+2025-12-18 08:21:43 - SIGINT to 6256 failed - Killing as fallback
+2025-12-18 08:21:43 - Stopping process 8180
+2025-12-18 08:21:43 - Send SIGINT 8180
+2025-12-18 08:21:43 - SIGINT to 8180 failed - Killing as fallback
+2025-12-18 08:21:43 - Stopping process 6188
+2025-12-18 08:21:43 - Send SIGINT 6188
+2025-12-18 08:21:43 - SIGINT to 6188 failed - Killing as fallback
+2025-12-18 08:21:43 - Finished backendkoperasi.exe
+2025-12-19 00:38:19 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-19 00:38:19 - Started 6384
+2025-12-19 01:05:53 - Stopping backendkoperasi.exe
+2025-12-19 01:05:53 - ProcessKill 6384
+2025-12-19 01:05:53 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-19 07:39:19 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-19 07:39:19 - Started 5280
+2025-12-19 13:41:27 - Stopping backendkoperasi.exe
+2025-12-19 13:41:27 - ProcessKill 5280
+2025-12-19 13:41:27 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-19 15:02:39 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-19 15:02:39 - Started 6200
+2025-12-19 15:28:23 - Stopping backendkoperasi.exe
+2025-12-19 15:28:23 - ProcessKill 6200
+2025-12-19 15:28:23 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-20 00:49:14 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-20 00:49:14 - Started 6100
+2025-12-20 01:21:36 - Stopping backendkoperasi.exe
+2025-12-20 01:21:36 - ProcessKill 6100
+2025-12-20 01:21:36 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-20 07:34:42 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-20 07:34:43 - Started 6060
+2025-12-20 11:01:43 - Stopping backendkoperasi.exe
+2025-12-20 11:01:43 - ProcessKill 6060
+2025-12-20 11:01:43 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-20 20:19:42 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-20 20:19:42 - Started 4760
+2025-12-20 21:10:52 - Stopping backendkoperasi.exe
+2025-12-20 21:10:52 - ProcessKill 4760
+2025-12-20 21:10:52 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-21 00:45:51 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-21 00:45:51 - Started 6276
+2025-12-21 01:27:35 - Stopping backendkoperasi.exe
+2025-12-21 01:27:35 - ProcessKill 6276
+2025-12-21 01:27:36 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-21 19:08:05 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-21 19:08:05 - Started 5800
+2025-12-21 23:38:26 - Stopping backendkoperasi.exe
+2025-12-21 23:38:26 - ProcessKill 5800
+2025-12-21 23:38:27 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-21 23:47:53 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-21 23:47:53 - Started 6060
+2025-12-22 00:27:24 - Stopping backendkoperasi.exe
+2025-12-22 00:27:24 - ProcessKill 6060
+2025-12-22 00:27:25 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-22 08:06:18 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-22 08:06:18 - Started 6148
+2025-12-22 13:54:27 - Stopping backendkoperasi.exe
+2025-12-22 13:54:27 - ProcessKill 6148
+2025-12-22 13:54:27 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-22 21:17:52 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-22 21:17:52 - Started 6280
+2025-12-23 01:38:16 - Stopping backendkoperasi.exe
+2025-12-23 01:38:16 - ProcessKill 6280
+2025-12-23 01:38:17 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-23 07:38:16 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-23 07:38:16 - Started 5800
+2025-12-23 14:01:25 - Stopping backendkoperasi.exe
+2025-12-23 14:01:25 - ProcessKill 5800
+2025-12-23 14:01:26 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-23 14:02:03 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-23 14:02:03 - Started 6352
+2025-12-23 14:02:35 - Stopping backendkoperasi.exe
+2025-12-23 14:02:35 - ProcessKill 6352
+2025-12-23 14:02:35 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-24 00:47:12 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-24 00:47:12 - Started 5936
+2025-12-24 01:58:12 - Stopping backendkoperasi.exe
+2025-12-24 01:58:12 - ProcessKill 5936
+2025-12-24 01:58:12 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-25 01:32:27 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-25 01:32:27 - Started 5956
+2025-12-25 02:12:50 - Stopping backendkoperasi.exe
+2025-12-25 02:12:50 - ProcessKill 5956
+2025-12-25 02:12:50 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-25 12:23:50 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-25 12:23:50 - Started 6004
+2025-12-25 12:48:43 - Stopping backendkoperasi.exe
+2025-12-25 12:48:43 - ProcessKill 6004
+2025-12-25 12:48:43 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-25 15:11:48 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-25 15:11:48 - Started 6084
+2025-12-25 18:58:02 - Stopping backendkoperasi.exe
+2025-12-25 18:58:02 - ProcessKill 6084
+2025-12-25 18:58:03 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-26 07:42:52 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-26 07:42:52 - Started 6092
+2025-12-26 14:15:37 - Stopping backendkoperasi.exe
+2025-12-26 14:15:37 - ProcessKill 6092
+2025-12-26 14:15:37 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-26 23:00:38 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-26 23:00:38 - Started 5940
+2025-12-27 02:06:58 - Stopping backendkoperasi.exe
+2025-12-27 02:06:58 - ProcessKill 5940
+2025-12-27 02:06:58 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-27 07:41:09 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-27 07:41:09 - Started 5920
+2025-12-27 12:01:44 - Stopping backendkoperasi.exe
+2025-12-27 12:01:44 - ProcessKill 5920
+2025-12-27 12:01:44 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-28 22:30:11 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-28 22:30:11 - Started 5972
+2025-12-29 00:23:52 - Stopping backendkoperasi.exe
+2025-12-29 00:23:52 - ProcessKill 5972
+2025-12-29 00:23:52 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-29 07:39:02 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-29 07:39:02 - Started 5952
+2025-12-29 13:59:00 - Stopping backendkoperasi.exe
+2025-12-29 13:59:00 - ProcessKill 5952
+2025-12-29 13:59:01 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-30 02:09:56 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-30 02:09:56 - Started 4336
+2025-12-30 02:52:49 - Stopping backendkoperasi.exe
+2025-12-30 02:52:49 - ProcessKill 4336
+2025-12-30 02:52:50 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-30 07:43:20 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-30 07:43:20 - Started 5964
+2025-12-30 11:29:45 - Stopping backendkoperasi.exe
+2025-12-30 11:29:45 - ProcessKill 5964
+2025-12-30 11:29:46 - Found child process: 6056 Name: conhost.exe
+2025-12-30 11:29:46 - Found child process: 7424 Name: node.exe
+2025-12-30 11:29:46 - Stopping process 6056
+2025-12-30 11:29:46 - Send SIGINT 6056
+2025-12-30 11:29:46 - SIGINT to 6056 failed - Killing as fallback
+2025-12-30 11:29:46 - Stopping process 7424
+2025-12-30 11:29:46 - Send SIGINT 7424
+2025-12-30 11:29:46 - SIGINT to 7424 failed - Killing as fallback
+2025-12-30 11:29:46 - Stopping process 5964
+2025-12-30 11:29:46 - Send SIGINT 5964
+2025-12-30 11:29:46 - SIGINT to 5964 failed - Killing as fallback
+2025-12-30 11:29:46 - Finished backendkoperasi.exe
+2025-12-30 22:47:18 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-30 22:47:18 - Started 6488
+2025-12-30 23:55:36 - Stopping backendkoperasi.exe
+2025-12-30 23:55:36 - ProcessKill 6488
+2025-12-30 23:55:37 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-31 07:43:50 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-31 07:43:50 - Started 6040
+2025-12-31 13:58:42 - Stopping backendkoperasi.exe
+2025-12-31 13:58:42 - ProcessKill 6040
+2025-12-31 13:58:43 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2025-12-31 23:57:41 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2025-12-31 23:57:41 - Started 6088
+2026-01-01 00:32:50 - Stopping backendkoperasi.exe
+2026-01-01 00:32:50 - ProcessKill 6088
+2026-01-01 00:32:50 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2026-01-01 02:46:58 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-01-01 02:46:58 - Started 5336
+2026-01-01 03:22:14 - Stopping backendkoperasi.exe
+2026-01-01 03:22:14 - ProcessKill 5336
+2026-01-01 03:22:15 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2026-01-01 16:56:07 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-01-01 16:56:07 - Started 6396
+2026-01-01 20:50:28 - Stopping backendkoperasi.exe
+2026-01-01 20:50:28 - ProcessKill 6396
+2026-01-01 20:50:29 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2026-01-02 07:51:27 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-01-02 07:51:28 - Started 5828
+2026-01-02 14:02:48 - Stopping backendkoperasi.exe
+2026-01-02 14:02:48 - ProcessKill 5828
+2026-01-02 14:02:48 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2026-01-03 07:34:23 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-01-03 07:34:23 - Started 6016
+2026-01-03 11:56:16 - Stopping backendkoperasi.exe
+2026-01-03 11:56:16 - ProcessKill 6016
+2026-01-03 11:56:17 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2026-01-04 01:40:03 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-01-04 01:40:03 - Started 6252
+2026-01-04 02:44:54 - Stopping backendkoperasi.exe
+2026-01-04 02:44:54 - ProcessKill 6252
+2026-01-04 02:44:54 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2026-01-04 15:56:48 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-01-04 15:56:48 - Started 6264
+2026-01-04 17:33:35 - Stopping backendkoperasi.exe
+2026-01-04 17:33:35 - ProcessKill 6264
+2026-01-04 17:33:35 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2026-01-04 21:59:05 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-01-04 21:59:05 - Started 6088
+2026-01-05 00:35:21 - Stopping backendkoperasi.exe
+2026-01-05 00:35:21 - ProcessKill 6088
+2026-01-05 00:35:21 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2026-01-05 07:42:30 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-01-05 07:42:30 - Started 6140
+2026-01-05 14:51:53 - Stopping backendkoperasi.exe
+2026-01-05 14:51:53 - ProcessKill 6140
+2026-01-05 14:51:53 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2026-01-05 18:23:08 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-01-05 18:23:09 - Started 5988
+2026-01-05 18:58:49 - Stopping backendkoperasi.exe
+2026-01-05 18:58:49 - ProcessKill 5988
+2026-01-05 18:58:49 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2026-01-05 18:59:15 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-01-05 18:59:15 - Started 5472
+2026-01-05 21:30:46 - Stopping backendkoperasi.exe
+2026-01-05 21:30:46 - ProcessKill 5472
+2026-01-05 21:30:46 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2026-01-05 22:32:24 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-01-05 22:32:24 - Started 5760
+2026-01-05 22:36:16 - Stopping backendkoperasi.exe
+2026-01-05 22:36:16 - ProcessKill 5760
+2026-01-05 22:36:16 - Found child process: 5912 Name: conhost.exe
+2026-01-05 22:36:16 - Found child process: 7984 Name: node.exe
+2026-01-05 22:36:16 - Stopping process 5912
+2026-01-05 22:36:16 - Send SIGINT 5912
+2026-01-05 22:36:16 - SIGINT to 5912 failed - Killing as fallback
+2026-01-05 22:36:16 - Stopping process 7984
+2026-01-05 22:36:16 - Send SIGINT 7984
+2026-01-05 22:36:16 - SIGINT to 7984 failed - Killing as fallback
+2026-01-05 22:36:16 - Stopping process 5760
+2026-01-05 22:36:16 - Send SIGINT 5760
+2026-01-05 22:36:16 - SIGINT to 5760 failed - Killing as fallback
+2026-01-05 22:36:16 - Finished backendkoperasi.exe
+2026-01-05 23:50:19 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-01-05 23:50:19 - Started 6128
+2026-01-06 01:12:06 - Stopping backendkoperasi.exe
+2026-01-06 01:12:06 - ProcessKill 6128
+2026-01-06 01:12:06 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2026-01-06 07:42:47 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-01-06 07:42:47 - Started 6188
+2026-01-06 13:59:11 - Stopping backendkoperasi.exe
+2026-01-06 13:59:11 - ProcessKill 6188
+2026-01-06 13:59:11 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2026-01-08 01:29:22 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-01-08 01:29:22 - Started 6116
+2026-01-08 03:12:49 - Stopping backendkoperasi.exe
+2026-01-08 03:12:49 - ProcessKill 6116
+2026-01-08 03:12:49 - Shutdown exception
+Message:A system shutdown is in progress.
+
+Stacktrace:   at System.Runtime.InteropServices.Marshal.ThrowExceptionForHRInternal(Int32 errorCode, IntPtr errorInfo)
+   at System.Management.ManagementScope.InitializeGuts(Object o)
+   at System.Management.ManagementScope.Initialize()
+   at System.Management.ManagementObjectSearcher.Initialize()
+   at System.Management.ManagementObjectSearcher.Get()
+   at winsw.WrapperService.GetChildPids(Int32 pid)
+   at winsw.WrapperService.StopProcessAndChildren(Int32 pid)
+   at winsw.WrapperService.StopIt()
+   at winsw.WrapperService.OnShutdown()
+2026-01-08 08:12:48 - Starting C:\Program Files\nodejs\node.exe  --harmony --max_old_space_size=4096 D:\app_kantin\app_koperasi\backend\node_modules\node-windows\lib\wrapper.js --file D:\app_kantin\app_koperasi\backend\app.js --scriptoptions= --log "BackendKoperasi wrapper" --grow 0.25 --wait 1 --maxrestarts 3 --abortonerror n --stopparentfirst undefined
+2026-01-08 08:12:49 - Started 5744
+2026-01-08 08:28:39 - Stopping backendkoperasi.exe
+2026-01-08 08:28:39 - ProcessKill 5744
+2026-01-08 08:28:40 - Found child process: 5900 Name: conhost.exe
+2026-01-08 08:28:40 - Found child process: 7540 Name: node.exe
+2026-01-08 08:28:40 - Stopping process 5900
+2026-01-08 08:28:40 - Send SIGINT 5900
+2026-01-08 08:28:40 - SIGINT to 5900 failed - Killing as fallback
+2026-01-08 08:28:40 - Stopping process 7540
+2026-01-08 08:28:40 - Send SIGINT 7540
+2026-01-08 08:28:40 - SIGINT to 7540 failed - Killing as fallback
+2026-01-08 08:28:40 - Stopping process 5744
+2026-01-08 08:28:40 - Send SIGINT 5744
+2026-01-08 08:28:40 - SIGINT to 5744 failed - Killing as fallback
+2026-01-08 08:28:40 - Finished backendkoperasi.exe

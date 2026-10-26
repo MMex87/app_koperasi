@@ -3,13 +3,13 @@ import { connect } from "react-redux";
 import ActionType from "../../../../redux/reducer/globalActionType";
 import Swal from "sweetalert2";
 import { generateFaktur } from "../../../../components/faktur/generateFaktur";
+import convertRupiah from "rupiah-format";
 import getTransPembelianJoin from "../../../../utils/transaksiPembelian/getTransPembelianJoin";
 import hapusTransaksiPembelian from "../../../../utils/transaksiPembelian/hapusTransaksiPembelian";
 import editTransaksiCartListPembelian from "../../../../utils/transaksiPembelian/editTransaksiCartListPembelian";
-import axios from "../../../../api/axios";
 
 const CartList = (props) => {
-  // alert
+  /* ================= ALERT ================= */
   const Toast = Swal.mixin({
     customClass: {
       confirmButton: "btn btn-success",
@@ -18,74 +18,55 @@ const CartList = (props) => {
     buttonsStyling: false,
   });
 
+  /* ================= STATE ================= */
   const [transaksi, setTransaksi] = useState([]);
-  const [hargaBeli, setHargaBeli] = useState(0);
-  const [jumlah, setJumlah] = useState(0);
   const [refresh, setRefresh] = useState(false);
-  const [display, setDisplay] = useState(false);
-  const [idEdit, setIdEdit] = useState(0);
+
+  // edit state
+  const [displayEdit, setDisplayEdit] = useState(false);
+  const [idEdit, setIdEdit] = useState(null);
+  const [jumlah, setJumlah] = useState(0);
   const [editHargaBeli, setEditHargaBeli] = useState(0);
   const [editHargaJual, setEditHargaJual] = useState(0);
 
-  // state search faktur
+  // search faktur
   const [displaySearch, setDisplaySearch] = useState(false);
   const [displayAutoFaktur, setDisplayAutoFaktur] = useState(false);
   const [searchFaktur, setSearchFaktur] = useState("");
-
   const [dataFilterFaktur, setDataFilterFaktur] = useState([]);
-  // let hargaJual = 0
 
+  /* ================= EFFECT ================= */
   useEffect(() => {
     getTransPembelianJoin().then((data) => {
       setTransaksi(data);
-      let arrayFilterPembelian = [];
-      let dataFaktur = [];
-      dataFaktur = data;
 
-      // sortir Data Double
-      const filteredSearchFaktur = dataFaktur.filter(
-        (value, index, self) =>
-          index === self.findIndex((t) => t.faktur === value.faktur)
-      );
-      arrayFilterPembelian = filteredSearchFaktur;
+      // remove duplicate faktur
+      const uniqueFaktur = data.filter((v, i, self) => i === self.findIndex((t) => t.faktur === v.faktur));
+      setDataFilterFaktur(uniqueFaktur);
 
-      // filter status Pembelian
-      if (
-        dataFaktur.filter(
-          ({ statusPembelian }) => statusPembelian == "onProcess"
-        ).length == 0
-      ) {
+      const onProcess = data.find((v) => v.statusPembelian === "onProcess");
+
+      if (!onProcess) {
         setDisplaySearch(true);
 
-        // filter Faktur Search
-        if (
-          dataFaktur.filter(({ faktur }) => faktur == searchFaktur).length == 0
-        ) {
+        if (!data.find((v) => v.faktur === searchFaktur)) {
           props.handleFakturPembelian(generateFaktur("FKB"));
         }
       } else {
         setDisplaySearch(false);
-        let fakturLama = dataFaktur.find(
-          ({ statusPembelian }) => statusPembelian == "onProcess"
-        );
-        let dataPembelian = arrayFilterPembelian.find(
-          ({ faktur }) => faktur == fakturLama.faktur
-        );
-
-        props.handleFakturPembelian(dataPembelian.faktur);
-        props.handleSupplier(dataPembelian.supplier.nama);
+        props.handleFakturPembelian(onProcess.faktur);
+        props.handleSupplier(onProcess.supplier.nama);
       }
-
-      setDataFilterFaktur(filteredSearchFaktur);
     });
   }, [props.harga, props.jumlah, refresh, searchFaktur, props.supplier]);
 
-  const handleEditJumlah = (val, val2, val3, val4) => {
-    setDisplay(true);
-    setIdEdit(val);
-    setJumlah(val2);
-    setEditHargaBeli(val3);
-    setEditHargaJual(val4);
+  /* ================= HANDLER ================= */
+  const handleEditJumlah = (id, qty, hargaBeli, hargaJual) => {
+    setDisplayEdit(true);
+    setIdEdit(id);
+    setJumlah(qty);
+    setEditHargaBeli(hargaBeli);
+    setEditHargaJual(hargaJual);
   };
 
   const handleAutoFaktur = (val) => {
@@ -94,49 +75,47 @@ const CartList = (props) => {
     props.handleFakturPembelian(val);
   };
 
-  const batal = async () => {
-    setDisplay(false);
-    setIdEdit(0);
+  const batal = () => {
+    setDisplayEdit(false);
+    setIdEdit(null);
     setJumlah(0);
     setEditHargaBeli(0);
     setEditHargaJual(0);
   };
 
   const save = async () => {
-    const data = {
-      harga: editHargaBeli,
-      jumlah: jumlah,
-      id: idEdit,
-    };
-    editTransaksiCartListPembelian(data);
-    const resTrans = await axios.get(`/transPembelian/${idEdit}`);
-    const resBarang = await axios.get(`/barang/${resTrans.data.barangId}`);
-    if (jumlah > resTrans.data.jumlah) {
-      let selisih = jumlah - resTrans.data.jumlah;
-      await axios.put(`/barang/${resTrans.data.barangId}`, {
-        hargaJual: editHargaJual,
-        hargaBeli: editHargaBeli,
-        jumlah: resBarang.data.jumlah + selisih,
-      });
-    } else {
-      let selisih = resTrans.data.jumlah - jumlah;
-      await axios.put(`/barang/${resTrans.data.barangId}`, {
-        hargaJual: editHargaJual,
-        hargaBeli: editHargaBeli,
-        jumlah: resBarang.data.jumlah - selisih,
-      });
+    const jumlahInt = parseInt(jumlah);
+    const hargaBeliInt = parseInt(editHargaBeli);
+    const hargaJualInt = parseInt(editHargaJual);
+
+    if (!jumlahInt || jumlahInt <= 0) {
+      return Swal.fire("Gagal!", "Jumlah harus lebih dari 0", "warning");
+    }
+    if (!hargaBeliInt || hargaBeliInt <= 0 || !hargaJualInt || hargaJualInt <= 0) {
+      return Swal.fire("Gagal!", "Harga beli dan harga jual harus lebih dari 0", "warning");
+    }
+    if (hargaJualInt < hargaBeliInt) {
+      return Swal.fire("Gagal!", "Harga jual tidak boleh lebih kecil dari harga beli", "warning");
     }
 
-    setIdEdit(0);
-    setJumlah(0);
-    setEditHargaBeli(0);
-    setDisplay(false);
-    setTimeout(() => {
-      setRefresh(!refresh);
-    }, 100);
+    try {
+      await editTransaksiCartListPembelian({
+        id: idEdit,
+        jumlah: jumlahInt,
+        harga: hargaBeliInt,
+        hargaJual: hargaJualInt,
+      });
+
+      // Stok dan harga barang baru diperbarui saat Simpan Pembelian (checkout)
+      batal();
+      setTimeout(() => setRefresh(!refresh), 100);
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Gagal!", err.response?.data?.msg || "Gagal menyimpan perubahan", "error");
+    }
   };
 
-  const handleHapusTransaksi = (val, val2, val3) => {
+  const handleHapusTransaksi = (idTrans) => {
     Toast.fire({
       title: "Apa Kamu Yakin?",
       text: "Kamu akan Menghapus Data Pembelian!",
@@ -146,220 +125,188 @@ const CartList = (props) => {
       cancelButtonText: "Tidak, Batal!",
       reverseButtons: true,
     }).then(async (result) => {
-      if (result.isConfirmed) {
-        await hapusTransaksiPembelian(val);
-        const resBarang = await axios.get(`/barang/${val2}`);
-        await axios.put(`/barang/${val2}`, {
-          jumlah: resBarang.data.jumlah - val3,
-        });
+      if (!result.isConfirmed) return;
+
+      // Item di keranjang belum menambah stok, jadi stok barang tidak perlu dikurangi
+      try {
+        await hapusTransaksiPembelian(idTrans);
         setRefresh(!refresh);
         Toast.fire("Terhapus!", "Data Pembelian Sudah Terhapus.", "success");
-      } else if (
-        /* Read more about handling dismissals below */
-        result.dismiss === Swal.DismissReason.cancel
-      ) {
-        Toast.fire("Dibatalkan", "Data Pembelian tetap aman :)", "error");
+      } catch (err) {
+        console.error(err);
+        Swal.fire("Gagal!", err.response?.data?.msg || "Gagal menghapus data", "error");
       }
     });
   };
 
+  /* ================= JSX ================= */
+  const items = transaksi.filter((v) => v.faktur === props.faktur);
+  const hargaJualItem = (v) => v.hargaJual || v.barang.hargaJual;
+  const totalItem = items.reduce((sum, v) => sum + (parseInt(v.jumlah) || 0), 0);
+  const totalBeli = items.reduce((sum, v) => sum + (parseInt(v.harga) || 0) * (parseInt(v.jumlah) || 0), 0);
+  const totalJual = items.reduce((sum, v) => sum + (parseInt(hargaJualItem(v)) || 0) * (parseInt(v.jumlah) || 0), 0);
+  const supplierList = [...new Set(items.map((v) => v.supplier?.nama).filter(Boolean))];
+
   return (
-    <>
-      <div className="col-lg-12">
-        <div className="row">
-          <div className="col-md-8">
-            <h1 className="card-title mt-1 fw-bold">Faktur : {props.faktur}</h1>
-          </div>
-          {displaySearch && (
-            <div className="col-md-4 ">
-              <div className="search-bar text-center mt-3">
-                <form
-                  className="search-form d-flex align-items-center"
-                  method="POST"
-                  action="#"
-                >
-                  <div className="input-group mb-3">
-                    <div>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="query"
-                        placeholder="Cari Faktur"
-                        title="Enter search keyword"
-                        aria-label="Recipient's username"
-                        aria-describedby="button-addon2"
-                        value={searchFaktur}
-                        onChange={(e) => setSearchFaktur(e.target.value)}
-                        onClick={() => setDisplayAutoFaktur(!displayAutoFaktur)}
-                      />
-                      {displayAutoFaktur && (
-                        <div className="flex-container flex-column pos-rel bodyAutoComplate">
-                          <ul className="list-group list-group-flush">
-                            {dataFilterFaktur
-                              .filter(
-                                ({ faktur }) =>
-                                  faktur.indexOf(searchFaktur) > -1
-                              )
-                              .map((v, i) => (
-                                <li
-                                  key={i}
-                                  onClick={() => handleAutoFaktur(v.faktur)}
-                                  className="list-group-item listAutoComplate"
-                                >
-                                  {" "}
-                                  {v.faktur}
-                                </li>
-                              ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </form>
-              </div>
+    <div className="row g-4">
+      {/* TABLE KERANJANG */}
+      <div className="col-xl-8">
+        <div className="card border-0 shadow-sm h-100">
+          <div className="card-body p-4">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h5 className="fw-bold mb-0">
+                <i className="bi bi-box-seam me-2" />
+                Daftar Pembelian
+              </h5>
+              <span className="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2">{items.length} barang</span>
             </div>
-          )}
+
+            <div className="table-responsive">
+              <table className="table table-hover align-middle mb-0 cart-table">
+                <thead className="table-light">
+                  <tr>
+                    <th className="text-center" style={{ width: "50px" }}>
+                      #
+                    </th>
+                    <th style={{ minWidth: "180px" }}>Barang</th>
+                    <th className="text-center" style={{ width: "110px" }}>
+                      Jumlah
+                    </th>
+                    <th className="text-end">Harga Beli</th>
+                    <th className="text-end">Harga Jual</th>
+                    <th className="text-end">Subtotal</th>
+                    <th className="text-center" style={{ width: "110px" }}>
+                      Aksi
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {items.length === 0 ? (
+                    <tr>
+                      <td colSpan="7" className="text-center text-muted py-5">
+                        <i className="bi bi-inbox fs-1 d-block mb-2" />
+                        Belum ada barang yang dibeli
+                        <small className="d-block">Tambahkan barang melalui form di atas</small>
+                      </td>
+                    </tr>
+                  ) : (
+                    items.map((v, i) => {
+                      const sedangEdit = displayEdit && v.id === idEdit;
+                      const jualInvalid = sedangEdit && editHargaJual < editHargaBeli;
+                      return (
+                        <tr key={v.id} className={sedangEdit ? "table-warning" : ""}>
+                          <td className="text-center text-muted">{i + 1}</td>
+                          <td>
+                            <div className="fw-semibold">{v.barang.nama}</div>
+                            <small className="text-muted">{v.supplier.nama}</small>
+                          </td>
+
+                          {sedangEdit ? (
+                            <>
+                              <td>
+                                <input type="number" min="1" className="form-control form-control-sm text-center" value={jumlah} autoFocus onChange={(e) => setJumlah(+e.target.value)} />
+                              </td>
+                              <td>
+                                <input type="number" min="1" className="form-control form-control-sm text-end" value={editHargaBeli} onChange={(e) => setEditHargaBeli(+e.target.value)} />
+                              </td>
+                              <td>
+                                <input type="number" min="1" className={`form-control form-control-sm text-end ${jualInvalid ? "is-invalid" : ""}`} value={editHargaJual} onChange={(e) => setEditHargaJual(+e.target.value)} />
+                              </td>
+                              <td className="text-end fw-bold text-nowrap">{convertRupiah.convert(jumlah * editHargaBeli)}</td>
+                            </>
+                          ) : (
+                            <>
+                              <td className="text-center">{v.jumlah}</td>
+                              <td className="text-end text-nowrap">{convertRupiah.convert(v.harga)}</td>
+                              <td className="text-end text-nowrap">{convertRupiah.convert(hargaJualItem(v))}</td>
+                              <td className="text-end fw-bold text-nowrap">{convertRupiah.convert(v.harga * v.jumlah)}</td>
+                            </>
+                          )}
+
+                          <td className="text-center text-nowrap">
+                            {sedangEdit ? (
+                              <>
+                                <button className="btn btn-sm btn-success me-1" title="Simpan" disabled={jualInvalid} onClick={save}>
+                                  <i className="bi bi-check-lg" />
+                                </button>
+                                <button className="btn btn-sm btn-secondary" title="Batal" onClick={batal}>
+                                  <i className="bi bi-x-lg" />
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button className="btn btn-sm btn-outline-warning me-1" title="Ubah" onClick={() => handleEditJumlah(v.id, v.jumlah, v.harga, hargaJualItem(v))}>
+                                  <i className="bi bi-pencil" />
+                                </button>
+                                <button className="btn btn-sm btn-outline-danger" title="Hapus" onClick={() => handleHapusTransaksi(v.id)}>
+                                  <i className="bi bi-trash" />
+                                </button>
+                              </>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
 
-      <table className="table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Nama Supplier</th>
-            <th>Nama Barang</th>
-            <th>Jumlah</th>
-            <th>Harga Beli</th>
-            <th>Harga Jual</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {transaksi
-            .filter(({ faktur }) => faktur == props.faktur)
-            .map((val, index) => (
-              <tr key={index}>
-                <th>{index + 1}</th>
-                <td>{val.supplier.nama}</td>
-                <td>{val.barang.nama}</td>
-                {display && val.id == idEdit ? (
-                  <>
-                    <td>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="jumlah"
-                        value={jumlah}
-                        onChange={(e) => setJumlah(e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="hargaBeli"
-                        value={editHargaBeli}
-                        onChange={(e) => setEditHargaBeli(e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="hargaBeli"
-                        value={editHargaJual}
-                        onChange={(e) => setEditHargaJual(e.target.value)}
-                      />
-                    </td>
-                  </>
-                ) : (
-                  <>
-                    <td>{val.jumlah}</td>
-                    <td>{val.barang.hargaBeli}</td>
-                    <td>{val.barang.hargaJual}</td>
-                  </>
-                )}
-                <td>
-                  {display && val.id == idEdit ? (
-                    <>
-                      <button className="btn btn-success" onClick={save}>
-                        Save
-                      </button>
-                      <button className="btn btn-warning" onClick={batal}>
-                        Batal
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        className="btn btn-warning bx bx-edit-alt text-black-50"
-                        onClick={() =>
-                          handleEditJumlah(
-                            val.id,
-                            val.jumlah,
-                            val.harga,
-                            val.barang.hargaJual
-                          )
-                        }
-                      />
-                      <button
-                        className="bx bx-trash btn btn-danger "
-                        onClick={() =>
-                          handleHapusTransaksi(val.id, val.barangId, val.jumlah)
-                        }
-                      />
-                    </>
-                  )}
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
-    </>
+      {/* RINGKASAN */}
+      <div className="col-xl-4">
+        <div className="card border-0 shadow-sm sticky-xl-top summary-card">
+          <div className="card-body p-4">
+            <h5 className="fw-bold mb-3">
+              <i className="bi bi-receipt me-2" />
+              Ringkasan
+            </h5>
+            <dl className="row small mb-0">
+              <dt className="col-5 text-muted fw-normal">Faktur</dt>
+              <dd className="col-7 text-end fw-semibold text-break">{props.faktur}</dd>
+              <dt className="col-5 text-muted fw-normal">Supplier</dt>
+              <dd className="col-7 text-end fw-semibold">{supplierList.join(", ") || props.supplier || "-"}</dd>
+              <dt className="col-5 text-muted fw-normal">Jumlah Item</dt>
+              <dd className="col-7 text-end fw-semibold">{totalItem}</dd>
+              <dt className="col-5 text-muted fw-normal">Estimasi Nilai Jual</dt>
+              <dd className="col-7 text-end fw-semibold">{convertRupiah.convert(totalJual)}</dd>
+              <dt className="col-5 text-muted fw-normal">Estimasi Margin</dt>
+              <dd className={`col-7 text-end fw-semibold ${totalJual - totalBeli < 0 ? "text-danger" : "text-success"}`}>{convertRupiah.convert(totalJual - totalBeli)}</dd>
+            </dl>
+            <hr />
+            <div className="text-muted small">Total Pembelian</div>
+            <div className="total-amount fw-bold text-primary mb-3 text-break">{convertRupiah.convert(totalBeli)}</div>
+            <button className="btn btn-success w-100 py-2" disabled={items.length === 0 || displayEdit} onClick={props.onSimpan}>
+              <i className="bi bi-save me-2" />
+              Simpan Pembelian
+            </button>
+            {displayEdit && <small className="text-muted d-block text-center mt-2">Selesaikan edit terlebih dahulu</small>}
+            <small className="text-muted d-block text-center mt-2">Stok dan harga barang diperbarui setelah pembelian disimpan</small>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    supplier: state.supplier,
-    kodeBarang: state.kodeBarang_beli,
-    namaBarang: state.namaBarang_beli,
-    jumlah: state.jumlah_beli,
-    jenis: state.jenis_beli,
-    harga: state.harga_beli,
-    harga_jual: state.harga_jual,
-    faktur: state.faktur_beli,
-  };
-};
+/* ================= REDUX ================= */
+const mapStateToProps = (state) => ({
+  supplier: state.supplier,
+  kodeBarang: state.kodeBarang_beli,
+  namaBarang: state.namaBarang_beli,
+  jumlah: state.jumlah_beli,
+  jenis: state.jenis_beli,
+  harga: state.harga_beli,
+  harga_jual: state.harga_jual,
+  faktur: state.faktur_beli,
+});
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    handleSupplier: (supplier) =>
-      dispatch({ type: ActionType.SET_SUPPLIER_PEMBELIAN, index: supplier }),
-    handleKodeBarang: (kodeBarang) =>
-      dispatch({
-        type: ActionType.SET_KODE_BARANG_PEMBELIAN,
-        index: kodeBarang,
-      }),
-    handleNamaBarang: (namaBarang) =>
-      dispatch({
-        type: ActionType.SET_NAMA_BARANG_PEMBELIAN,
-        index: namaBarang,
-      }),
-    handleJumlah: (jumlah) =>
-      dispatch({ type: ActionType.SET_JUMLAH_PEMBELIAN, index: jumlah }),
-    handlejenisBarang: (jenisBarang) =>
-      dispatch({ type: ActionType.SET_JENIS_PEMBELIAN, index: jenisBarang }),
-    handleHargaBarang: (hargaBarang) =>
-      dispatch({ type: ActionType.SET_HARGA_PEMBELIAN, index: hargaBarang }),
-    handleHargaJualBarang: (hargaJualBarang) =>
-      dispatch({
-        type: ActionType.SET_HARGA_JUAL_PEMBELIAN,
-        index: hargaJualBarang,
-      }),
-    handleFakturPembelian: (faktur) =>
-      dispatch({ type: ActionType.SET_FAKTUR_PEMBELIAN, index: faktur }),
-  };
-};
+const mapDispatchToProps = (dispatch) => ({
+  handleSupplier: (v) => dispatch({ type: ActionType.SET_SUPPLIER_PEMBELIAN, index: v }),
+  handleFakturPembelian: (v) => dispatch({ type: ActionType.SET_FAKTUR_PEMBELIAN, index: v }),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(CartList);

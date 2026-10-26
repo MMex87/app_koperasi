@@ -1,16 +1,19 @@
 import axios from "../../../../api/axios";
 import { useState, useEffect } from "react";
-import moment from "moment";
 import ReactPaginate from "react-paginate";
 import convertRupiah from "rupiah-format";
 import { Link } from "react-router-dom";
 
+const formatTanggal = (v) => new Date(v).toLocaleString("id-ID", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+
 const RPembelian = () => {
   const [dataPembelian, setDataPembelian] = useState([]);
   const [page, setPage] = useState(0);
+  const [limit] = useState(10);
   const [pages, setPages] = useState(0);
   const [rows, setRows] = useState(0);
   const [nama, setNama] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getData();
@@ -21,104 +24,162 @@ const RPembelian = () => {
   };
 
   const getData = async () => {
-    const response = await axios.get(`http://localhost:8800/transPembelianJoinRetur?&page=${page}&namaBarang=${nama}`);
-    setDataPembelian(response.data.result);
-    setPage(response.data.page);
-    setPages(response.data.totalPage);
-    setRows(response.data.totalRows);
+    setLoading(true);
+    try {
+      const response = await axios.get("/transPembelianJoinRetur", { params: { page, limit, namaBarang: nama } });
+      setDataPembelian(response.data.result);
+      setPages(response.data.totalPage);
+      setRows(response.data.totalRows);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const search = (e) => {
-    setNama(e.target.value)
-  }
+    setNama(e.target.value);
+    setPage(0);
+  };
 
   return (
-    <main id="main">
-      <div className="pagetitle text-center">
-        <h1 className="fw-bold fs-2">Retur Pembelian</h1>
+    <main id="main" className="main retur-page">
+      <div className="pagetitle mb-4">
+        <h1 className="fs-2 fw-bold mb-1">Retur Pembelian</h1>
+        <small className="text-muted">Transaksi pembelian tahun {new Date().getFullYear()} — pilih yang barangnya dikembalikan ke supplier, stok akan berkurang</small>
       </div>
 
       <section className="section">
-        <div className="card p-3">
-          <div className="col-lg-12">
-            <div className="col-md-12">
-              <>
-                <div className="row">
-                  <div className="col-md-9"></div>
-                  <div className="col-md-3 text-end">
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="query"
-                      placeholder="Cari Barang"
-                      title="Enter search keyword"
-                      aria-label="Recipient's username"
-                      aria-describedby="button-addon2"
-                      value={nama}
-                      onChange={search}
-                    />
-                  </div>
-                </div>
-                <table className="table ">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Faktur</th>
-                      <th>Barang</th>
-                      <th>Jumlah</th>
-                      <th>Total</th>
-                      <th>Tanggal</th>
-                      <th>Status</th>
-                      <th>Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {dataPembelian.map((data, index) => (
-                      <tr key={data.id}>
-                        <th>{index + 1}</th>
-                        <td>{data.faktur}</td>
-                        <td>{data.barang.nama}</td>
-                        <td>{data.jumlah}</td>
-                        <td>{convertRupiah.convert(data.barang.hargaJual * data.jumlah)}</td>
-                        <td>{moment(data.createdAt).format("D MMMM YYYY")}</td>
-                        <td>{data.statusPembelian}</td>
-                        <Link to={`/retrunPembelian/${data.id}`} className="btn btn-warning me-3">
-                          Retur
-                        </Link>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <div className="p-3">
-                  <div className="d-flex justify-content-between">
-                    <p className="text-center">
-                      Total Rows : {rows} Page: {rows ? page + 1 : 0} of {pages}
-                    </p>
-                    <nav aria-label="Page navigate example justify-content-end">
-                      <ReactPaginate
-                        previousLabel={"< Prev"}
-                        nextLabel={"Next >"}
-                        pageCount={pages}
-                        onPageChange={changePage}
-                        containerClassName={"pagination"}
-                        pageLinkClassName={"page-link"}
-                        pageClassName={"page-item"}
-                        previousLinkClassName={"page-link"}
-                        previousClassName={"page-item"}
-                        nextClassName={"page-item"}
-                        nextLinkClassName={"page-link"}
-                        activeClassName={"active"}
-                      />
-                    </nav>
-                  </div>
-                </div>
-              </>
+        <div className="card border-0 shadow-sm">
+          <div className="card-body p-4">
+            <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+              <div className="input-group" style={{ maxWidth: "360px" }}>
+                <span className="input-group-text bg-white">
+                  <i className="bi bi-search" />
+                </span>
+                <input type="text" className="form-control" placeholder="Cari nama barang atau faktur..." value={nama} onChange={search} />
+              </div>
+              <span className="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2">{rows} transaksi</span>
             </div>
+
+            <div className="table-responsive">
+              <table className="table table-hover align-middle mb-0 retur-table">
+                <thead className="table-light">
+                  <tr>
+                    <th className="text-center">No</th>
+                    <th>Tanggal</th>
+                    <th>Faktur</th>
+                    <th>Barang</th>
+                    <th className="text-center">Jumlah</th>
+                    <th className="text-end">Total Beli</th>
+                    <th className="text-center">Stok Saat Ini</th>
+                    <th className="text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td colSpan="8" className="text-center py-5">
+                        <div className="spinner-border spinner-border-sm text-primary me-2" />
+                        <span className="text-muted">Memuat data...</span>
+                      </td>
+                    </tr>
+                  ) : dataPembelian.length === 0 ? (
+                    <tr>
+                      <td colSpan="8" className="text-center text-muted py-5">
+                        <i className="bi bi-inbox fs-1 d-block mb-2" />
+                        {nama ? `Tidak ada transaksi yang cocok dengan "${nama}"` : "Belum ada transaksi pembelian"}
+                      </td>
+                    </tr>
+                  ) : (
+                    dataPembelian.map((data, index) => (
+                      <tr key={data.id}>
+                        <td className="text-center text-muted">{page * limit + index + 1}</td>
+                        <td className="text-muted small">{formatTanggal(data.createdAt)}</td>
+                        <td className="fw-semibold">
+                          {data.faktur}
+                          {data.statusPembelian === "Retur" && (
+                            <span className="badge bg-warning text-dark ms-2" title="Transaksi ini pernah diretur">
+                              <i className="bi bi-arrow-return-right" /> Retur
+                            </span>
+                          )}
+                        </td>
+                        <td>
+                          <div className="fw-semibold">{data.barang.nama}</div>
+                          <small className="text-muted">{data.barang.supplier?.nama || "-"}</small>
+                        </td>
+                        <td className="text-center">{data.jumlah}</td>
+                        <td className="text-end">{convertRupiah.convert(data.harga * data.jumlah)}</td>
+                        <td className="text-center">
+                          <span className={`badge ${data.barang.jumlah > 0 ? "bg-light text-dark border" : "bg-danger"}`}>{data.barang.jumlah > 0 ? data.barang.jumlah : "Habis"}</span>
+                        </td>
+                        <td className="text-center">
+                          {/* Retur pembelian mengurangi stok, jadi tidak bisa jika stok sudah habis */}
+                          {data.barang.jumlah > 0 ? (
+                            <Link to={`/retrunPembelian/${data.id}`} className="btn btn-sm btn-outline-primary">
+                              <i className="bi bi-arrow-return-right me-1" />
+                              Retur
+                            </Link>
+                          ) : (
+                            <button className="btn btn-sm btn-outline-secondary" disabled title="Stok barang habis">
+                              <i className="bi bi-arrow-return-right me-1" />
+                              Retur
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {pages > 1 && (
+              <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+                <small className="text-muted">
+                  Halaman <b>{page + 1}</b> dari <b>{pages}</b>
+                </small>
+                <ReactPaginate
+                  previousLabel={"‹"}
+                  nextLabel={"›"}
+                  pageCount={pages}
+                  forcePage={page}
+                  onPageChange={changePage}
+                  marginPagesDisplayed={1}
+                  pageRangeDisplayed={3}
+                  containerClassName={"pagination pagination-sm m-0"}
+                  pageClassName={"page-item"}
+                  pageLinkClassName={"page-link"}
+                  previousClassName={"page-item"}
+                  previousLinkClassName={"page-link"}
+                  nextClassName={"page-item"}
+                  nextLinkClassName={"page-link"}
+                  breakClassName={"page-item"}
+                  breakLinkClassName={"page-link"}
+                  activeClassName={"active"}
+                />
+              </div>
+            )}
           </div>
         </div>
       </section>
+
+      <style>{`
+        /* Template memberi tiap .card & .pagetitle h1 margin-left -90px; geser sekali di level halaman */
+        .retur-page .card { margin: 0; border-radius: 14px; }
+        .retur-page .pagetitle h1 { margin-left: 0; }
+        @media (min-width: 1200px) {
+          .retur-page .pagetitle,
+          .retur-page .section { margin-left: -90px; }
+        }
+        .retur-page .retur-table thead th {
+          font-size: .75rem; text-transform: uppercase; letter-spacing: .03em;
+          color: #6c757d; white-space: nowrap;
+        }
+        .retur-page .retur-table td { white-space: nowrap; }
+      `}</style>
     </main>
   );
-}
+};
 
 export default RPembelian;

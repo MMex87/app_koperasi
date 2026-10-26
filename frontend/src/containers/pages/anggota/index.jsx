@@ -1,178 +1,237 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "../../../api/axios.jsx";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import ReactPaginate from "react-paginate";
-import getAnggota from "../../../utils/anggota/getAnggota.jsx";
 import getSearchAnggota from "../../../utils/anggota/getSearchAnggota.jsx";
 
-export class Anggota extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      anggota: [],
-      search: "",
-      page: 0,
-      limit: 10,
-      pages: 0,
-      rows: 0,
-    };
-  }
+const inisial = (nama = "") =>
+  nama
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((k) => k.charAt(0).toUpperCase())
+    .join("") || "?";
 
-  componentDidMount() {
-    getSearchAnggota(this.state.search, this.state.limit, this.state.page).then((data) => {
-      this.setState({ anggota: data.result });
-      this.setState({ page: data.page });
-      this.setState({ pages: data.totalPage });
-      this.setState({ rows: data.totalRows });
-    });
-  }
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 2500,
+  timerProgressBar: true,
+});
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.page != prevState.page || this.state.search != prevState.search) {
-      getSearchAnggota(this.state.search, this.state.limit, this.state.page).then((data) => {
-        this.setState({ anggota: data.result });
-        this.setState({ page: data.page });
-        this.setState({ pages: data.totalPage });
-        this.setState({ rows: data.totalRows });
-      });
+const Anggota = () => {
+  const [anggota, setAnggota] = useState([]);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(0);
+  const [limit] = useState(10);
+  const [pages, setPages] = useState(0);
+  const [rows, setRows] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  // edit state
+  const [anggotaId, setAnggotaId] = useState(0);
+  const [namaAnggota, setNamaAnggota] = useState("");
+  const [noHp, setNoHp] = useState("");
+
+  useEffect(() => {
+    loadAnggota();
+  }, [page, search]);
+
+  const loadAnggota = async () => {
+    setLoading(true);
+    try {
+      const data = await getSearchAnggota(encodeURIComponent(search), limit, page);
+      setAnggota(data.result);
+      setPages(data.totalPage);
+      setRows(data.totalRows);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
-  render() {
+  const changePage = ({ selected }) => {
+    setPage(selected);
+  };
 
-    const Toast = Swal.mixin({
-      customClass: {
-        confirmButton: "btn btn-success",
-        cancelButton: "btn btn-danger",
-      },
-      buttonsStyling: false,
-    });
+  const cari = (e) => {
+    setSearch(e.target.value);
+    setPage(0);
+  };
 
-    // handle Pagination
-    const changePage = ({ selected }) => {
-      this.setState({ page: selected });
-    };
+  const edit = (id, nama, noHp) => {
+    setAnggotaId(id);
+    setNamaAnggota(nama || "");
+    setNoHp(noHp || "");
+  };
 
-    const handleDelete = (val) => {
-      try {
-        Toast.fire({
-          title: "Hapus Data ?",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonText: "Hapus!",
-          cancelButtonText: "Tidak!",
-          reverseButtons: true,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            axios.delete(`/anggota/${val}`);
-            Toast.fire("Berhasil", "Data Anggota Dihapus", "success");
-            getSearchAnggota(this.state.search, this.state.limit, this.state.page).then((data) => {
-              this.setState({ anggota: data.result });
-              this.setState({ page: data.page });
-              this.setState({ pages: data.totalPage });
-              this.setState({ rows: data.totalRows });
-            });
-          } else if (
-            /* Read more about handling dismissals below */
-            result.dismiss === Swal.DismissReason.cancel
-          ) {
-            Toast.fire("Gagal", "Data Aggota Aman", "error");
-          }
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  const batal = () => {
+    setAnggotaId(0);
+    setNamaAnggota("");
+    setNoHp("");
+  };
 
-    return (
-      <main id="main" className="main">
-        <div className="pagetitle text-center">
-          <h1 className="fw-bold fs-2">Data Anggota</h1>
+  const save = async () => {
+    if (!namaAnggota.trim()) {
+      return Swal.fire("Gagal!", "Nama anggota tidak boleh kosong", "warning");
+    }
+    try {
+      await axios.put(`/anggota/${anggotaId}`, {
+        nama: namaAnggota.trim(),
+        noHP: noHp,
+      });
+      batal();
+      loadAnggota();
+      Toast.fire({ icon: "success", title: "Data anggota diperbarui" });
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Gagal!", error.response?.data?.msg || "Gagal menyimpan data anggota", "error");
+    }
+  };
+
+  return (
+    <main id="main" className="main app-page">
+      <div className="pagetitle d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <div>
+          <h1 className="fs-2 fw-bold mb-1">Data Anggota</h1>
+          <small className="text-muted">Daftar anggota koperasi yang dapat bertransaksi</small>
         </div>
-        <section className="section">
-          <div className="card">
-            <div className="card-body">
-              <div className="col-lg-12">
-                <div className="row">
-                  <div className="col-md-8"></div>
-                  <div className="col-md-3">
-                    <div className="search-bar text-center mt-3">
-                      <form className="search-form d-flex align-items-center" method="POST" action="#">
-                        <div className="input-group mb-3">
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="query"
-                            placeholder="Cari Anggota"
-                            title="Enter search keyword"
-                            aria-label="Recipient's username"
-                            aria-describedby="button-addon2"
-                            onChange={ (e) => this.setState({ search: e.target.value }) }
-                          />
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                  <div className="col-1">
-                    <Link to="/anggota/tambah">
-                      <img src={ "assets/img/add.svg" } alt="" id="add" />
-                    </Link>
-                  </div>
-                  <table className="table">
-                    <thead>
-                      <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nama Anggota</th>
-                        <th scope="col">Nomor Handphone</th>
-                        <th scope="col">Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      { this.state.anggota.map((val, index) => (
-                        <tr key={ index }>
-                          <th>{ index + 1 }</th>
-                          <td>{ val.nama }</td>
-                          <td>{ val.noHP }</td>
+        <Link to="/anggota/tambah" className="btn btn-primary px-3">
+          <i className="bi bi-person-plus me-1" />
+          Tambah Anggota
+        </Link>
+      </div>
+
+      <section className="section">
+        <div className="card border-0 shadow-sm">
+          <div className="card-body p-4">
+            <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+              <div className="input-group" style={{ maxWidth: "340px" }}>
+                <span className="input-group-text bg-white">
+                  <i className="bi bi-search" />
+                </span>
+                <input type="text" className="form-control" placeholder="Cari nama anggota..." value={search} onChange={cari} />
+              </div>
+              <span className="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2">{rows} anggota</span>
+            </div>
+
+            <div className="table-responsive">
+              <table className="table table-hover align-middle mb-0 data-table">
+                <thead className="table-light">
+                  <tr>
+                    <th className="text-center" style={{ width: "60px" }}>
+                      No
+                    </th>
+                    <th>Nama</th>
+                    <th>No HP</th>
+                    <th className="text-center" style={{ width: "140px" }}>
+                      Aksi
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td colSpan="4" className="text-center py-5">
+                        <div className="spinner-border spinner-border-sm text-primary me-2" />
+                        <span className="text-muted">Memuat data...</span>
+                      </td>
+                    </tr>
+                  ) : anggota.length === 0 ? (
+                    <tr>
+                      <td colSpan="4" className="text-center text-muted py-5">
+                        <i className="bi bi-people fs-1 d-block mb-2" />
+                        {search ? `Tidak ada anggota bernama "${search}"` : "Belum ada data anggota"}
+                      </td>
+                    </tr>
+                  ) : (
+                    anggota.map((val, index) => {
+                      const sedangEdit = anggotaId === val.id;
+                      return (
+                        <tr key={val.id} className={sedangEdit ? "table-warning" : ""}>
+                          <td className="text-center text-muted">{page * limit + index + 1}</td>
                           <td>
-                            <Link className="btn btn-warning bx bx-edit-alt text-black-50 me-2" to={ `edit/${val.id}` } />
-                            {/* <button className="bx bx-trash btn btn-danger " onClick={ () => handleDelete(val.id) } /> */ }
+                            {sedangEdit ? (
+                              <input type="text" className="form-control form-control-sm" value={namaAnggota} autoFocus onChange={(e) => setNamaAnggota(e.target.value)} />
+                            ) : (
+                              <div className="d-flex align-items-center gap-2">
+                                <span className="avatar">{inisial(val.nama)}</span>
+                                <span className="fw-semibold">{val.nama}</span>
+                              </div>
+                            )}
+                          </td>
+                          <td>
+                            {sedangEdit ? (
+                              <input type="tel" className="form-control form-control-sm" placeholder="08xxxxxxxxxx" value={noHp} onChange={(e) => setNoHp(e.target.value.replace(/[^0-9+]/g, ""))} />
+                            ) : val.noHP ? (
+                              <span>
+                                <i className="bi bi-telephone text-muted me-2" />
+                                {val.noHP}
+                              </span>
+                            ) : (
+                              <span className="text-muted">-</span>
+                            )}
+                          </td>
+                          <td className="text-center text-nowrap">
+                            {sedangEdit ? (
+                              <>
+                                <button className="btn btn-sm btn-success me-1" title="Simpan" onClick={save}>
+                                  <i className="bi bi-check-lg" />
+                                </button>
+                                <button className="btn btn-sm btn-secondary" title="Batal" onClick={batal}>
+                                  <i className="bi bi-x-lg" />
+                                </button>
+                              </>
+                            ) : (
+                              <button className="btn btn-sm btn-outline-warning" onClick={() => edit(val.id, val.nama, val.noHP)}>
+                                <i className="bi bi-pencil me-1" />
+                                Edit
+                              </button>
+                            )}
                           </td>
                         </tr>
-                      )) }
-                    </tbody>
-                  </table>
-                  <div className="p-3">
-                    <div className="d-flex justify-content-between">
-                      <p className="text-center">
-                        Total Anggota: { this.state.rows } Page: { this.state.rows ? this.state.page + 1 : 0 } of { this.state.pages }
-                      </p>
-                      <nav aria-label="Page navigate example justify-content-end">
-                        <ReactPaginate
-                          previousLabel={ "< Prev" }
-                          nextLabel={ "Next >" }
-                          pageCount={ this.state.pages }
-                          onPageChange={ changePage }
-                          containerClassName={ "pagination" }
-                          pageLinkClassName={ "page-link" }
-                          pageClassName={ "page-item" }
-                          previousLinkClassName={ "page-link" }
-                          previousClassName={ "page-item" }
-                          nextClassName={ "page-item" }
-                          nextLinkClassName={ "page-link" }
-                          activeClassName={ "active" }
-                        />
-                      </nav>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
             </div>
+
+            {pages > 1 && (
+              <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+                <small className="text-muted">
+                  Halaman <b>{page + 1}</b> dari <b>{pages}</b>
+                </small>
+                <ReactPaginate
+                  previousLabel={"‹"}
+                  nextLabel={"›"}
+                  pageCount={pages}
+                  forcePage={page}
+                  onPageChange={changePage}
+                  marginPagesDisplayed={1}
+                  pageRangeDisplayed={3}
+                  containerClassName={"pagination pagination-sm m-0"}
+                  pageClassName={"page-item"}
+                  pageLinkClassName={"page-link"}
+                  previousClassName={"page-item"}
+                  previousLinkClassName={"page-link"}
+                  nextClassName={"page-item"}
+                  nextLinkClassName={"page-link"}
+                  breakClassName={"page-item"}
+                  breakLinkClassName={"page-link"}
+                  activeClassName={"active"}
+                />
+              </div>
+            )}
           </div>
-        </section>
-      </main>
-    );
-  }
-}
+        </div>
+      </section>
+    </main>
+  );
+};
 
 export default Anggota;

@@ -6,9 +6,7 @@ const getTransPembelian = async () => {
   return response.data;
 };
 export const cariTransaksi = async (faktur, barangId) => {
-  let res = await axios.get(
-    `cariPembelian?faktur=${faktur}&barangId=${barangId}`
-  );
+  let res = await axios.get(`cariPembelian?faktur=${faktur}&barangId=${barangId}`);
 
   return res.data;
 };
