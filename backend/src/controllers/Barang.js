@@ -10,10 +10,7 @@ const getBarang = async (req, res) => {
 
     const count = await barangModel.count({
       where: {
-        [Sequelize.Op.or]: [
-          { nama: { [Sequelize.Op.not]: null } },
-          { kodeBarang: { [Sequelize.Op.not]: null } },
-        ],
+        [Sequelize.Op.or]: [{ nama: { [Sequelize.Op.not]: null } }, { kodeBarang: { [Sequelize.Op.not]: null } }],
       },
     });
 
@@ -44,9 +41,7 @@ const getLapBarang = async (req, res) => {
     const total = barang.map((result) => {
       const harga_jual_string = result.hargaJual.toString();
       const jumlah_string = result.jumlah.toString();
-      const totalString = (
-        parseInt(harga_jual_string) * parseInt(jumlah_string)
-      ).toString();
+      const totalString = (parseInt(harga_jual_string) * parseInt(jumlah_string)).toString();
 
       return {
         ...result.get({ plain: true }),
@@ -124,6 +119,7 @@ const getSearchBarang = async (req, res) => {
       include: [
         {
           model: supplierModel,
+          as: "supplier",
         },
       ],
       where: {
@@ -156,6 +152,7 @@ const getSearchBarang = async (req, res) => {
       include: [
         {
           model: supplierModel,
+          as: "supplier",
         },
       ],
       where: {
@@ -211,17 +208,7 @@ const getBarangJoin = async (req, res) => {
       ],
       order: [["id", "DESC"]],
       limit: 100,
-      attributes: [
-        "id",
-        "nama",
-        "kodeBarang",
-        "jenisBarang",
-        "satuan",
-        "jumlah",
-        "hargaBeli",
-        "hargaJual",
-        "supplierId",
-      ],
+      attributes: ["id", "nama", "kodeBarang", "jenisBarang", "satuan", "jumlah", "hargaBeli", "hargaJual", "supplierId"],
     });
     res.status(200).json(barang);
   } catch (error) {
@@ -243,17 +230,7 @@ const getBarangJoinAutoComplate = async (req, res) => {
         ],
         order: [["id", "DESC"]],
         limit: 10,
-        attributes: [
-          "id",
-          "nama",
-          "kodeBarang",
-          "jenisBarang",
-          "satuan",
-          "jumlah",
-          "hargaBeli",
-          "hargaJual",
-          "supplierId",
-        ],
+        attributes: ["id", "nama", "kodeBarang", "jenisBarang", "satuan", "jumlah", "hargaBeli", "hargaJual", "supplierId"],
       });
     } else {
       barang = await barangModel.findAll({
@@ -265,17 +242,7 @@ const getBarangJoinAutoComplate = async (req, res) => {
         ],
         order: [["id", "DESC"]],
         limit: 10,
-        attributes: [
-          "id",
-          "nama",
-          "kodeBarang",
-          "jenisBarang",
-          "satuan",
-          "jumlah",
-          "hargaBeli",
-          "hargaJual",
-          "supplierId",
-        ],
+        attributes: ["id", "nama", "kodeBarang", "jenisBarang", "satuan", "jumlah", "hargaBeli", "hargaJual", "supplierId"],
         where: {
           [Op.or]: [
             {
@@ -300,7 +267,7 @@ const getBarangJoinAutoComplate = async (req, res) => {
 };
 
 const findBarang = async (req, res) => {
-  const { kodeBarang, supplierId } = req.query
+  const { kodeBarang, supplierId } = req.query;
   try {
     const barang = await barangModel.findOne({
       include: [
@@ -312,15 +279,15 @@ const findBarang = async (req, res) => {
       where: {
         [Op.and]: {
           kodeBarang,
-          supplierId
-        }
-      }
-    })
+          supplierId,
+        },
+      },
+    });
     res.status(200).json(barang);
   } catch (error) {
     res.status(400).json({ msg: "Gagal Mengambil Data: " + error });
   }
-}
+};
 
 const barangTerjual = async (req, res) => {
   const { jumlah } = req.body;
@@ -356,16 +323,13 @@ const barangTerbeli = async (req, res) => {
 
 const tambahBarang = async (req, res) => {
   try {
-    const {
-      nama,
-      kodeBarang,
-      jenisBarang,
-      satuan,
-      jumlah,
-      hargaBeli,
-      hargaJual,
-      supplierId,
-    } = req.body;
+    const { nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, supplierId } = req.body;
+
+    // Cek apakah nama sudah ada di database
+    const existingBarang = await barangModel.findOne({ where: { nama } });
+    if (existingBarang) {
+      return res.status(400).json({ msg: "Barang sudah terdaftar" });
+    }
 
     const barang = await barangModel.create({
       nama,
@@ -378,9 +342,7 @@ const tambahBarang = async (req, res) => {
       supplierId,
     });
 
-    res
-      .status(200)
-      .json({ msg: "Data Berhasil Ditambahakan", barangId: barang.id });
+    res.status(200).json({ msg: "Data Berhasil Ditambahakan", barangId: barang.id });
   } catch (error) {
     console.error(error);
     res.status(400).json({ msg: "Gagal Menambah Data! " + error });
@@ -389,16 +351,13 @@ const tambahBarang = async (req, res) => {
 
 const editBarang = async (req, res) => {
   try {
-    const {
-      nama,
-      kodeBarang,
-      jenisBarang,
-      satuan,
-      jumlah,
-      hargaBeli,
-      hargaJual,
-      supplierId,
-    } = req.body;
+    const { nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, supplierId } = req.body;
+
+    // Cek apakah nama sudah ada di database
+    // const existingBarang = await barangModel.findOne({ where: { nama } });
+    // if (existingBarang) {
+    //   return res.status(400).json({ msg: "Barang sudah terdaftar" });
+    // }
 
     await barangModel.update(
       {

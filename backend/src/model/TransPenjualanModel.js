@@ -1,43 +1,48 @@
-const { DataTypes } = require('sequelize')
-const db = require('../config/database.js')
-const barang = require('../model/BarangModel.js')
-const anggota = require('../model/AnggotaModel.js')
+const { DataTypes } = require("sequelize");
+const db = require("../config/database.js");
+const barang = require("../model/BarangModel.js");
+const anggota = require("../model/AnggotaModel.js");
 
-const transPenjualanModel = db.define('transPenjualan', {
+const transPenjualanModel = db.define(
+  "transPenjualan",
+  {
     jumlah: {
-        type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
     },
     faktur: {
-        type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     harga: {
-        type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
     },
     typePembayaran: {
-        type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     statusPenjualan: {
-        type: DataTypes.STRING
-    }
-}, {
+      type: DataTypes.STRING,
+    },
+  },
+  {
     freezeTableName: true,
-
-})
+  }
+);
 
 barang.hasMany(transPenjualanModel, {
-    foreignKey: 'barangId'
+  foreignKey: "barangId",
+  as: "barang",
 });
 transPenjualanModel.belongsTo(barang, {
-    foreignKey: 'barangId'
+  foreignKey: "barangId",
+  as: "barang",
 });
 
 anggota.hasMany(transPenjualanModel, {
-    foreignKey: 'anggotaId',
-    as: "anggota"
-})
+  foreignKey: "anggotaId",
+  as: "anggota",
+});
 transPenjualanModel.belongsTo(anggota, {
-    foreignKey: 'anggotaId',
-    as: "anggota"
-})
+  foreignKey: "anggotaId",
+  as: "anggota",
+});
 
-module.exports = transPenjualanModel
+module.exports = transPenjualanModel;

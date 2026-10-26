@@ -11,12 +11,74 @@ const getPenjualan = async (req, res) => {
       include: [
         {
           model: barangModel,
+          as: "Barang",
           include: supplierModel,
         },
         {
-          model: anggotaModel, as: "anggota"
+          model: anggotaModel,
+          as: "anggota",
         },
       ],
+      order: [["id", "DESC"]],
+    });
+
+    res.status(200).json(penjualan);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ msg: "Gagal Mengambil Data: " + error });
+  }
+};
+
+const getOnProcessByBarang = async (req, res) => {
+  try {
+    const { barangId, faktur } = req.query;
+
+    if (!barangId || !faktur) {
+      return res.status(400).json({ msg: "barangId dan faktur wajib" });
+    }
+
+    const trans = await transPenjualanModel.findOne({
+      where: {
+        barangId,
+        faktur,
+        statusPenjualan: "onProcess",
+      },
+    });
+
+    // 🔥 hanya lookup, tidak pakai include
+    res.status(200).json(trans); // null jika belum ada
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+};
+
+const getTransPenjualan = async (req, res) => {
+  try {
+    const penjualan = await transPenjualanModel.findAll({
+      where: {
+        statusPenjualan: "onProcess",
+      },
+      attributes: ["id", "jumlah", "faktur", "harga", "typePembayaran", "anggotaId", "barangId", ["createdAt", "waktuJual"], "statusPenjualan"],
+      order: [["id", "DESC"]],
+    });
+    res.status(200).json(penjualan);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ msg: "Gagal Mengambil Data: " + error });
+  }
+};
+
+const getTransPenjualanByFaktur = async (req, res) => {
+  try {
+    const penjualan = await transPenjualanModel.findAll({
+      where: {
+        faktur: req.params.faktur,
+      },
+      include: [
+        { model: anggotaModel, as: "anggota" },
+        { model: barangModel, as: "barang" },
+      ],
+      attributes: ["id", "jumlah", "faktur", "harga", "typePembayaran", "anggotaId", "barangId", ["createdAt", "waktuJual"]],
       order: [["id", "DESC"]],
     });
     res.status(200).json(penjualan);
@@ -30,19 +92,24 @@ const getPenjualanById = async (req, res) => {
   try {
     const penjualan = await transPenjualanModel.findOne({
       where: {
-        id: req.params.id
+        id: req.params.id,
       },
       include: [
         {
-          model: barangModel, as: "barang",
-          include: [{
-            model: supplierModel, as: "supplier"
-          }],
+          model: barangModel,
+          as: "barang",
+          include: [
+            {
+              model: supplierModel,
+              as: "supplier",
+            },
+          ],
         },
         {
-          model: anggotaModel, as: "anggota"
+          model: anggotaModel,
+          as: "anggota",
         },
-      ]
+      ],
     });
     res.status(200).json(penjualan);
   } catch (error) {
@@ -54,27 +121,24 @@ const getPenjualanById = async (req, res) => {
 const getJoinPenAnBarang = async (req, res) => {
   try {
     const penjualan = await transPenjualanModel.findAll({
+      where: {
+        statusPenjualan: "onProcess",
+      },
       include: [
         {
           model: barangModel,
-          include: supplierModel,
+          as: "barang",
+          include: {
+            model: supplierModel,
+            as: "supplier",
+          },
         },
         {
           model: anggotaModel,
           as: "anggota",
         },
       ],
-      attributes: [
-        "id",
-        "jumlah",
-        "faktur",
-        "harga",
-        "typePembayaran",
-        "anggotaId",
-        "barangId",
-        ["createdAt", "waktuJual"],
-        "statusPenjualan",
-      ],
+      attributes: ["id", "jumlah", "faktur", "harga", "typePembayaran", "anggotaId", "barangId", ["createdAt", "waktuJual"], "statusPenjualan"],
     });
     res.status(200).json(penjualan);
   } catch (error) {
@@ -92,7 +156,9 @@ const getJoinPenAnBarangLapor = async (req, res) => {
       include: [
         {
           model: barangModel,
+          as: "barang",
           include: supplierModel,
+          as: "supplier",
         },
         {
           model: anggotaModel,
@@ -108,17 +174,7 @@ const getJoinPenAnBarangLapor = async (req, res) => {
           },
         ],
       },
-      attributes: [
-        "id",
-        "jumlah",
-        "faktur",
-        "harga",
-        "typePembayaran",
-        "anggotaId",
-        "barangId",
-        ["createdAt", "waktuJual"],
-        "statusPenjualan",
-      ],
+      attributes: ["id", "jumlah", "faktur", "harga", "typePembayaran", "anggotaId", "barangId", ["createdAt", "waktuJual"], "statusPenjualan"],
       limit: limit,
       order: [["id", "DESC"]],
     });
@@ -136,7 +192,11 @@ const getJoinPenAnBarangId = async (req, res) => {
       include: [
         {
           model: barangModel,
-          include: supplierModel,
+          as: "barang",
+          include: {
+            model: supplierModel,
+            as: "suppplier",
+          },
         },
         {
           model: anggotaModel,
@@ -152,17 +212,7 @@ const getJoinPenAnBarangId = async (req, res) => {
           },
         ],
       },
-      attributes: [
-        "id",
-        "jumlah",
-        "faktur",
-        "harga",
-        "typePembayaran",
-        "anggotaId",
-        "barangId",
-        ["createdAt", "waktuJual"],
-        "statusPenjualan",
-      ],
+      attributes: ["id", "jumlah", "faktur", "harga", "typePembayaran", "anggotaId", "barangId", ["createdAt", "waktuJual"], "statusPenjualan"],
       order: [[Sequelize.literal("DATE_TRUNC('week', \"createdAt\")"), "DESC"]],
     });
 
@@ -179,6 +229,7 @@ const getJoinPenAnBarangSarch = async (req, res) => {
     const limit = parseInt(req.query.limit);
     const search = req.query.date;
     const IdSupplier = req.query.supplier;
+    const pembayaran = req.query.pembayaran;
     const offset = page * limit;
 
     const startOfDay = moment(search).startOf("day").toDate();
@@ -188,18 +239,22 @@ const getJoinPenAnBarangSarch = async (req, res) => {
     let result = [];
     let totalRows = 0;
 
+    let barangWhere = {};
+    if (IdSupplier) {
+      barangWhere.supplierId = IdSupplier;
+    }
+
     if (limit == 0) {
       result = await transPenjualanModel.findAll({
         include: [
           {
             model: barangModel,
             as: "barang",
-            where: {
-              supplierid: IdSupplier
-            },
+            where: barangWhere,
             include: [
               {
                 model: supplierModel,
+                as: "supplier",
               },
             ],
           },
@@ -211,8 +266,9 @@ const getJoinPenAnBarangSarch = async (req, res) => {
         where: {
           createdAt: {
             [Op.gte]: startOfDay,
-            [Op.lte]: endOfDay
+            [Op.lte]: endOfDay,
           },
+          typePembayaran: pembayaran,
         },
         order: [["id", "DESC"]],
       });
@@ -222,12 +278,11 @@ const getJoinPenAnBarangSarch = async (req, res) => {
           {
             model: barangModel,
             as: "barang",
-            where: {
-              supplierid: IdSupplier
-            },
+            where: barangWhere,
             include: [
               {
                 model: supplierModel,
+                as: "supplier",
               },
             ],
           },
@@ -239,8 +294,9 @@ const getJoinPenAnBarangSarch = async (req, res) => {
         where: {
           createdAt: {
             [Op.gte]: startOfDay,
-            [Op.lte]: endOfDay
+            [Op.lte]: endOfDay,
           },
+          typePembayaran: pembayaran,
         },
       });
 
@@ -250,12 +306,11 @@ const getJoinPenAnBarangSarch = async (req, res) => {
           {
             model: barangModel,
             as: "barang",
-            where: {
-              supplierid: IdSupplier
-            },
+            where: barangWhere,
             include: [
               {
                 model: supplierModel,
+                as: "supplier",
               },
             ],
           },
@@ -267,8 +322,9 @@ const getJoinPenAnBarangSarch = async (req, res) => {
         where: {
           createdAt: {
             [Op.gte]: startOfDay,
-            [Op.lte]: endOfDay
+            [Op.lte]: endOfDay,
           },
+          typePembayaran: pembayaran,
         },
         offset,
         limit,
@@ -304,8 +360,8 @@ const getJoinPenjualannBulanan = async (req, res) => {
     const monthYearFormat = `${currentYear}-${search}`;
 
     // Konversi ke rentang tanggal awal dan akhir bulan
-    const startOfMonth = moment(monthYearFormat, 'YYYY-MM').startOf('month').toDate(); // Awal bulan
-    const endOfMonth = moment(monthYearFormat, 'YYYY-MM').endOf('month').toDate(); // Akhir bulan
+    const startOfMonth = moment(monthYearFormat, "YYYY-MM").startOf("month").toDate(); // Awal bulan
+    const endOfMonth = moment(monthYearFormat, "YYYY-MM").endOf("month").toDate(); // Akhir bulan
 
     let totalPage = 0;
     let result = [];
@@ -318,11 +374,12 @@ const getJoinPenjualannBulanan = async (req, res) => {
             model: barangModel,
             as: "barang",
             where: {
-              supplierid: IdSupplier
+              supplierid: IdSupplier,
             },
             include: [
               {
                 model: supplierModel,
+                as: "supplier",
               },
             ],
           },
@@ -346,11 +403,12 @@ const getJoinPenjualannBulanan = async (req, res) => {
             model: barangModel,
             as: "barang",
             where: {
-              supplierid: IdSupplier
+              supplierid: IdSupplier,
             },
             include: [
               {
                 model: supplierModel,
+                as: "supplier",
               },
             ],
           },
@@ -374,11 +432,12 @@ const getJoinPenjualannBulanan = async (req, res) => {
             model: barangModel,
             as: "barang",
             where: {
-              supplierid: IdSupplier
+              supplierid: IdSupplier,
             },
             include: [
               {
                 model: supplierModel,
+                as: "supplier",
               },
             ],
           },
@@ -408,17 +467,19 @@ const getJoinPenjualannBulanan = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error });
+    res.status(400).json({ msg: "Gagal Mengambil Data: " + error });
   }
 };
 
-const getJoinPenAnBarangRetur = async (req, res) => {
+const getJoinPembelianAnggota = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 0
-    const limit = parseInt(req.query.limit) || 10
-    const offset = page * limit
-    const nama_barang = req.query.namaBarang || ""
+    const page = parseInt(req.query.page) || 0;
+    const limit = parseInt(req.query.limit);
+    const search = req.query.date; // Input hanya berupa bulan, misalnya "01"
+    const offset = page * limit;
 
+    const startOfDay = moment(search).startOf("day").toDate(); // Mulai hari pada tanggal tertentu
+    const endOfDay = moment(search).endOf("day").toDate(); // Akhir hari pada tanggal tertentu
 
     let totalPage = 0;
     let result = [];
@@ -429,58 +490,93 @@ const getJoinPenAnBarangRetur = async (req, res) => {
         include: [
           {
             model: barangModel,
-            where: {
-              nama: {
-                [Op.like]: `%${nama_barang}%`
-              }
+            as: "barang",
+            include: {
+              model: supplierModel,
+              as: "supplier",
             },
-            include: [{
-              model: supplierModel
-            }]
+          },
+          {
+            model: anggotaModel,
+            as: "anggota",
+            where: {
+              id: { [Op.ne]: "354" }, // Nama anggota bukan "customer"
+            },
           },
         ],
-        order: [
-          ['createdAt', 'DESC']
-        ]
-      })
+        where: {
+          createdAt: {
+            [Op.gte]: startOfDay,
+            [Op.lte]: endOfDay,
+          },
+          barangId: {
+            [Op.not]: null,
+          },
+        },
+        order: [["createdAt", "DESC"]],
+      });
     } else {
       totalRows = await transPenjualanModel.count({
         include: [
           {
             model: barangModel,
-            where: {
-              nama: {
-                [Op.like]: `%${nama_barang}%`
-              }
+            as: "barang",
+            include: {
+              model: supplierModel,
+              as: "supplier",
             },
-            include: [{
-              model: supplierModel
-            }]
+          },
+          {
+            model: anggotaModel,
+            as: "anggota",
+            where: {
+              id: { [Op.ne]: "354" }, // Nama anggota bukan "customer"
+            },
           },
         ],
-      })
+        where: {
+          createdAt: {
+            [Op.gte]: startOfDay,
+            [Op.lte]: endOfDay,
+          },
+          barangId: {
+            [Op.not]: null,
+          },
+        },
+      });
 
-      totalPage = Math.ceil(totalRows / limit)
+      totalPage = Math.ceil(totalRows / limit);
       result = await transPenjualanModel.findAll({
         include: [
           {
             model: barangModel,
-            where: {
-              nama: {
-                [Op.like]: `%${nama_barang}%`
-              }
+            as: "barang",
+            include: {
+              model: supplierModel,
+              as: "supplier",
             },
-            include: [{
-              model: supplierModel
-            }]
+          },
+          {
+            model: anggotaModel,
+            as: "anggota",
+            where: {
+              id: { [Op.ne]: "354" }, // Nama anggota bukan "customer"
+            },
           },
         ],
+        where: {
+          createdAt: {
+            [Op.gte]: startOfDay,
+            [Op.lte]: endOfDay,
+          },
+          barangId: {
+            [Op.not]: null,
+          },
+        },
         offset,
         limit,
-        order: [
-          ['createdAt', 'DESC']
-        ]
-      })
+        order: [["createdAt", "DESC"]],
+      });
     }
 
     res.status(200).json({
@@ -488,14 +584,219 @@ const getJoinPenAnBarangRetur = async (req, res) => {
       result,
       totalPage,
       totalRows,
-      limit
-    })
+      limit,
+    });
   } catch (error) {
-    console.error(error)
-    res.status(400).json({ msg: 'Gagal Mengambil Data: ' + error })
+    console.error(error);
+    res.status(400).json({ msg: "Gagal Mengambil Data: " + error });
   }
-}
+};
+const getJoinPembelianCustomer = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 0;
+    const limit = parseInt(req.query.limit);
+    const search = req.query.date; // Input hanya berupa bulan, misalnya "01"
+    const offset = page * limit;
 
+    const startOfDay = moment(search).startOf("day").toDate(); // Mulai hari pada tanggal tertentu
+    const endOfDay = moment(search).endOf("day").toDate(); // Akhir hari pada tanggal tertentu
+
+    let totalPage = 0;
+    let result = [];
+    let totalRows = 0;
+
+    if (limit == 0) {
+      result = await transPenjualanModel.findAll({
+        include: [
+          {
+            model: barangModel,
+            as: "barang",
+            include: {
+              model: supplierModel,
+              as: "supplier",
+            },
+          },
+          {
+            model: anggotaModel,
+            as: "anggota",
+            where: {
+              id: "354",
+            },
+          },
+        ],
+        where: {
+          createdAt: {
+            [Op.gte]: startOfDay,
+            [Op.lte]: endOfDay,
+          },
+          barangId: {
+            [Op.not]: null,
+          },
+        },
+        order: [["createdAt", "DESC"]],
+      });
+    } else {
+      totalRows = await transPenjualanModel.count({
+        include: [
+          {
+            model: barangModel,
+            as: "barang",
+            include: {
+              model: supplierModel,
+              as: "supplier",
+            },
+          },
+          {
+            model: anggotaModel,
+            as: "anggota",
+            where: {
+              id: "354",
+            },
+          },
+        ],
+        where: {
+          createdAt: {
+            [Op.gte]: startOfDay,
+            [Op.lte]: endOfDay,
+          },
+          barangId: {
+            [Op.not]: null,
+          },
+        },
+      });
+
+      totalPage = Math.ceil(totalRows / limit);
+      result = await transPenjualanModel.findAll({
+        include: [
+          {
+            model: barangModel,
+            as: "barang",
+            include: {
+              model: supplierModel,
+              as: "supplier",
+            },
+          },
+          {
+            model: anggotaModel,
+            as: "anggota",
+            where: {
+              id: "354",
+            },
+          },
+        ],
+        where: {
+          createdAt: {
+            [Op.gte]: startOfDay,
+            [Op.lte]: endOfDay,
+          },
+          barangId: {
+            [Op.not]: null,
+          },
+        },
+        offset,
+        limit,
+        order: [["createdAt", "DESC"]],
+      });
+    }
+
+    res.status(200).json({
+      page,
+      result,
+      totalPage,
+      totalRows,
+      limit,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ msg: "Gagal Mengambil Data: " + error });
+  }
+};
+
+const getJoinPenAnBarangRetur = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 0;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = page * limit;
+    const nama_barang = req.query.namaBarang || "";
+
+    let totalPage = 0;
+    let result = [];
+    let totalRows = 0;
+
+    if (limit == 0) {
+      result = await transPenjualanModel.findAll({
+        include: [
+          {
+            model: barangModel,
+            as: "barang",
+            include: [
+              {
+                model: supplierModel,
+                as: "supplier",
+              },
+            ],
+          },
+        ],
+        order: [["createdAt", "DESC"]],
+      });
+    } else {
+      totalRows = await transPenjualanModel.count({
+        include: [
+          {
+            model: barangModel,
+            as: "barang",
+            where: {
+              nama: {
+                [Op.like]: `%${nama_barang}%`,
+              },
+            },
+            include: [
+              {
+                model: supplierModel,
+                as: "supplier",
+              },
+            ],
+          },
+        ],
+      });
+
+      totalPage = Math.ceil(totalRows / limit);
+      result = await transPenjualanModel.findAll({
+        include: [
+          {
+            model: barangModel,
+            as: "barang",
+            where: {
+              nama: {
+                [Op.like]: `%${nama_barang}%`,
+              },
+            },
+            include: [
+              {
+                model: supplierModel,
+                as: "supplier",
+              },
+            ],
+          },
+        ],
+        offset,
+        limit,
+        order: [["createdAt", "DESC"]],
+      });
+    }
+
+    res.status(200).json({
+      page,
+      result,
+      totalPage,
+      totalRows,
+      limit,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ msg: "Gagal Mengambil Data: " + error });
+  }
+};
 
 const getTotalHarga = async (req, res) => {
   try {
@@ -504,6 +805,7 @@ const getTotalHarga = async (req, res) => {
       include: [
         {
           model: barangModel,
+          as: "barang",
         },
       ],
       where: { faktur },
@@ -525,15 +827,7 @@ const getTotalHarga = async (req, res) => {
 
 const tambahPenjualan = async (req, res) => {
   try {
-    const {
-      jumlah,
-      faktur,
-      harga,
-      typePembayaran,
-      anggotaId,
-      barangId,
-      statusPenjualan,
-    } = req.body;
+    const { jumlah, faktur, harga, typePembayaran, anggotaId, barangId, statusPenjualan } = req.body;
     await transPenjualanModel.create({
       jumlah,
       faktur,
@@ -550,146 +844,9 @@ const tambahPenjualan = async (req, res) => {
   }
 };
 
-const getJoinPembelianAnggota = async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 0;
-    const limit = parseInt(req.query.limit);
-    const search = req.query.bulan; // Input hanya berupa bulan, misalnya "01"
-    const IdSupplier = 1;
-    const offset = page * limit;
-
-    // Ambil tahun saat ini jika tidak dikirim dari frontend
-    const currentYear = new Date().getFullYear();
-
-    // Gabungkan tahun saat ini dengan bulan dari frontend untuk membuat format YYYY-MM
-    const monthYearFormat = `${currentYear}-${search}`;
-
-    // Konversi ke rentang tanggal awal dan akhir bulan
-    const startOfMonth = moment(monthYearFormat, 'YYYY-MM').startOf('month').toDate(); // Awal bulan
-    const endOfMonth = moment(monthYearFormat, 'YYYY-MM').endOf('month').toDate(); // Akhir bulan
-
-    let totalPage = 0;
-    let result = [];
-    let totalRows = 0;
-
-    if (limit == 0) {
-      result = await transPenjualanModel.findAll({
-        include: [
-          {
-            model: barangModel,
-            as: "barang",
-            include: [
-              {
-                model: supplierModel,
-              },
-            ],
-          },
-          {
-            model: anggotaModel,
-            as: "anggota",
-            where: {
-              id: { [Op.ne]: "354" }, // Nama anggota bukan "customer"
-            },
-          },
-        ],
-        where: {
-          createdAt: {
-            [Op.gte]: startOfMonth,
-            [Op.lte]: endOfMonth,
-          },
-        },
-        order: [["createdAt", "DESC"]],
-      });
-    } else {
-      totalRows = await transPenjualanModel.count({
-        include: [
-          {
-            model: barangModel,
-            as: "barang",
-            // where: {
-            //   supplierid: IdSupplier,
-            // },
-            include: [
-              {
-                model: supplierModel,
-              },
-            ],
-          },
-          {
-            model: anggotaModel,
-            as: "anggota",
-            where: {
-              id: { [Op.ne]: "354" }, // Nama anggota bukan "customer"
-            },
-          },
-        ],
-        where: {
-          createdAt: {
-            [Op.gte]: startOfMonth,
-            [Op.lte]: endOfMonth,
-          },
-        },
-      });
-
-      totalPage = Math.ceil(totalRows / limit);
-      result = await transPenjualanModel.findAll({
-        include: [
-          {
-            model: barangModel,
-            as: "barang",
-            // where: {
-            //   supplierid: IdSupplier,
-            // },
-            include: [
-              {
-                model: supplierModel,
-              },
-            ],
-          },
-          {
-            model: anggotaModel,
-            as: "anggota",
-            where: {
-              id: { [Op.ne]: "354" }, // Nama anggota bukan "customer"
-            },
-          },
-        ],
-        where: {
-          createdAt: {
-            [Op.gte]: startOfMonth,
-            [Op.lte]: endOfMonth,
-          },
-        },
-        offset,
-        limit,
-        order: [["createdAt", "DESC"]],
-      });
-    }
-
-    res.status(200).json({
-      page,
-      result,
-      totalPage,
-      totalRows,
-      limit,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(400).json({ msg: "Gagal Mengambil Data: " + error });
-  }
-};
-
 const editPenjualan = async (req, res) => {
   try {
-    const {
-      jumlah,
-      faktur,
-      harga,
-      typePembayaran,
-      anggotaId,
-      barangId,
-      statusPenjualan,
-    } = req.body;
+    const { jumlah, faktur, harga, typePembayaran, anggotaId, barangId, statusPenjualan } = req.body;
     await transPenjualanModel.update(
       {
         jumlah,
@@ -704,7 +861,7 @@ const editPenjualan = async (req, res) => {
         where: {
           id: req.params.id,
         },
-      }
+      },
     );
     res.status(200).json({ msg: "Data Berhasil diUbah!" });
   } catch (error) {
@@ -732,12 +889,16 @@ module.exports = {
   getPenjualanById,
   getJoinPenAnBarang,
   getJoinPenAnBarangId,
+  getOnProcessByBarang,
+  getTransPenjualanByFaktur,
   getJoinPenAnBarangLapor,
-  getJoinPenAnBarangSarch,
   getJoinPenjualannBulanan,
-  getJoinPenAnBarangRetur,
   getJoinPembelianAnggota,
+  getJoinPembelianCustomer,
+  getJoinPenAnBarangSarch,
+  getJoinPenAnBarangRetur,
   getTotalHarga,
+  getTransPenjualan,
   tambahPenjualan,
   editPenjualan,
   hapusPenjualan,
