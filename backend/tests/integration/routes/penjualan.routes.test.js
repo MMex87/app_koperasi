@@ -12,19 +12,25 @@
 
 const request = require("supertest");
 
-// Mock database untuk testing
+// Mock database untuk testing: db.define mengembalikan model tiruan, jadi semua model
+// (dan relasinya) bisa dimuat router tanpa koneksi/Sequelize sungguhan
 jest.mock("../../../src/config/database", () => ({
+  define: jest.fn(() => ({
+    findAll: jest.fn(),
+    findOne: jest.fn(),
+    findByPk: jest.fn(),
+    count: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    destroy: jest.fn(),
+    hasMany: jest.fn(),
+    hasOne: jest.fn(),
+    belongsTo: jest.fn(),
+  })),
   sync: jest.fn().mockResolvedValue(),
   close: jest.fn().mockResolvedValue(),
   authenticate: jest.fn().mockResolvedValue(),
 }));
-
-// Mock semua models
-jest.mock("../../../src/model/TransPenjualanModel");
-jest.mock("../../../src/model/BarangModel");
-jest.mock("../../../src/model/AnggotaModel");
-jest.mock("../../../src/model/SupplierModel");
-jest.mock("../../../src/model/LogPenjualanModel");
 
 const transPenjualanModel = require("../../../src/model/TransPenjualanModel");
 
@@ -140,13 +146,13 @@ describe("Penjualan API - Integration Tests", () => {
       expect(response.status).toBe(200);
     });
 
-    it("❌ harus mengembalikan null jika ID tidak ditemukan", async () => {
+    it("❌ harus mengembalikan 404 jika ID tidak ditemukan", async () => {
       transPenjualanModel.findOne.mockResolvedValue(null);
 
       const response = await request(app).get("/api/transPenjualan/999");
 
-      expect(response.status).toBe(200);
-      expect(response.body).toBeNull();
+      expect(response.status).toBe(404);
+      expect(response.body).toHaveProperty("msg", "Transaksi tidak ditemukan");
     });
   });
 
@@ -161,8 +167,13 @@ describe("Penjualan API - Integration Tests", () => {
       typePembayaran: "Tunai",
       anggotaId: 1,
       barangId: 1,
-      statusPenjualan: "Selesai",
+      statusPenjualan: "onProcess",
     };
+
+    // Hanya item keranjang (onProcess) yang bisa diubah; status selesai lewat checkout
+    beforeEach(() => {
+      transPenjualanModel.findByPk.mockResolvedValue({ id: 1, statusPenjualan: "onProcess" });
+    });
 
     it("✅ harus berhasil mengupdate penjualan", async () => {
       transPenjualanModel.update.mockResolvedValue([1]);
