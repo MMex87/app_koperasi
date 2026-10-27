@@ -73,13 +73,13 @@ const addCartManual = (props) => {
 
   useEffect(() => {
     if (props.namaBarang.length > 2) {
-      getBarangJoinAutoComplate(props.namaBarang).then((data) => {
+      getBarangJoinAutoComplate(props.namaBarang, true).then((data) => {
         setBarang(data);
       });
     }
 
     if (props.kodeBarang.length > 2) {
-      getBarangJoinAutoComplate(props.kodeBarang).then((data) => {
+      getBarangJoinAutoComplate(props.kodeBarang, true).then((data) => {
         setBarangKode(data);
       });
     }

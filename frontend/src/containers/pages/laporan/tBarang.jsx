@@ -25,7 +25,7 @@ const COLUMNS = [
 ];
 
 // Laporan stok barang Waserda yang masih tersedia (sama dengan filter lapBarang di backend)
-const tBarang = () => {
+const LaporanStokBarang = () => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -87,4 +87,4 @@ const tBarang = () => {
   );
 };
 
-export default tBarang;
+export default LaporanStokBarang;

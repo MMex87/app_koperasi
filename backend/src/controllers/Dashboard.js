@@ -4,6 +4,7 @@ const barangModel = require("../model/BarangModel.js");
 const supplierModel = require("../model/SupplierModel.js");
 const transPenjualanModel = require("../model/TransPenjualanModel.js");
 const transPembelianModel = require("../model/TransPembelianModel.js");
+const { filterArsip } = require("../model/BarangArsipModel.js");
 const { idSupplierLaporan } = require("../config/config.js");
 const moment = require("moment");
 
@@ -65,12 +66,13 @@ const getDashboard = async (req, res) => {
         attributes: ["harga", "anggotaId"],
         where: { statusPenjualan: "Bon" },
       }),
-      barangModel.count({ where: { nama: { [Op.ne]: null } } }),
-      barangModel.count({ where: { nama: { [Op.ne]: null }, jumlah: { [Op.lte]: 0 } } }),
-      barangModel.count({ where: { nama: { [Op.ne]: null }, jumlah: { [Op.gt]: 0, [Op.lte]: batasStok } } }),
+      // Barang arsip tidak dihitung (barang lama yang sudah tidak dijual)
+      barangModel.count({ where: { nama: { [Op.ne]: null }, ...filterArsip() } }),
+      barangModel.count({ where: { nama: { [Op.ne]: null }, jumlah: { [Op.lte]: 0 }, ...filterArsip() } }),
+      barangModel.count({ where: { nama: { [Op.ne]: null }, jumlah: { [Op.gt]: 0, [Op.lte]: batasStok }, ...filterArsip() } }),
       barangModel.findAll({
         attributes: ["id", "nama", "jumlah", "satuan"],
-        where: { nama: { [Op.ne]: null }, jumlah: { [Op.lte]: batasStok } },
+        where: { nama: { [Op.ne]: null }, jumlah: { [Op.lte]: batasStok }, ...filterArsip() },
         order: [["jumlah", "ASC"]],
         limit: 6,
       }),

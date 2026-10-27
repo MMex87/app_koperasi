@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "../../../api/axios";
 import { Link } from "react-router-dom";
 import convertRupiah from "rupiah-format";
+import GrafikBatang from "../../../components/GrafikBatang";
 
 const rupiah = (v) => convertRupiah.convert(v || 0);
-const ringkasAngka = (v) => new Intl.NumberFormat("id-ID", { notation: "compact", maximumFractionDigits: 1 }).format(v || 0);
 const formatTanggal = (v, opsi) => new Date(v).toLocaleDateString("id-ID", opsi);
 
 // Persentase perubahan terhadap periode sebelumnya; null jika periode sebelumnya kosong
@@ -70,46 +70,6 @@ const Kosong = ({ icon = "bi-inbox", text }) => (
     <small>{text}</small>
   </div>
 );
-
-// Grafik batang satu seri (tanpa library) dengan tooltip saat hover
-const GrafikPenjualan = ({ data }) => {
-  const [aktif, setAktif] = useState(null);
-  const maks = Math.max(...data.map((d) => d.total), 0);
-  const skala = maks > 0 ? maks * 1.1 : 1;
-  const garis = [1, 0.5];
-
-  return (
-    <div className="chart-wrap">
-      <div className="chart-area">
-        {maks === 0 && <div className="chart-empty text-muted small">Belum ada penjualan pada periode ini</div>}
-        {garis.map((g) => (
-          <div key={g} className="chart-grid" style={{ bottom: `${(g * maks * 100) / skala}%` }}>
-            <span>{maks > 0 ? ringkasAngka(g * maks) : ""}</span>
-          </div>
-        ))}
-        <div className="chart-bars">
-          {data.map((d, i) => (
-            <div key={d.label} className="chart-col" onMouseEnter={() => setAktif(i)} onMouseLeave={() => setAktif(null)}>
-              {aktif === i && (
-                <div className="chart-tooltip shadow-sm">
-                  <div className="fw-semibold">{d.labelPanjang}</div>
-                  <div>{rupiah(d.total)}</div>
-                  <div className="text-muted">{d.transaksi} transaksi</div>
-                </div>
-              )}
-              <div className={`chart-bar ${aktif === i ? "active" : ""}`} style={{ height: `${(d.total * 100) / skala}%` }} />
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="chart-labels">
-        {data.map((d) => (
-          <span key={d.label}>{d.label}</span>
-        ))}
-      </div>
-    </div>
-  );
-};
 
 const Dashboard = () => {
   const [data, setData] = useState(null);
@@ -230,7 +190,7 @@ const Dashboard = () => {
                     <span className="placeholder col-12 rounded" style={{ height: "220px" }} />
                   </div>
                 ) : (
-                  <GrafikPenjualan data={dataGrafik} />
+                  <GrafikBatang data={dataGrafik.map((d) => ({ ...d, nilai: d.total, info: `${d.transaksi} transaksi` }))} format={rupiah} kosong="Belum ada penjualan pada periode ini" />
                 )}
               </div>
             </div>
@@ -468,29 +428,6 @@ const Dashboard = () => {
           font-size: .8rem; font-weight: 600;
         }
         .summary-list .list-group-item { padding-top: .6rem; padding-bottom: .6rem; border-radius: 8px; }
-
-        .chart-wrap { padding-left: 44px; }
-        .chart-area { position: relative; height: 220px; border-bottom: 1px solid var(--bs-border-color); }
-        .chart-grid { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--bs-border-color); }
-        .chart-grid span { position: absolute; left: -44px; top: -.6rem; width: 40px; text-align: right; font-size: .7rem; color: var(--bs-secondary-color); }
-        .chart-bars { position: absolute; inset: 0; display: flex; align-items: flex-end; gap: 2px; }
-        .chart-col { position: relative; flex: 1; height: 100%; display: flex; align-items: flex-end; justify-content: center; cursor: default; }
-        .chart-bar {
-          width: 60%; max-width: 44px; min-height: 2px;
-          background: var(--bs-primary); opacity: .75;
-          border-radius: 4px 4px 0 0;
-          transition: height .4s ease, opacity .15s ease;
-        }
-        .chart-bar.active { opacity: 1; }
-        .chart-tooltip {
-          position: absolute; left: 50%; transform: translate(-50%, 0);
-          top: 0;
-          background: var(--bs-body-bg); border: 1px solid var(--bs-border-color); border-radius: 8px;
-          padding: .4rem .6rem; font-size: .75rem; white-space: nowrap; z-index: 2; pointer-events: none;
-        }
-        .chart-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-        .chart-labels { display: flex; gap: 2px; margin-top: .4rem; }
-        .chart-labels span { flex: 1; text-align: center; font-size: .75rem; color: var(--bs-secondary-color); text-transform: capitalize; }
 
         .dashboard-table thead th {
           font-size: .75rem; text-transform: uppercase; letter-spacing: .03em;

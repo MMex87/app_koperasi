@@ -1,8 +1,8 @@
-import React from 'react'
 import axios from '../../api/axios'
 
-const getSearchBarang = async (search, limit, page) => {
-    const response = await axios.get(`/barangSearch?search=${search}&limit=${limit}&page=${page}`)
+// arsip: true = hanya barang yang diarsipkan, false = hanya barang aktif
+const getSearchBarang = async (search, limit, page, arsip = false) => {
+    const response = await axios.get(`/barangSearch?search=${search}&limit=${limit}&page=${page}${arsip ? '&arsip=1' : ''}`)
     return response.data
 }
 

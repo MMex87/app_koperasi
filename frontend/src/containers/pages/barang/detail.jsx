@@ -121,6 +121,12 @@ export default function DetailBarang() {
                   <i className="bi bi-shop me-1" />
                   {barang.supplier?.nama || "-"}
                 </span>
+                {data.arsip && (
+                  <span className="badge bg-secondary" title={data.arsip.alasan ? `Alasan: ${data.arsip.alasan}` : undefined}>
+                    <i className="bi bi-archive me-1" />
+                    Diarsipkan
+                  </span>
+                )}
                 {stokHabis && (
                   <span className="badge bg-danger">
                     <i className="bi bi-x-circle me-1" />

@@ -4,27 +4,27 @@ import convertRupiah from "rupiah-format";
 import ReportShell, { hariIni, FilterField } from "./ReportShell";
 import { exportPdf, exportExcel, formatNilai } from "./exportLaporan";
 
-const TABS = [
-  { to: "/reportAnggota", label: "Anggota" },
-  { to: "/reportCustomer", label: "Customer Umum" },
-];
+const JENIS_PEMBELI = { "": "Semua pembeli", anggota: "Anggota", customer: "Customer umum" };
 
-// mode "anggota": penjualan ke anggota terdaftar; "customer": penjualan ke pelanggan umum
-const LaporanAnggota = ({ mode }) => {
-  const customer = mode === "customer";
+// Laporan penjualan per pembeli: anggota terdaftar dan customer umum dalam satu halaman.
+// Data diambil dari dua endpoint agar pembagian anggota/customer tetap mengikuti backend (idAnggotaCustomer).
+const LaporanAnggota = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [tanggal, setTanggal] = useState(hariIni());
   const [pembayaran, setPembayaran] = useState("");
+  const [jenis, setJenis] = useState("");
 
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       setError("");
       try {
-        const res = await axios.get(customer ? "/transPenjualanJoinSearchCustomer" : "/transPenjualanJoinSearchAnggota", { params: { date: tanggal, limit: 0 } });
-        setData(res.data.result || []);
+        const params = { params: { date: tanggal, limit: 0 } };
+        const [anggota, customer] = await Promise.all([axios.get("/transPenjualanJoinSearchAnggota", params), axios.get("/transPenjualanJoinSearchCustomer", params)]);
+        const gabung = [...(anggota.data.result || []).map((r) => ({ ...r, jenisPembeli: "anggota" })), ...(customer.data.result || []).map((r) => ({ ...r, jenisPembeli: "customer" }))];
+        setData(gabung.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
       } catch (err) {
         console.error(err);
         setData([]);
@@ -34,15 +34,31 @@ const LaporanAnggota = ({ mode }) => {
       }
     };
     load();
-  }, [customer, tanggal]);
+  }, [tanggal]);
 
-  const rows = useMemo(() => data.filter((r) => !["onProcess", "Batal"].includes(r.statusPenjualan) && r.jumlah > 0 && (!pembayaran || r.typePembayaran === pembayaran)), [data, pembayaran]);
+  const rows = useMemo(
+    () => data.filter((r) => !["onProcess", "Batal"].includes(r.statusPenjualan) && r.jumlah > 0 && (!pembayaran || r.typePembayaran === pembayaran) && (!jenis || r.jenisPembeli === jenis)),
+    [data, pembayaran, jenis]
+  );
 
   // harga transaksi penjualan = total baris
   const columns = [
     { label: "Waktu", type: "datetime", get: (r) => r.createdAt },
     { label: "Faktur", type: "text", get: (r) => r.faktur, bold: true },
-    ...(customer ? [] : [{ label: "Anggota", type: "text", get: (r) => r.anggota?.nama?.trim() }]),
+    {
+      label: "Pembeli",
+      type: "text",
+      get: (r) => (r.jenisPembeli === "customer" ? "Customer umum" : r.anggota?.nama?.trim()),
+      render: (r) =>
+        r.jenisPembeli === "customer" ? (
+          <span className="badge bg-light text-dark border">Umum</span>
+        ) : (
+          <span>
+            <i className="bi bi-person-badge text-primary me-1" />
+            {r.anggota?.nama?.trim() || "-"}
+          </span>
+        ),
+    },
     { label: "Barang", type: "text", get: (r) => r.barang?.nama },
     { label: "Jumlah", type: "number", get: (r) => r.jumlah },
     { label: "Pembayaran", type: "text", get: (r) => r.typePembayaran },
@@ -50,42 +66,48 @@ const LaporanAnggota = ({ mode }) => {
   ];
 
   const total = rows.reduce((s, r) => s + (parseInt(r.harga) || 0), 0);
+  const totalCustomer = rows.filter((r) => r.jenisPembeli === "customer").reduce((s, r) => s + (parseInt(r.harga) || 0), 0);
   const faktur = new Set(rows.map((r) => r.faktur)).size;
-  const item = rows.reduce((s, r) => s + (parseInt(r.jumlah) || 0), 0);
-  const anggotaUnik = new Set(rows.map((r) => r.anggotaId)).size;
+  const anggotaUnik = new Set(rows.filter((r) => r.jenisPembeli === "anggota").map((r) => r.anggotaId)).size;
 
   const summary = [
     { label: "Total Penjualan", value: convertRupiah.convert(total), icon: "bi-cash-stack", color: "primary" },
     { label: "Jumlah Transaksi", value: `${faktur} faktur`, icon: "bi-receipt", color: "info" },
-    { label: "Item Terjual", value: item.toLocaleString("id-ID"), icon: "bi-box-seam", color: "warning" },
-    customer
-      ? { label: "Rata-rata / Transaksi", value: convertRupiah.convert(faktur ? Math.round(total / faktur) : 0), icon: "bi-calculator", color: "success" }
-      : { label: "Anggota Bertransaksi", value: `${anggotaUnik} orang`, icon: "bi-people", color: "success" },
+    { label: "Dari Anggota", value: convertRupiah.convert(total - totalCustomer), icon: "bi-people", color: "success" },
+    { label: "Dari Customer Umum", value: convertRupiah.convert(totalCustomer), icon: "bi-person", color: "warning" },
   ];
 
-  const judul = customer ? "Laporan Penjualan Customer Umum" : "Laporan Penjualan Anggota";
   const periode = formatNilai("date", tanggal);
   const meta = () => ({
-    judul,
+    judul: "Laporan Penjualan Anggota & Customer",
     info: [
       { label: "Tanggal", value: periode },
+      { label: "Pembeli", value: JENIS_PEMBELI[jenis] },
       { label: "Pembayaran", value: pembayaran || "Semua" },
     ],
-    ringkasan: summary.map((s) => ({ label: s.label, value: s.value })),
+    ringkasan: [...summary.map((s) => ({ label: s.label, value: s.value })), { label: "Anggota Bertransaksi", value: `${anggotaUnik} orang` }],
     columns,
     rows,
-    namaFile: `${judul} ${periode}`,
+    namaFile: `Laporan Anggota & Customer ${periode}`,
   });
 
   return (
     <ReportShell
-      title={judul}
-      subtitle={customer ? `Penjualan ke pelanggan non-anggota · ${periode}` : `Penjualan ke anggota koperasi · ${periode}`}
-      tabs={TABS}
+      title="Laporan Anggota & Customer"
+      subtitle={`Penjualan per pembeli · ${periode} · ${anggotaUnik} anggota bertransaksi`}
       filters={
         <>
           <FilterField label="Tanggal">
             <input type="date" className="form-control" value={tanggal} max={hariIni()} onChange={(e) => setTanggal(e.target.value)} />
+          </FilterField>
+          <FilterField label="Pembeli" width={170}>
+            <select className="form-select" value={jenis} onChange={(e) => setJenis(e.target.value)}>
+              {Object.entries(JENIS_PEMBELI).map(([v, l]) => (
+                <option key={v} value={v}>
+                  {l}
+                </option>
+              ))}
+            </select>
           </FilterField>
           <FilterField label="Pembayaran" width={140}>
             <select className="form-select" value={pembayaran} onChange={(e) => setPembayaran(e.target.value)}>

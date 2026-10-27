@@ -16,9 +16,9 @@ import RPenjualan from "../containers/pages/transaksi/retrunPenjualan/retur";
 import ReportPenjualan from "../containers/pages/laporan/tPenjualan";
 import ReportPembelian from "../containers/pages/laporan/tPembelian";
 import ReportAnggota from "../containers/pages/laporan/tAnggota";
-import ReportCustomer from "../containers/pages/laporan/tCustomer";
 import ReportSupplier from "../containers/pages/laporan/tSupplier";
 import ReportBarang from "../containers/pages/laporan/tBarang";
+import ReportLabaRugi from "../containers/pages/laporan/tLabaRugi";
 // import Cicilan from "../containers/pages/cicilan";
 import Template from "../containers/templates/Template";
 
@@ -51,9 +51,9 @@ const router = createBrowserRouter(
       <Route path={"/reportPenjualan"} element={<ReportPenjualan />} />
       <Route path={"/reportPembelian"} element={<ReportPembelian />} />
       <Route path={"/reportAnggota"} element={<ReportAnggota />} />
-      <Route path={"/reportCustomer"} element={<ReportCustomer />} />
       <Route path={"/reportSupplier"} element={<ReportSupplier />} />
       <Route path={"/reportBarang"} element={<ReportBarang />} />
+      <Route path={"/reportLabaRugi"} element={<ReportLabaRugi />} />
     </Route>,
   ),
 );

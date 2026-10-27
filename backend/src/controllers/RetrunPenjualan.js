@@ -3,6 +3,7 @@ const transPenjualanModel = require("../model/TransPenjualanModel.js")
 const barangModel = require("../model/BarangModel.js")
 const logPenjualanModel = require("../model/LogPenjualanModel.js")
 const db = require("../config/database.js")
+const { aktifkanJikaDiarsip } = require('../model/BarangArsipModel.js')
 
 const httpError = (status, msg) => Object.assign(new Error(msg), { status })
 
@@ -122,6 +123,7 @@ const prosesReturPenjualan = async (req, res) => {
             await trans.update({ statusPenjualan: 'Retur', jumlah: jumlahSisa, harga: hargaSisa }, { transaction: t })
 
             await barang.update({ jumlah: stokAkhir }, { transaction: t })
+            await aktifkanJikaDiarsip(barang.id, t)
 
             await logPenjualanModel.create({
                 qty: retur,
