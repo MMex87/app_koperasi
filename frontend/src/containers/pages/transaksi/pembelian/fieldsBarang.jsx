@@ -51,7 +51,7 @@ const FieldsBarang = (props) => {
         </label>
         <div className="input-group">
           <span className="input-group-text">Rp</span>
-          <input type="number" min="1" className={`form-control ${hargaJual && hargaJual < hargaBeli ? "is-invalid" : ""}`} id="hargaJual" value={props.harga_jual} onChange={(e) => props.handleHargaJualBarang(e.target.value)} />
+          <input type="number" min="1" className={`form-control ${hargaJual && hargaJual < hargaBeli ? "border-warning" : ""}`} id="hargaJual" value={props.harga_jual} onChange={(e) => props.handleHargaJualBarang(e.target.value)} />
         </div>
       </div>
 
@@ -60,7 +60,7 @@ const FieldsBarang = (props) => {
           <div className="d-flex flex-wrap gap-3 small bg-light rounded px-3 py-2">
             <span>
               Margin/unit:{" "}
-              <b className={margin < 0 ? "text-danger" : "text-success"}>
+              <b className={margin < 0 ? "" : "text-success"} style={margin < 0 ? { color: "#997404" } : undefined}>
                 Rp {margin.toLocaleString("id-ID")}
                 {hargaBeli > 0 && ` (${((margin / hargaBeli) * 100).toFixed(1)}%)`}
               </b>
@@ -71,9 +71,9 @@ const FieldsBarang = (props) => {
               </span>
             )}
             {margin < 0 && hargaJual > 0 && (
-              <span className="text-danger">
+              <span style={{ color: "#997404" }}>
                 <i className="bi bi-exclamation-triangle me-1" />
-                Harga jual lebih kecil dari harga beli
+                Harga jual di bawah harga beli (dijual rugi)
               </span>
             )}
           </div>

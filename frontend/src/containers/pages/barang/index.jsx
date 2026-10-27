@@ -7,6 +7,8 @@ import convertRupiah from "rupiah-format";
 import Swal from "sweetalert2";
 import sesuaikanStok from "../../../utils/barang/sesuaikanStok";
 import { ambilSesiAdmin, mintaSesiAdmin, jalankanAdmin, keluarAdmin } from "../../../utils/adminSession";
+import { arsipkanBarang, aktifkanBarang } from "../../../utils/barang/arsipBarang";
+import KesehatanData from "./KesehatanData";
 
 // Daftar barang dipakai dua halaman: /barang (Detail & Edit) dan /barang-admin (aksi lengkap:
 // sesuaikan stok & hapus barang yang berdampak ke stok/laporan).
@@ -27,10 +29,35 @@ export function DaftarBarang({ admin = false }) {
   const [loading, setLoading] = useState(true);
   // Mode admin: halaman terkunci sampai operator memasukkan PIN
   const [sesiAdmin, setSesiAdmin] = useState(() => (admin ? ambilSesiAdmin() : null));
+  // Tab admin: "aktif" (barang dijual), "arsip" (barang diarsipkan), "kesehatan" (data yang perlu dibersihkan)
+  const [tab, setTab] = useState("aktif");
+  const [terpilih, setTerpilih] = useState([]);
 
   useEffect(() => {
-    loadBarang();
-  }, [search, page]);
+    if (tab !== "kesehatan") loadBarang();
+  }, [search, page, tab]);
+
+  const gantiTab = (t) => {
+    setTab(t);
+    setPage(0);
+    setTerpilih([]);
+    batal();
+  };
+
+  // Hanya barang stok 0 yang bisa diarsip
+  const pilih = (val) => setTerpilih((p) => (p.some((b) => b.id === val.id) ? p.filter((b) => b.id !== val.id) : [...p, val]));
+  const bisaDiarsip = barang.filter((b) => (parseInt(b.jumlah) || 0) <= 0);
+  const semuaTerpilih = bisaDiarsip.length > 0 && bisaDiarsip.every((b) => terpilih.some((t) => t.id === b.id));
+  const pilihSemua = () =>
+    setTerpilih(semuaTerpilih ? terpilih.filter((t) => !bisaDiarsip.some((b) => b.id === t.id)) : [...terpilih, ...bisaDiarsip.filter((b) => !terpilih.some((t) => t.id === b.id))]);
+
+  const arsipkanTerpilih = async () => {
+    if (await arsipkanBarang(terpilih)) {
+      setTerpilih([]);
+      loadBarang();
+    }
+  };
+  const aktifkan = async (val) => (await aktifkanBarang(val)) && loadBarang();
 
   const masukAdmin = async () => setSesiAdmin(await mintaSesiAdmin({ paksa: true }));
   const keluar = () => {
@@ -41,7 +68,7 @@ export function DaftarBarang({ admin = false }) {
   const loadBarang = async () => {
     setLoading(true);
     try {
-      const data = await getSearchBarang(encodeURIComponent(search), limit, page);
+      const data = await getSearchBarang(encodeURIComponent(search), limit, page, admin && tab === "arsip");
       setBarang(data.result);
       setRows(data.totalRows);
       setPages(data.totalPage);
@@ -82,8 +109,18 @@ export function DaftarBarang({ admin = false }) {
     if (!namaBarang.trim() || !String(kodeBarang).trim()) {
       return Swal.fire("Gagal!", "Nama dan kode barang tidak boleh kosong", "warning");
     }
+    // Harga jual di bawah harga beli diizinkan (promo / jual rugi), cukup dikonfirmasi
     if (parseInt(hargaJual) < parseInt(hargaBeli)) {
-      return Swal.fire("Gagal!", "Harga jual tidak boleh lebih kecil dari harga beli", "warning");
+      const lanjut = await Swal.fire({
+        icon: "warning",
+        title: "Harga jual di bawah harga beli",
+        text: "Barang ini akan dijual rugi. Tetap simpan?",
+        showCancelButton: true,
+        confirmButtonText: "Tetap simpan",
+        cancelButtonText: "Periksa lagi",
+        reverseButtons: true,
+      });
+      if (!lanjut.isConfirmed) return;
     }
     try {
       await axios.put(`/barang/${barangId}`, {
@@ -215,8 +252,34 @@ export function DaftarBarang({ admin = false }) {
       </div>
 
       <section className="section">
+        {admin && (
+          <ul className="nav nav-pills mb-3 gap-2">
+            {[
+              ["aktif", "bi-box-seam", "Barang Aktif"],
+              ["arsip", "bi-archive", "Arsip"],
+              ["kesehatan", "bi-clipboard2-pulse", "Kesehatan Data"],
+            ].map(([k, icon, label]) => (
+              <li key={k} className="nav-item">
+                <button type="button" className={`nav-link ${tab === k ? "active" : "bg-white border"}`} onClick={() => gantiTab(k)}>
+                  <i className={`bi ${icon} me-1`} />
+                  {label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {admin && tab === "kesehatan" ? (
+          <KesehatanData />
+        ) : (
         <div className="card border-0 shadow-sm">
           <div className="card-body p-4">
+            {admin && tab === "arsip" && (
+              <div className="alert alert-secondary small py-2">
+                <i className="bi bi-info-circle me-1" />
+                Barang arsip tidak muncul di kasir & daftar barang. Barang otomatis aktif lagi jika stoknya bertambah.
+              </div>
+            )}
             <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
               <div className="input-group" style={{ maxWidth: "340px" }}>
                 <span className="input-group-text bg-white">
@@ -224,13 +287,28 @@ export function DaftarBarang({ admin = false }) {
                 </span>
                 <input type="text" className="form-control" placeholder="Cari nama atau kode barang..." value={search} onChange={cari} />
               </div>
-              <span className="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2">{rows} barang</span>
+              <div className="d-flex align-items-center gap-2">
+                {admin && tab === "aktif" && terpilih.length > 0 && (
+                  <button className="btn btn-sm btn-secondary" onClick={arsipkanTerpilih}>
+                    <i className="bi bi-archive me-1" />
+                    Arsipkan terpilih ({terpilih.length})
+                  </button>
+                )}
+                <span className="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2">
+                  {rows} barang{admin && tab === "arsip" ? " diarsip" : ""}
+                </span>
+              </div>
             </div>
 
             <div className="table-responsive">
               <table className="table table-hover align-middle mb-0 data-table">
                 <thead className="table-light">
                   <tr>
+                    {admin && tab === "aktif" && (
+                      <th className="text-center" title="Pilih barang stok 0 untuk diarsipkan">
+                        <input type="checkbox" className="form-check-input" checked={semuaTerpilih} disabled={!bisaDiarsip.length} onChange={pilihSemua} />
+                      </th>
+                    )}
                     <th className="text-center">No</th>
                     <th>Barang</th>
                     <th>Supplier</th>
@@ -245,14 +323,14 @@ export function DaftarBarang({ admin = false }) {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan="8" className="text-center py-5">
+                      <td colSpan={admin && tab === "aktif" ? 9 : 8} className="text-center py-5">
                         <div className="spinner-border spinner-border-sm text-primary me-2" />
                         <span className="text-muted">Memuat data...</span>
                       </td>
                     </tr>
                   ) : barang.length === 0 ? (
                     <tr>
-                      <td colSpan="8" className="text-center text-muted py-5">
+                      <td colSpan={admin && tab === "aktif" ? 9 : 8} className="text-center text-muted py-5">
                         <i className="bi bi-box-seam fs-1 d-block mb-2" />
                         {search ? `Tidak ada barang yang cocok dengan "${search}"` : "Belum ada data barang"}
                       </td>
@@ -260,9 +338,21 @@ export function DaftarBarang({ admin = false }) {
                   ) : (
                     barang.map((val, index) => {
                       const sedangEdit = barangId === val.id;
-                      const jualInvalid = sedangEdit && parseInt(hargaJual) < parseInt(hargaBeli);
+                      const jualRugi = sedangEdit && parseInt(hargaJual) < parseInt(hargaBeli);
                       return (
                         <tr key={val.id} className={sedangEdit ? "table-warning" : ""}>
+                          {admin && tab === "aktif" && (
+                            <td className="text-center">
+                              <input
+                                type="checkbox"
+                                className="form-check-input"
+                                title={(parseInt(val.jumlah) || 0) > 0 ? "Barang yang masih punya stok tidak bisa diarsip" : "Pilih untuk diarsipkan"}
+                                disabled={(parseInt(val.jumlah) || 0) > 0}
+                                checked={terpilih.some((t) => t.id === val.id)}
+                                onChange={() => pilih(val)}
+                              />
+                            </td>
+                          )}
                           <td className="text-center text-muted">{page * limit + index + 1}</td>
 
                           {/* NAMA + KODE */}
@@ -298,7 +388,7 @@ export function DaftarBarang({ admin = false }) {
 
                           {/* HARGA JUAL */}
                           <td className="text-end text-nowrap" style={sedangEdit ? { minWidth: "120px" } : undefined}>
-                            {sedangEdit ? <input type="number" min="0" className={`form-control form-control-sm text-end ${jualInvalid ? "is-invalid" : ""}`} value={hargaJual} onChange={(e) => setHargaJual(e.target.value)} /> : convertRupiah.convert(val.hargaJual)}
+                            {sedangEdit ? <input type="number" min="0" className={`form-control form-control-sm text-end ${jualRugi ? "border-warning" : ""}`} title={jualRugi ? "Di bawah harga beli (rugi)" : undefined} value={hargaJual} onChange={(e) => setHargaJual(e.target.value)} /> : convertRupiah.convert(val.hargaJual)}
                           </td>
 
                           <td className="text-center">
@@ -309,11 +399,21 @@ export function DaftarBarang({ admin = false }) {
                           <td className="text-center text-nowrap">
                             {sedangEdit ? (
                               <>
-                                <button className="btn btn-sm btn-success me-1" title="Simpan" disabled={jualInvalid} onClick={save}>
+                                <button className="btn btn-sm btn-success me-1" title="Simpan" onClick={save}>
                                   <i className="bi bi-check-lg" />
                                 </button>
                                 <button className="btn btn-sm btn-secondary" title="Batal" onClick={batal}>
                                   <i className="bi bi-x-lg" />
+                                </button>
+                              </>
+                            ) : admin && tab === "arsip" ? (
+                              <>
+                                <Link to={`/barang/${val.id}`} className="btn btn-sm btn-outline-info me-1" title="Detail & riwayat stok">
+                                  <i className="bi bi-eye" />
+                                </Link>
+                                <button className="btn btn-sm btn-outline-success" title="Keluarkan dari arsip" onClick={() => aktifkan(val)}>
+                                  <i className="bi bi-arrow-counterclockwise me-1" />
+                                  Aktifkan
                                 </button>
                               </>
                             ) : (
@@ -373,6 +473,7 @@ export function DaftarBarang({ admin = false }) {
             )}
           </div>
         </div>
+        )}
       </section>
     </main>
   );

@@ -1,5 +1,6 @@
 import LaporanAnggota from "./LaporanAnggota";
 
-const tAnggota = () => <LaporanAnggota mode="anggota" />;
+// Anggota & customer umum digabung dalam satu laporan
+const tAnggota = () => <LaporanAnggota />;
 
 export default tAnggota;

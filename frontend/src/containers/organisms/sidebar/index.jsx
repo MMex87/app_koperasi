@@ -35,10 +35,10 @@ const MENU = [
     children: [
       { to: "/reportPenjualan", label: "Penjualan" },
       { to: "/reportPembelian", label: "Pembelian" },
-      { to: "/reportAnggota", label: "Anggota" },
-      { to: "/reportCustomer", label: "Customer" },
+      { to: "/reportAnggota", label: "Anggota & Customer" },
       { to: "/reportSupplier", label: "Retur ke Supplier" },
       { to: "/reportBarang", label: "Stok Barang" },
+      { to: "/reportLabaRugi", label: "Laba Rugi" },
     ],
   },
 ];

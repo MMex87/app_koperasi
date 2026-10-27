@@ -8,6 +8,10 @@ const KUNCI_SESI = "koperasi_admin_sesi";
 const KUNCI_OPERATOR = "koperasi_admin_operator_terakhir";
 const DURASI_MS = 30 * 60 * 1000;
 
+// Komponen lain (mis. header) mendengarkan event ini untuk memperbarui status mode admin
+export const EVENT_SESI_ADMIN = "koperasi-admin-sesi";
+const umumkan = () => window.dispatchEvent(new Event(EVENT_SESI_ADMIN));
+
 export const ambilSesiAdmin = () => {
   try {
     const sesi = JSON.parse(sessionStorage.getItem(KUNCI_SESI));
@@ -24,6 +28,7 @@ export const keluarAdmin = () => {
   } catch {
     // abaikan
   }
+  umumkan();
 };
 
 export const headerAdmin = (sesi) => ({ "X-Admin-Pin": sesi.pin, "X-Admin-Operator": encodeURIComponent(sesi.operator) });
@@ -89,6 +94,7 @@ export const mintaSesiAdmin = async ({ paksa = false, keterangan = "" } = {}) =>
   } catch {
     // tanpa storage, sesi tetap dipakai untuk aksi ini saja
   }
+  umumkan();
   return sesi;
 };
 

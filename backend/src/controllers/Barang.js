@@ -13,6 +13,8 @@ const { KOLASI_TABEL } = require("../model/PenyesuaianStokModel.js");
 const db = require("../config/database.js");
 const { idSupplierLaporan } = require("../config/config.js");
 const { catatJejak } = require("../middleware/adminPin.js");
+const barangArsipModel = require("../model/BarangArsipModel.js");
+const { filterArsip, aktifkanJikaDiarsip, SQL_ID_ARSIP } = require("../model/BarangArsipModel.js");
 
 // Cek kode barang dipakai barang lain (kode harus unik agar scan barcode tidak salah barang)
 const kodeBarangDipakai = async (kodeBarang, kecualiId) => {
@@ -135,76 +137,27 @@ const getBarangId = async (req, res) => {
   }
 };
 
+// ?arsip=1 menampilkan hanya barang yang diarsipkan; default hanya barang aktif
 const getSearchBarang = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 0;
     const limit = parseInt(req.query.limit) || 10;
     const search = req.query.search || "";
     const offset = limit * page;
-    const totalRows = await barangModel.count({
-      include: [
-        {
-          model: supplierModel,
-          as: "supplier",
-        },
+    const cocok = { [Op.like]: "%" + search + "%" };
+    const where = {
+      [Op.and]: [
+        filterArsip(req.query.arsip === "1" ? "arsip" : "aktif"),
+        { [Op.or]: [{ nama: cocok }, { kodeBarang: cocok }, { jenisBarang: cocok }, { "$supplier.nama$": cocok }] },
       ],
-      where: {
-        [Op.or]: [
-          {
-            nama: {
-              [Op.like]: "%" + search + "%",
-            },
-          },
-          {
-            kodeBarang: {
-              [Op.like]: "%" + search + "%",
-            },
-          },
-          {
-            jenisBarang: {
-              [Op.like]: "%" + search + "%",
-            },
-          },
-          {
-            "$supplier.nama$": {
-              [Op.like]: "%" + search + "%",
-            },
-          },
-        ],
-      },
-    });
+    };
+    const include = [{ model: supplierModel, as: "supplier" }];
+
+    const totalRows = await barangModel.count({ include, where });
     const totalPage = Math.ceil(totalRows / limit);
     const result = await barangModel.findAll({
-      include: [
-        {
-          model: supplierModel,
-          as: "supplier",
-        },
-      ],
-      where: {
-        [Op.or]: [
-          {
-            nama: {
-              [Op.like]: "%" + search + "%",
-            },
-          },
-          {
-            kodeBarang: {
-              [Op.like]: "%" + search + "%",
-            },
-          },
-          {
-            jenisBarang: {
-              [Op.like]: "%" + search + "%",
-            },
-          },
-          {
-            "$supplier.nama$": {
-              [Op.like]: "%" + search + "%",
-            },
-          },
-        ],
-      },
+      include,
+      where,
       offset,
       limit,
       order: [["updatedAt", "DESC"]],
@@ -216,7 +169,6 @@ const getSearchBarang = async (req, res) => {
       totalRows,
       limit,
     });
-    // console.log(result)
   } catch (error) {
     console.error(error);
     res.status(400).json({ msg: "Gagal Mengambil Data! " + error });
@@ -233,7 +185,8 @@ const getBarangJoin = async (req, res) => {
         },
       ],
       order: [["id", "DESC"]],
-      // Tanpa limit: dipakai scan barcode dan cek duplikat, jadi harus mencakup semua barang
+      // Tanpa limit: dipakai scan barcode dan cek duplikat. Kasir hanya barang aktif; pembelian (?termasukArsip=1) semua barang
+      where: filterArsip(req.query.termasukArsip === "1" ? "semua" : "aktif"),
       attributes: ["id", "nama", "kodeBarang", "jenisBarang", "satuan", "jumlah", "hargaBeli", "hargaJual", "supplierId"],
     });
     res.status(200).json(barang);
@@ -245,6 +198,8 @@ const getBarangJoin = async (req, res) => {
 const getBarangJoinAutoComplate = async (req, res) => {
   let search = req.query.search;
   let barang = "";
+  // Kasir hanya barang aktif; pembelian (?termasukArsip=1) juga barang arsip agar bisa di-restock
+  const arsip = filterArsip(req.query.termasukArsip === "1" ? "semua" : "aktif");
   try {
     if (search == "") {
       barang = await barangModel.findAll({
@@ -256,6 +211,7 @@ const getBarangJoinAutoComplate = async (req, res) => {
         ],
         order: [["id", "DESC"]],
         limit: 10,
+        where: arsip,
         attributes: ["id", "nama", "kodeBarang", "jenisBarang", "satuan", "jumlah", "hargaBeli", "hargaJual", "supplierId"],
       });
     } else {
@@ -270,16 +226,10 @@ const getBarangJoinAutoComplate = async (req, res) => {
         limit: 10,
         attributes: ["id", "nama", "kodeBarang", "jenisBarang", "satuan", "jumlah", "hargaBeli", "hargaJual", "supplierId"],
         where: {
-          [Op.or]: [
+          [Op.and]: [
+            arsip,
             {
-              nama: {
-                [Op.like]: "%" + search + "%",
-              },
-            },
-            {
-              kodeBarang: {
-                [Op.like]: "%" + search + "%",
-              },
+              [Op.or]: [{ nama: { [Op.like]: "%" + search + "%" } }, { kodeBarang: { [Op.like]: "%" + search + "%" } }],
             },
           ],
         },
@@ -319,10 +269,6 @@ const tambahBarang = async (req, res) => {
   try {
     const { nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, supplierId } = req.body;
 
-    if (hargaBeli !== undefined && hargaJual !== undefined && Number(hargaJual) < Number(hargaBeli)) {
-      return res.status(400).json({ msg: "Harga jual tidak boleh lebih kecil dari harga beli" });
-    }
-
     // Cek apakah nama sudah ada di database
     const existingBarang = await barangModel.findOne({ where: { nama } });
     if (existingBarang) {
@@ -361,9 +307,7 @@ const editBarang = async (req, res) => {
       return res.status(400).json({ msg: "Stok tidak bisa diubah di sini. Gunakan fitur Penyesuaian Stok." });
     }
 
-    if (hargaBeli !== undefined && hargaJual !== undefined && Number(hargaJual) < Number(hargaBeli)) {
-      return res.status(400).json({ msg: "Harga jual tidak boleh lebih kecil dari harga beli" });
-    }
+    // Harga jual boleh di bawah harga beli (promo / jual rugi), jadi tidak divalidasi terhadap harga beli
 
     // Cek apakah nama sudah ada di database
     // const existingBarang = await barangModel.findOne({ where: { nama } });
@@ -467,6 +411,7 @@ const penyesuaianStok = async (req, res) => {
       }
 
       await barang.update({ jumlah: stokBaru }, { transaction: t });
+      if (stokBaru > 0) await aktifkanJikaDiarsip(barang.id, t);
       await penyesuaianStokModel.create(
         {
           qty: Math.abs(selisih),
@@ -523,14 +468,132 @@ const getDetailBarang = async (req, res) => {
     });
 
     const totalRows = parseInt(countRows[0]?.total) || 0;
+    const arsip = await barangArsipModel.findOne({ where: { barangId: barang.id } });
     res.status(200).json({
       barang,
+      arsip,
       ringkasan,
       riwayat,
       page,
       limit,
       totalRows,
       totalPage: Math.ceil(totalRows / limit),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ msg: "Gagal Mengambil Data! " + error });
+  }
+};
+
+// Arsipkan banyak barang sekaligus (PIN admin). Hanya barang stok 0 yang bisa diarsip,
+// agar barang yang masih punya stok tidak pernah tersembunyi dari kasir & nilai stok.
+const arsipBarang = async (req, res) => {
+  const ids = [...new Set((Array.isArray(req.body.ids) ? req.body.ids : []).map(Number).filter(Number.isInteger))];
+  const alasan = (req.body.alasan || "").trim();
+
+  if (ids.length === 0) {
+    return res.status(400).json({ msg: "Pilih minimal satu barang" });
+  }
+  if (alasan.length < 5) {
+    return res.status(400).json({ msg: "Alasan arsip wajib diisi (minimal 5 karakter)" });
+  }
+
+  try {
+    const hasil = await db.transaction(async (t) => {
+      const barang = await barangModel.findAll({ where: { id: ids }, transaction: t, lock: t.LOCK.UPDATE });
+      if (barang.length !== ids.length) {
+        throw Object.assign(new Error("Sebagian barang tidak ditemukan"), { status: 404 });
+      }
+      const masihAdaStok = barang.filter((b) => (parseInt(b.jumlah) || 0) > 0);
+      if (masihAdaStok.length) {
+        const nama = masihAdaStok.slice(0, 5).map((b) => `${b.nama} (${b.jumlah})`).join(", ");
+        throw Object.assign(new Error(`Barang yang masih punya stok tidak bisa diarsip: ${nama}${masihAdaStok.length > 5 ? ", ..." : ""}`), { status: 409 });
+      }
+
+      const sudah = (await barangArsipModel.findAll({ where: { barangId: ids }, transaction: t })).map((a) => a.barangId);
+      const baru = barang.filter((b) => !sudah.includes(b.id));
+      await barangArsipModel.bulkCreate(
+        baru.map((b) => ({ barangId: b.id, alasan, operator: req.admin?.operator })),
+        { transaction: t }
+      );
+      await catatJejak(req, { aksi: "arsip_barang", referensi: baru.map((b) => b.id).join(","), alasan, detail: { jumlah: baru.length, barang: baru.map((b) => b.nama) } }, t);
+      return { diarsip: baru.length, sudahArsip: sudah.length };
+    });
+
+    res.status(200).json({ msg: `${hasil.diarsip} barang diarsipkan`, ...hasil });
+  } catch (error) {
+    console.error(error);
+    res.status(error.status || 400).json({ msg: error.status ? error.message : "Gagal Mengarsipkan Barang! " + error });
+  }
+};
+
+// Keluarkan barang dari arsip (PIN admin)
+const aktifkanBarang = async (req, res) => {
+  try {
+    const barang = await barangModel.findByPk(req.params.id);
+    if (!barang) {
+      return res.status(404).json({ msg: "Barang tidak ditemukan" });
+    }
+    await db.transaction(async (t) => {
+      const dihapus = await aktifkanJikaDiarsip(barang.id, t);
+      if (!dihapus) {
+        throw Object.assign(new Error("Barang ini tidak sedang diarsip"), { status: 400 });
+      }
+      await catatJejak(req, { aksi: "aktifkan_barang", referensi: barang.id, detail: { nama: barang.nama } }, t);
+    });
+    res.status(200).json({ msg: `Barang "${barang.nama}" aktif kembali` });
+  } catch (error) {
+    console.error(error);
+    res.status(error.status || 400).json({ msg: error.status ? error.message : "Gagal Mengaktifkan Barang! " + error });
+  }
+};
+
+// Ringkasan data barang yang perlu dibersihkan (read-only). Kandidat arsip: stok 0, belum diarsip,
+// dan tidak ada pergerakan stok selama `hari` terakhir (default 90).
+const kesehatanData = async (req, res) => {
+  try {
+    const hari = parseInt(req.query.hari) || 90;
+    const batas = new Date(Date.now() - hari * 24 * 60 * 60 * 1000);
+    const q = (sql, replacements = {}) => db.query(sql, { replacements, type: QueryTypes.SELECT });
+    const aktif = `b.id NOT IN ${SQL_ID_ARSIP}`;
+
+    const [tanpaNama, tanpaKode, hargaKosong, kodeDuplikat, supplierTanpaNama, kandidatArsip, jumlahArsip] = await Promise.all([
+      q(`SELECT b.id, b.nama, b.kodeBarang, b.jumlah FROM barang b WHERE ${aktif} AND (b.nama IS NULL OR TRIM(b.nama) = '') ORDER BY b.id`),
+      q(`SELECT b.id, b.nama, b.kodeBarang, b.jumlah FROM barang b WHERE ${aktif} AND (b.kodeBarang IS NULL OR TRIM(b.kodeBarang) = '') ORDER BY b.id`),
+      q(`SELECT b.id, b.nama, b.kodeBarang, b.jumlah, b.hargaBeli, b.hargaJual FROM barang b WHERE ${aktif} AND (b.hargaJual IS NULL OR b.hargaJual <= 0) ORDER BY b.id`),
+      q(
+        `SELECT b.id, b.nama, b.kodeBarang, b.jumlah FROM barang b
+         WHERE TRIM(b.kodeBarang) <> '' AND b.kodeBarang IN (SELECT kodeBarang FROM barang WHERE TRIM(kodeBarang) <> '' GROUP BY kodeBarang HAVING COUNT(*) > 1)
+         ORDER BY b.kodeBarang, b.id`
+      ),
+      q(`SELECT s.id, s.nama, s.noHP, s.alamat, (SELECT COUNT(*) FROM barang WHERE supplierId = s.id) AS jumlahBarang FROM supplier s WHERE s.nama IS NULL OR TRIM(s.nama) = '' ORDER BY s.id`),
+      q(
+        `SELECT b.id, b.nama, b.kodeBarang, b.jumlah, s.nama AS supplier, t.terakhir
+         FROM barang b
+         LEFT JOIN supplier s ON s.id = b.supplierId
+         LEFT JOIN (
+           SELECT barangId, MAX(createdAt) AS terakhir FROM (
+             SELECT barangId, createdAt FROM log_penjualan
+             UNION ALL SELECT barangId, createdAt FROM log_pembelian
+             UNION ALL SELECT barangId, createdAt FROM penyesuaian_stok
+           ) x GROUP BY barangId
+         ) t ON t.barangId = b.id
+         WHERE ${aktif} AND b.jumlah <= 0 AND (t.terakhir IS NULL OR t.terakhir < :batas)
+         ORDER BY t.terakhir IS NULL DESC, t.terakhir ASC`,
+        { batas }
+      ),
+      q(`SELECT COUNT(*) AS n FROM barang_arsip`),
+    ]);
+
+    res.status(200).json({
+      hari,
+      jumlahArsip: parseInt(jumlahArsip[0]?.n) || 0,
+      tanpaNama,
+      tanpaKode,
+      hargaKosong,
+      kodeDuplikat,
+      supplierTanpaNama,
+      kandidatArsip,
     });
   } catch (error) {
     console.error(error);
@@ -579,6 +642,7 @@ const hapusBarang = async (req, res) => {
       await logPenjualanModel.destroy(opt);
       await logPembelianModel.destroy(opt);
       await penyesuaianStokModel.destroy(opt);
+      await barangArsipModel.destroy(opt);
       await barang.destroy({ transaction: t });
 
       // Barang & riwayatnya hilang, jadi jejak admin menyimpan ringkasan apa yang dihapus
@@ -608,6 +672,9 @@ module.exports = {
   getHapusInfoBarang,
   getDetailBarang,
   penyesuaianStok,
+  arsipBarang,
+  aktifkanBarang,
+  kesehatanData,
   hapusBarang,
   lapBarang,
   getLapBarang,

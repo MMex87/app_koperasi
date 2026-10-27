@@ -5,6 +5,7 @@ const supplierModel = require("../model/SupplierModel.js");
 const transPenjualanModel = require("../model/TransPenjualanModel.js");
 const logPenjualanModel = require("../model/LogPenjualanModel.js");
 const pembatalanModel = require("../model/PembatalanModel.js");
+const { aktifkanJikaDiarsip } = require("../model/BarangArsipModel.js");
 const { catatJejak } = require("../middleware/adminPin.js");
 const db = require("../config/database.js");
 const { idAnggotaCustomer } = require("../config/config.js");
@@ -1048,6 +1049,7 @@ const batalPenjualan = async (req, res) => {
           const stokAwal = parseInt(barang.jumlah) || 0;
           const stokAkhir = stokAwal + jumlah;
           await barang.update({ jumlah: stokAkhir }, { transaction: t });
+          await aktifkanJikaDiarsip(barang.id, t);
           await logPenjualanModel.create(
             { qty: jumlah, qty_awal: stokAwal, qty_baru: stokAkhir, keterangan: "Pembatalan Penjualan (+)", barangId: barang.id, faktur },
             { transaction: t },

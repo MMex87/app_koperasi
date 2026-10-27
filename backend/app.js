@@ -19,6 +19,7 @@ const returnPenjualanModel = require('./src/model/ReturnPenjualanModel.js')
 const pembatalanModel = require('./src/model/PembatalanModel.js')
 const penyesuaianStokModel = require('./src/model/PenyesuaianStokModel.js')
 const jejakAdminModel = require('./src/model/JejakAdminModel.js')
+const barangArsipModel = require('./src/model/BarangArsipModel.js')
 
 
 const app = express()
@@ -49,6 +50,7 @@ dotenv.config()
 pembatalanModel.sync().catch((error) => console.error('Gagal membuat tabel pembatalan_transaksi:', error))
 penyesuaianStokModel.sync().catch((error) => console.error('Gagal membuat tabel penyesuaian_stok:', error))
 jejakAdminModel.sync().catch((error) => console.error('Gagal membuat tabel jejak_admin:', error))
+barangArsipModel.sync().catch((error) => console.error('Gagal membuat tabel barang_arsip:', error))
 
 if (!process.env.ADMIN_PIN) {
     console.warn('ADMIN_PIN belum diatur di .env: aksi admin (penyesuaian stok, hapus barang, batal faktur) akan ditolak')

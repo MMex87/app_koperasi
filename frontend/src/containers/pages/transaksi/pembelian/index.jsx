@@ -27,7 +27,7 @@ const TransaksiPembalian = (props) => {
     }
 
     getSupplier().then(setSuppliers);
-    getBarangJoin().then(setBarang);
+    getBarangJoin(true).then(setBarang);
     getTransPembelian().then(setTransaksi);
   }, []);
 
@@ -93,9 +93,10 @@ const TransaksiPembalian = (props) => {
         return;
       }
 
+      // Harga jual di bawah harga beli diizinkan (promo / jual rugi), cukup dikonfirmasi
       if (hargaJualInt < hargaInt) {
-        Swal.fire("Gagal!", "Harga jual tidak boleh lebih kecil dari harga beli", "warning");
-        return;
+        const lanjut = await Swal.fire({ icon: "warning", title: "Harga jual di bawah harga beli", text: "Barang ini akan dijual rugi. Tetap tambahkan?", showCancelButton: true, confirmButtonText: "Tetap tambahkan", cancelButtonText: "Periksa lagi", reverseButtons: true });
+        if (!lanjut.isConfirmed) return;
       }
 
       if (props.namaBarang.length < 3 || props.kodeBarang.length < 3) {

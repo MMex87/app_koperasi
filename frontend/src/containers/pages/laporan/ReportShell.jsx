@@ -4,7 +4,8 @@ import ReactPaginate from "react-paginate";
 import { formatNilai } from "./exportLaporan";
 
 // Kerangka bersama halaman laporan: judul, tab, filter, ringkasan, tabel berpaginasi, dan tombol unduh
-const ReportShell = ({ title, subtitle, tabs, filters, summary = [], columns, rows, loading, error, onPdf, onExcel, rowAction, cari, emptyText = "Tidak ada data pada periode ini", pageSize = 10 }) => {
+// extra: konten tambahan (mis. grafik) yang ditampilkan di antara ringkasan dan tabel
+const ReportShell = ({ title, subtitle, tabs, filters, summary = [], extra, columns, rows, loading, error, onPdf, onExcel, rowAction, cari, emptyText = "Tidak ada data pada periode ini", pageSize = 10 }) => {
   const [page, setPage] = useState(0);
   const [q, setQ] = useState("");
 
@@ -85,6 +86,8 @@ const ReportShell = ({ title, subtitle, tabs, filters, summary = [], columns, ro
             ))}
           </div>
         )}
+
+        {extra}
 
         {/* TABEL */}
         <div className="card border-0 shadow-sm">

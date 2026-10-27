@@ -13,6 +13,7 @@ jest.mock("../../../src/model/TransPenjualanModel.js", () => ({ findByPk: jest.f
 jest.mock("../../../src/model/TransPembelianModel.js", () => ({ findByPk: jest.fn(), findAll: jest.fn(), update: jest.fn() }));
 jest.mock("../../../src/model/LogPenjualanModel.js", () => ({ create: jest.fn() }));
 jest.mock("../../../src/model/LogPembelianModel.js", () => ({ create: jest.fn() }));
+jest.mock("../../../src/model/BarangArsipModel.js", () => ({ findOne: jest.fn(), destroy: jest.fn(), filterArsip: jest.fn(() => ({})), aktifkanJikaDiarsip: jest.fn(), SQL_ID_ARSIP: "(SELECT barangId FROM barang_arsip)" }));
 jest.mock("../../../src/model/JejakAdminModel.js", () => ({ create: jest.fn() }));
 jest.mock("../../../src/model/PembatalanModel.js", () => ({ create: jest.fn() }));
 

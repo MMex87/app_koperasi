@@ -4,6 +4,7 @@ const supplierModel = require("../model/SupplierModel.js");
 const transPembelianModel = require("../model/TransPembelianModel.js");
 const logPembelianModel = require("../model/LogPembelianModel.js");
 const pembatalanModel = require("../model/PembatalanModel.js");
+const { aktifkanJikaDiarsip } = require("../model/BarangArsipModel.js");
 const { catatJejak } = require("../middleware/adminPin.js");
 const db = require("../config/database.js");
 const moment = require("moment");
@@ -482,9 +483,7 @@ const tambahPembelian = async (req, res) => {
     if (!isBilanganBulat(harga) || Number(harga) <= 0 || !isBilanganBulat(hargaJual) || Number(hargaJual) <= 0) {
       return res.status(400).json({ msg: "Harga beli dan harga jual harus lebih dari 0" });
     }
-    if (Number(hargaJual) < Number(harga)) {
-      return res.status(400).json({ msg: "Harga jual tidak boleh lebih kecil dari harga beli" });
-    }
+    // Harga jual boleh di bawah harga beli (promo / jual rugi), jadi tidak divalidasi terhadap harga beli
     if (statusPembelian && !STATUS_PEMBELIAN.includes(statusPembelian)) {
       return res.status(400).json({ msg: "statusPembelian tidak valid" });
     }
@@ -600,19 +599,6 @@ const editPembelian = async (req, res) => {
       return res.status(400).json({ msg: "Status keranjang hanya bisa diubah melalui simpan pembelian" });
     }
 
-    if (harga !== undefined && hargaJual !== undefined) {
-      if (Number(hargaJual) < Number(harga)) {
-        return res.status(400).json({ msg: "Harga jual tidak boleh lebih kecil dari harga beli" });
-      }
-    } else if (harga !== undefined || hargaJual !== undefined) {
-      // Hanya salah satu harga yang dikirim: bandingkan dengan nilai yang tersimpan
-      const hargaBeliAkhir = Number(harga ?? trans.harga);
-      const hargaJualAkhir = Number(hargaJual ?? trans.hargaJual);
-      if (hargaJualAkhir < hargaBeliAkhir) {
-        return res.status(400).json({ msg: "Harga jual tidak boleh lebih kecil dari harga beli" });
-      }
-    }
-
     await transPembelianModel.update(
       {
         jumlah,
@@ -676,6 +662,8 @@ const checkoutPembelian = async (req, res) => {
         // Harga barang baru berlaku saat pembelian disimpan (bukan saat masih di keranjang)
         const hargaBaru = parseInt(item.harga) > 0 && parseInt(item.hargaJual) > 0 ? { hargaBeli: item.harga, hargaJual: item.hargaJual } : {};
         await barang.update({ jumlah: stokAkhir, ...hargaBaru }, { transaction: t });
+        // Barang arsip yang di-restock otomatis aktif kembali
+        await aktifkanJikaDiarsip(barang.id, t);
 
         await logPembelianModel.create(
           {

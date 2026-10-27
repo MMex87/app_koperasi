@@ -11,6 +11,7 @@ const pembayaranCicilan = require("../controllers/PembayaranCicilan.js");
 const logPembelian = require("../controllers/LogPembelian.js");
 const logPenjualan = require("../controllers/LogPenjualan.js");
 const dashboard = require("../controllers/Dashboard.js");
+const laporan = require("../controllers/Laporan.js");
 const { wajibAdmin, verifikasiAdmin } = require("../middleware/adminPin.js");
 
 const router = express.Router();
@@ -20,6 +21,9 @@ router.post("/admin/verifikasi", verifikasiAdmin);
 
 // dashboard
 router.get("/dashboard", dashboard.getDashboard);
+
+// laporan
+router.get("/laporan/labaRugi", laporan.labaRugi);
 
 // barang
 router.get("/barang", barang.getBarang);
@@ -33,6 +37,9 @@ router.put("/barang/:id", barang.editBarang);
 router.get("/barang/:id/hapus-info", barang.getHapusInfoBarang);
 router.get("/barang/:id/detail", barang.getDetailBarang);
 router.post("/barang/:id/penyesuaian", wajibAdmin, barang.penyesuaianStok);
+router.post("/barang-arsip", wajibAdmin, barang.arsipBarang);
+router.post("/barang/:id/aktifkan", wajibAdmin, barang.aktifkanBarang);
+router.get("/barang-kesehatan", barang.kesehatanData);
 router.delete("/barang/:id", wajibAdmin, barang.hapusBarang);
 router.get("/lapBarang", barang.lapBarang);
 router.get("/lapBarangDownload", barang.getLapBarang);

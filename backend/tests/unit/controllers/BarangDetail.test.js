@@ -10,6 +10,7 @@
 // Factory mock agar model Sequelize asli (dan koneksi DB) tidak ikut dimuat
 const mockT = { LOCK: { UPDATE: "UPDATE" } };
 jest.mock("../../../src/config/database.js", () => ({ query: jest.fn(), transaction: jest.fn((cb) => cb(mockT)) }));
+jest.mock("../../../src/model/BarangArsipModel.js", () => ({ findOne: jest.fn(), destroy: jest.fn(), filterArsip: jest.fn(() => ({})), aktifkanJikaDiarsip: jest.fn(), SQL_ID_ARSIP: "(SELECT barangId FROM barang_arsip)" }));
 jest.mock("../../../src/model/JejakAdminModel.js", () => ({ create: jest.fn() }));
 jest.mock("../../../src/model/PenyesuaianStokModel.js", () => ({ create: jest.fn(), KOLASI_TABEL: "utf8mb4_general_ci" }));
 jest.mock("../../../src/config/config.js", () => ({ idSupplierLaporan: "1" }));

@@ -94,8 +94,10 @@ const CartList = (props) => {
     if (!hargaBeliInt || hargaBeliInt <= 0 || !hargaJualInt || hargaJualInt <= 0) {
       return Swal.fire("Gagal!", "Harga beli dan harga jual harus lebih dari 0", "warning");
     }
+    // Harga jual di bawah harga beli diizinkan (promo / jual rugi), cukup dikonfirmasi
     if (hargaJualInt < hargaBeliInt) {
-      return Swal.fire("Gagal!", "Harga jual tidak boleh lebih kecil dari harga beli", "warning");
+      const lanjut = await Swal.fire({ icon: "warning", title: "Harga jual di bawah harga beli", text: "Barang ini akan dijual rugi. Tetap simpan?", showCancelButton: true, confirmButtonText: "Tetap simpan", cancelButtonText: "Periksa lagi", reverseButtons: true });
+      if (!lanjut.isConfirmed) return;
     }
 
     try {
@@ -193,7 +195,7 @@ const CartList = (props) => {
                   ) : (
                     items.map((v, i) => {
                       const sedangEdit = displayEdit && v.id === idEdit;
-                      const jualInvalid = sedangEdit && editHargaJual < editHargaBeli;
+                      const jualRugi = sedangEdit && editHargaJual < editHargaBeli;
                       return (
                         <tr key={v.id} className={sedangEdit ? "table-warning" : ""}>
                           <td className="text-center text-muted">{i + 1}</td>
@@ -211,7 +213,7 @@ const CartList = (props) => {
                                 <input type="number" min="1" className="form-control form-control-sm text-end" value={editHargaBeli} onChange={(e) => setEditHargaBeli(+e.target.value)} />
                               </td>
                               <td>
-                                <input type="number" min="1" className={`form-control form-control-sm text-end ${jualInvalid ? "is-invalid" : ""}`} value={editHargaJual} onChange={(e) => setEditHargaJual(+e.target.value)} />
+                                <input type="number" min="1" className={`form-control form-control-sm text-end ${jualRugi ? "border-warning" : ""}`} title={jualRugi ? "Di bawah harga beli (rugi)" : undefined} value={editHargaJual} onChange={(e) => setEditHargaJual(+e.target.value)} />
                               </td>
                               <td className="text-end fw-bold text-nowrap">{convertRupiah.convert(jumlah * editHargaBeli)}</td>
                             </>
@@ -227,7 +229,7 @@ const CartList = (props) => {
                           <td className="text-center text-nowrap">
                             {sedangEdit ? (
                               <>
-                                <button className="btn btn-sm btn-success me-1" title="Simpan" disabled={jualInvalid} onClick={save}>
+                                <button className="btn btn-sm btn-success me-1" title="Simpan" onClick={save}>
                                   <i className="bi bi-check-lg" />
                                 </button>
                                 <button className="btn btn-sm btn-secondary" title="Batal" onClick={batal}>

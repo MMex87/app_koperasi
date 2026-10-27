@@ -24,7 +24,7 @@ const kunciTanggal = (v) => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 };
 
-const tSupplier = () => {
+const LaporanReturSupplier = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -159,4 +159,4 @@ const tSupplier = () => {
   );
 };
 
-export default tSupplier;
+export default LaporanReturSupplier;
