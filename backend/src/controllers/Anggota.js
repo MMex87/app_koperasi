@@ -1,7 +1,6 @@
 const { Op, Sequelize } = require("sequelize");
 const anggotaModel = require("../model/AnggotaModel.js");
 const transPenjualanModel = require("../model/TransPenjualanModel.js");
-const PenjualanBonModel = require("../model/PenjualanBonModel.js");
 
 const getAnggota = async (req, res) => {
   try {
@@ -175,9 +174,8 @@ const hapusAnggota = async (req, res) => {
   try {
     // Tolak jika anggota masih punya riwayat transaksi, agar laporan tidak kehilangan data anggota
     const jumlahTransaksi = await transPenjualanModel.count({ where: { anggotaId: req.params.id } });
-    const jumlahBon = await PenjualanBonModel.count({ where: { anggotaId: req.params.id } });
-    if (jumlahTransaksi > 0 || jumlahBon > 0) {
-      return res.status(409).json({ msg: `Anggota tidak bisa dihapus: masih punya ${jumlahTransaksi} transaksi penjualan dan ${jumlahBon} bon` });
+    if (jumlahTransaksi > 0) {
+      return res.status(409).json({ msg: `Anggota tidak bisa dihapus: masih punya ${jumlahTransaksi} transaksi penjualan` });
     }
 
     await anggotaModel.destroy({

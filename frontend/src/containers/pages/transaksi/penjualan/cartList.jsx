@@ -52,6 +52,8 @@ const CartList = (props) => {
 
     // cek transaksi on process
     const onProcess = data.find((v) => v.statusPenjualan === "onProcess");
+    // Anggota dikunci selama keranjang berisi barang (satu faktur = satu anggota)
+    props.handleKeranjangTerisi(!!onProcess);
 
     if (!onProcess) {
       setDisplaySearch(true);
@@ -80,7 +82,7 @@ const CartList = (props) => {
 
   useEffect(() => {
     loadTransaksi();
-  }, [loadTransaksi, props.harga, props.jumlah, props.anggota, refresh]);
+  }, [loadTransaksi, props.harga, props.jumlah, props.anggota, props.versiKeranjang, refresh]);
 
   /* ======================================================
      HANDLER
@@ -372,6 +374,7 @@ const mapStateToProps = (state) => ({
   anggota: state.anggota,
   typePembayaran: state.typePembayaran,
   kodeBarang: state.kodeBarang,
+  versiKeranjang: state.versiKeranjang,
   namaBarang: state.namaBarang,
   jumlah: state.jumlah,
   harga: state.harga,
@@ -389,6 +392,7 @@ const mapDispatchToProps = (dispatch) => ({
   handleHargaBarang: (v) => dispatch({ type: ActionType.SET_HARGA_PENJUALAN, index: v }),
   handleFakturPenjualan: (v) => dispatch({ type: ActionType.SET_FAKTUR_PENJUALAN, index: v }),
   handleSupplierIdPenjualan: (v) => dispatch({ type: ActionType.SET_ID_SUPPLIER_PENJUALAN, index: v }),
+  handleKeranjangTerisi: (v) => dispatch({ type: ActionType.SET_KERANJANG_TERISI_PENJUALAN, index: v }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CartList);

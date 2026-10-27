@@ -1,13 +1,12 @@
 # App Koperasi
 
-Aplikasi kasir dan manajemen koperasi/kantin berbasis web. Fiturnya mencakup transaksi penjualan dan pembelian, retur, bon anggota, stok barang, laporan, dan dashboard.
+Aplikasi kasir dan manajemen koperasi/kantin berbasis web. Fiturnya mencakup transaksi penjualan dan pembelian, retur, stok barang, laporan, dan dashboard.
 
 ## Fitur
 
 - **Dashboard**: penjualan harian/bulanan, laba, grafik, barang terlaris, dan stok menipis
 - **Transaksi**: penjualan (scan barcode atau input manual), pembelian, dan retur penjualan/pembelian
 - **Data master**: barang, anggota, dan supplier
-- **Bon anggota**: penjualan kredit dan pembayaran bon
 - **Laporan** penjualan, pembelian, anggota, customer, supplier, dan barang (harian dan bulanan), dengan export Excel dan PDF
 - **Aksi admin dengan PIN**: penyesuaian stok, hapus barang, dan pembatalan faktur, lengkap dengan jejak admin
 

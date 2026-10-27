@@ -22,7 +22,6 @@ jest.mock("../../../src/model/ReturnPenjualanModel.js", () => ({}));
 jest.mock("../../../src/model/ReturnPembelianModel.js", () => ({}));
 jest.mock("../../../src/model/LogPenjualanModel.js", () => ({}));
 jest.mock("../../../src/model/LogPembelianModel.js", () => ({}));
-jest.mock("../../../src/model/PenjualanBonModel.js", () => ({}));
 
 const db = require("../../../src/config/database.js");
 const barangModel = require("../../../src/model/BarangModel.js");

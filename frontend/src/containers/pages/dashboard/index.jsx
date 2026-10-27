@@ -23,7 +23,7 @@ const Perubahan = ({ nilai, label }) => {
 };
 
 const KpiCard = ({ title, value, icon, color, loading, children }) => (
-  <div className="col-12 col-sm-6 col-xl-3">
+  <div className="col-12 col-md-4">
     <div className="card border-0 shadow-sm h-100 kpi-card">
       <div className="card-body p-4">
         <div className="d-flex justify-content-between align-items-start mb-2">
@@ -163,10 +163,6 @@ const Dashboard = () => {
           <KpiCard title="Estimasi Laba Bulan Ini" value={rupiah(penjualan?.labaBulanIni)} icon="bi-piggy-bank" color="info" loading={loading}>
             <div className="mb-1 text-muted">Margin {marginLaba.toFixed(1)}%</div>
             <span className="text-muted">Dari harga beli barang saat ini</span>
-          </KpiCard>
-          <KpiCard title="Bon Belum Lunas" value={rupiah(data?.bon.total)} icon="bi-journal-text" color="danger" loading={loading}>
-            <div className="mb-1 text-muted">{data?.bon.anggota} anggota memiliki bon</div>
-            <span className="text-muted">Total piutang berjalan</span>
           </KpiCard>
         </div>
 
@@ -378,7 +374,7 @@ const Dashboard = () => {
                         <td className="text-muted small">{formatTanggal(t.waktu, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</td>
                         <td className="text-center">{t.item}</td>
                         <td className="text-center">
-                          <span className={`badge ${t.status === "Bon" ? "bg-danger bg-opacity-10 text-danger" : "bg-light text-dark border"}`}>{t.status === "Bon" ? "Bon (belum lunas)" : t.typePembayaran}</span>
+                          <span className="badge bg-light text-dark border">{t.typePembayaran}</span>
                         </td>
                         <td className="text-end fw-bold">{rupiah(t.total)}</td>
                       </tr>

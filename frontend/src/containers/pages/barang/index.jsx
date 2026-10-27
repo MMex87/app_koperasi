@@ -15,6 +15,7 @@ import KesehatanData from "./KesehatanData";
 export function DaftarBarang({ admin = false }) {
   const [barang, setBarang] = useState([]);
   const [search, setSearch] = useState("");
+  const [filterStok, setFilterStok] = useState("");
   const [page, setPage] = useState(0);
   const [limit] = useState(10);
   const [pages, setPages] = useState(0);
@@ -35,7 +36,7 @@ export function DaftarBarang({ admin = false }) {
 
   useEffect(() => {
     if (tab !== "kesehatan") loadBarang();
-  }, [search, page, tab]);
+  }, [search, page, tab, filterStok]);
 
   const gantiTab = (t) => {
     setTab(t);
@@ -68,7 +69,7 @@ export function DaftarBarang({ admin = false }) {
   const loadBarang = async () => {
     setLoading(true);
     try {
-      const data = await getSearchBarang(encodeURIComponent(search), limit, page, admin && tab === "arsip");
+      const data = await getSearchBarang(encodeURIComponent(search), limit, page, admin && tab === "arsip", filterStok);
       setBarang(data.result);
       setRows(data.totalRows);
       setPages(data.totalPage);
@@ -82,6 +83,12 @@ export function DaftarBarang({ admin = false }) {
   const cari = (e) => {
     setSearch(e.target.value);
     setPage(0);
+  };
+
+  const gantiFilterStok = (e) => {
+    setFilterStok(e.target.value);
+    setPage(0);
+    setTerpilih([]);
   };
 
   const changePage = ({ selected }) => {
@@ -162,7 +169,6 @@ export function DaftarBarang({ admin = false }) {
         `<li>${t.returnPenjualan} retur penjualan, ${t.returnPembelian} retur pembelian</li>` +
         `<li>${t.logPenjualan + t.logPembelian + (t.penyesuaianStok || 0)} riwayat log stok</li>` +
         `</ul>` +
-        (t.penjualanBon > 0 ? `<p class="text-danger">${t.penjualanBon} bon terkait akan kehilangan rincian transaksinya.</p>` : "") +
         `<p>Laporan penjualan dan pembelian akan berubah. Ketik <b>HAPUS</b> untuk melanjutkan.</p>` +
         `</div>`,
       input: "text",
@@ -281,11 +287,20 @@ export function DaftarBarang({ admin = false }) {
               </div>
             )}
             <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-              <div className="input-group" style={{ maxWidth: "340px" }}>
-                <span className="input-group-text bg-white">
-                  <i className="bi bi-search" />
-                </span>
-                <input type="text" className="form-control" placeholder="Cari nama atau kode barang..." value={search} onChange={cari} />
+              <div className="d-flex flex-wrap align-items-center gap-2">
+                <div className="input-group" style={{ maxWidth: "340px" }}>
+                  <span className="input-group-text bg-white">
+                    <i className="bi bi-search" />
+                  </span>
+                  <input type="text" className="form-control" placeholder="Cari nama atau kode barang..." value={search} onChange={cari} />
+                </div>
+                {/* Batas menipis 10, sama dengan dashboard */}
+                <select className="form-select" style={{ width: "auto" }} value={filterStok} onChange={gantiFilterStok} title="Filter stok">
+                  <option value="">Semua stok</option>
+                  <option value="tersedia">Tersedia (&gt; 10)</option>
+                  <option value="menipis">Menipis (1–10)</option>
+                  <option value="habis">Habis (0)</option>
+                </select>
               </div>
               <div className="d-flex align-items-center gap-2">
                 {admin && tab === "aktif" && terpilih.length > 0 && (

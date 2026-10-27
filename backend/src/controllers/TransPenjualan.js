@@ -811,7 +811,7 @@ const getTotalHarga = async (req, res) => {
   }
 };
 
-const STATUS_PENJUALAN = ["onProcess", "Selesai", "Bon", "Lunas", "Retur"];
+const STATUS_PENJUALAN = ["onProcess", "Selesai", "Retur"];
 
 const isBilanganBulat = (v) => v !== null && v !== "" && Number.isInteger(Number(v));
 
@@ -882,15 +882,8 @@ const editPenjualan = async (req, res) => {
         return res.status(400).json({ msg: "Status keranjang hanya bisa diubah melalui checkout" });
       }
     } else {
-      // Transaksi selesai sudah mengurangi stok: isinya dikunci. Satu-satunya perubahan yang
-      // diizinkan adalah pelunasan bon (Bon -> Lunas). Koreksi lain lewat retur/pembatalan faktur.
-      const hanyaLunasi =
-        trans.statusPenjualan === "Bon" &&
-        statusPenjualan === "Lunas" &&
-        [jumlah, faktur, harga, typePembayaran, anggotaId, barangId].every((v) => v === undefined);
-      if (!hanyaLunasi) {
-        return res.status(409).json({ msg: "Transaksi yang sudah selesai tidak bisa diubah. Gunakan retur atau pembatalan faktur." });
-      }
+      // Transaksi selesai sudah mengurangi stok: isinya dikunci. Koreksi lewat retur/pembatalan faktur.
+      return res.status(409).json({ msg: "Transaksi yang sudah selesai tidak bisa diubah. Gunakan retur atau pembatalan faktur." });
     }
 
     await transPenjualanModel.update(
@@ -926,8 +919,6 @@ const checkoutPenjualan = async (req, res) => {
   }
 
   try {
-    const statusAkhir = typePembayaran === "Bon" ? "Bon" : "Selesai";
-
     await db.transaction(async (t) => {
       const items = await transPenjualanModel.findAll({
         where: { faktur, statusPenjualan: "onProcess" },
@@ -974,7 +965,7 @@ const checkoutPenjualan = async (req, res) => {
         );
 
         // Jenis pembayaran disamakan dengan yang dipilih saat bayar (bisa berubah setelah item masuk keranjang)
-        await item.update({ statusPenjualan: statusAkhir, ...(typePembayaran ? { typePembayaran } : {}) }, { transaction: t });
+        await item.update({ statusPenjualan: "Selesai", ...(typePembayaran ? { typePembayaran } : {}) }, { transaction: t });
       }
     });
 

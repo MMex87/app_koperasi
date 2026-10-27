@@ -50,8 +50,7 @@ describe("Dashboard Controller - Unit Tests", () => {
     ];
     transPenjualanModel.findAll
       .mockResolvedValueOnce(penjualan)
-      .mockResolvedValueOnce(penjualan)
-      .mockResolvedValueOnce([{ harga: 1500, anggotaId: 1 }]);
+      .mockResolvedValueOnce(penjualan);
     transPembelianModel.findAll.mockResolvedValue([{ jumlah: 10, harga: 1000 }]);
     barangModel.count.mockResolvedValueOnce(20).mockResolvedValueOnce(2).mockResolvedValueOnce(3);
     barangModel.findAll.mockResolvedValueOnce([{ id: 5, nama: "Gula", jumlah: 0 }]).mockResolvedValueOnce([{ jumlah: 10, hargaJual: 1500 }]);
@@ -66,7 +65,6 @@ describe("Dashboard Controller - Unit Tests", () => {
     expect(data.penjualan.hariIni).toEqual({ total: 7000, transaksi: 1 });
     expect(data.penjualan.kemarin).toEqual({ total: 1500, transaksi: 1 });
     expect(data.pembelianBulanIni.total).toBe(10000);
-    expect(data.bon).toEqual({ total: 1500, anggota: 1 });
     expect(data.stok).toMatchObject({ totalBarang: 20, stokHabis: 2, stokMenipis: 3, nilaiStok: 15000 });
     expect(data.grafikHarian).toHaveLength(7);
     expect(data.grafikBulanan).toHaveLength(12);

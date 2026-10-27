@@ -9,6 +9,7 @@ const { idSupplierLaporan } = require("../config/config.js");
 const moment = require("moment");
 
 // Status penjualan yang sudah checkout (onProcess = masih di keranjang)
+// Bon & Lunas hanya dari data lama (fitur bon sudah dihapus); tetap dihitung sebagai penjualan
 const STATUS_TERJUAL = ["Selesai", "Bon", "Lunas", "Retur"];
 const STATUS_TERBELI = ["Done", "Retur"];
 
@@ -32,7 +33,7 @@ const getDashboard = async (req, res) => {
     const awalGrafikHarian = awalHariIni.clone().subtract(6, "day");
     const awalData = moment.min(awalGrafikBulanan, awalGrafikHarian, awalBulanLalu);
 
-    const [penjualan, terbaru, pembelianBulanIni, bon, totalBarang, stokHabis, stokMenipis, listStokMenipis, barangLaporan, totalAnggota, totalSupplier] = await Promise.all([
+    const [penjualan, terbaru, pembelianBulanIni, totalBarang, stokHabis, stokMenipis, listStokMenipis, barangLaporan, totalAnggota, totalSupplier] = await Promise.all([
       transPenjualanModel.findAll({
         attributes: ["id", "jumlah", "faktur", "harga", "typePembayaran", "statusPenjualan", "barangId", "anggotaId", "createdAt"],
         where: {
@@ -61,10 +62,6 @@ const getDashboard = async (req, res) => {
           statusPembelian: { [Op.in]: STATUS_TERBELI },
           createdAt: { [Op.gte]: awalBulanIni.toDate() },
         },
-      }),
-      transPenjualanModel.findAll({
-        attributes: ["harga", "anggotaId"],
-        where: { statusPenjualan: "Bon" },
       }),
       // Barang arsip tidak dihitung (barang lama yang sudah tidak dijual)
       barangModel.count({ where: { nama: { [Op.ne]: null }, ...filterArsip() } }),
@@ -152,10 +149,6 @@ const getDashboard = async (req, res) => {
       pembelianBulanIni: {
         total: pembelianBulanIni.reduce((sum, r) => sum + toInt(r.harga) * toInt(r.jumlah), 0),
         transaksi: pembelianBulanIni.length,
-      },
-      bon: {
-        total: bon.reduce((sum, r) => sum + toInt(r.harga), 0),
-        anggota: new Set(bon.map((r) => r.anggotaId)).size,
       },
       stok: {
         totalBarang,

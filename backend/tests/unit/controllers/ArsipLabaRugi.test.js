@@ -14,7 +14,6 @@ jest.mock("../../../src/model/ReturnPenjualanModel.js", () => ({}));
 jest.mock("../../../src/model/ReturnPembelianModel.js", () => ({}));
 jest.mock("../../../src/model/LogPenjualanModel.js", () => ({}));
 jest.mock("../../../src/model/LogPembelianModel.js", () => ({}));
-jest.mock("../../../src/model/PenjualanBonModel.js", () => ({}));
 jest.mock("../../../src/model/PembatalanModel.js", () => ({}));
 jest.mock("../../../src/model/PenyesuaianStokModel.js", () => ({ KOLASI_TABEL: "utf8mb4_general_ci" }));
 jest.mock("../../../src/model/JejakAdminModel.js", () => ({ create: jest.fn() }));

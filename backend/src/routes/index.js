@@ -6,8 +6,6 @@ const transPembelian = require("../controllers/TransPembelian.js");
 const transPenjualan = require("../controllers/TransPenjualan.js");
 const returnTransPembelian = require("../controllers/ReturnPembelian.js");
 const returnTransPenjualan = require("../controllers/RetrunPenjualan.js");
-const penjualanBon = require("../controllers/PenjualanBon.js");
-const pembayaranCicilan = require("../controllers/PembayaranCicilan.js");
 const logPembelian = require("../controllers/LogPembelian.js");
 const logPenjualan = require("../controllers/LogPenjualan.js");
 const dashboard = require("../controllers/Dashboard.js");
@@ -101,18 +99,12 @@ router.delete("/transPenjualan/:id", transPenjualan.hapusPenjualan);
 router.get("/returnPembelian", returnTransPembelian.getReturnPembelian);
 router.get("/returnPembelian/:id", transPembelian.getPembelianById);
 router.get("/returnPembelianLaporan", returnTransPembelian.getReturnPembelianLaporan);
-router.post("/returnPembelian", returnTransPembelian.tambahReturnPembelian);
 router.post("/prosesReturPembelian", returnTransPembelian.prosesReturPembelian);
-router.put("/returnPembelian/:id", returnTransPembelian.editReturnPembelian);
-router.delete("/returnPembelian/:id", returnTransPembelian.hapusReturnPembelian);
 
 // return Penjualan
 router.get("/returnPenjualan", returnTransPenjualan.getReturnPenjualan);
 router.get("/returnPenjualan/:id", transPenjualan.getPenjualanById);
-router.post("/returnPenjualan", returnTransPenjualan.tambahReturnPenjualan);
 router.post("/prosesReturPenjualan", returnTransPenjualan.prosesReturPenjualan);
-router.put("/returnPenjualan/:id", returnTransPenjualan.editReturnPenjualan);
-router.delete("/returnPenjualan/:id", returnTransPenjualan.hapusReturnPenjualan);
 
 //Log Pembelian
 router.get("/logPembelian", logPembelian.search);
@@ -124,18 +116,5 @@ router.get("/testLog", logPenjualan.getLog);
 router.post("/logPenjualan", logPenjualan.create);
 router.delete("/logPenjualan/:barangId/:faktur", logPenjualan.destroy);
 
-// PenjualanBon
-router.get("/penjualanBon", penjualanBon.getPenBon);
-router.get("/penjualanBonSearch", penjualanBon.getPenBonJoinSearch);
-router.get("/penjualanBonJoin", penjualanBon.getPenBonJoin);
-router.post("/penjualanBon", penjualanBon.tambahPenBon);
-router.put("/penjualanBon/:id", penjualanBon.editPenBon);
-router.delete("/penjualanBon/:id", penjualanBon.hapusPenBon);
-
-// Pembayaran Cicilan
-router.get("/pembayaran", pembayaranCicilan.getCicilan);
-router.post("/pembayaran", pembayaranCicilan.tambahCicilan);
-router.put("/pembayaran/:id", pembayaranCicilan.editCicilan);
-router.delete("/pembayaran/:id", pembayaranCicilan.hapusCicilan);
 
 module.exports = router;

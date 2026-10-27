@@ -7,7 +7,6 @@ const returnPenjualanModel = require("../model/ReturnPenjualanModel.js");
 const returnPembelianModel = require("../model/ReturnPembelianModel.js");
 const logPenjualanModel = require("../model/LogPenjualanModel.js");
 const logPembelianModel = require("../model/LogPembelianModel.js");
-const PenjualanBonModel = require("../model/PenjualanBonModel.js");
 const penyesuaianStokModel = require("../model/PenyesuaianStokModel.js");
 const { KOLASI_TABEL } = require("../model/PenyesuaianStokModel.js");
 const db = require("../config/database.js");
@@ -16,12 +15,24 @@ const { catatJejak } = require("../middleware/adminPin.js");
 const barangArsipModel = require("../model/BarangArsipModel.js");
 const { filterArsip, aktifkanJikaDiarsip, SQL_ID_ARSIP } = require("../model/BarangArsipModel.js");
 
-// Cek kode barang dipakai barang lain (kode harus unik agar scan barcode tidak salah barang)
-const kodeBarangDipakai = async (kodeBarang, kecualiId) => {
-  if (kodeBarang === undefined || kodeBarang === null || String(kodeBarang).trim() === "") return null;
-  const where = { kodeBarang: String(kodeBarang).trim() };
-  if (kecualiId) where.id = { [Op.ne]: kecualiId };
-  return barangModel.findOne({ where });
+// Nama & kode barang wajib diisi dan unik di seluruh barang (kode unik agar scan barcode tidak salah barang).
+// Satu barang hanya punya satu supplier, jadi supplier juga wajib diisi.
+// Mengembalikan { status, msg } jika ada pelanggaran, null jika valid.
+const cekNamaKode = async ({ nama, kodeBarang, supplierId }, kecualiId) => {
+  const namaBersih = String(nama ?? "").trim();
+  const kodeBersih = String(kodeBarang ?? "").trim();
+  if (!namaBersih) return { status: 400, msg: "Nama barang wajib diisi" };
+  if (!kodeBersih) return { status: 400, msg: "Kode barang wajib diisi" };
+  if (!supplierId) return { status: 400, msg: "Supplier wajib diisi" };
+
+  const kecuali = kecualiId ? { id: { [Op.ne]: kecualiId } } : {};
+  const namaSama = await barangModel.findOne({ where: { ...kecuali, nama: namaBersih } });
+  if (namaSama) return { status: 400, msg: "Barang sudah terdaftar" };
+
+  const kodeSama = await barangModel.findOne({ where: { ...kecuali, kodeBarang: kodeBersih } });
+  if (kodeSama) return { status: 400, msg: `Kode barang ${kodeBersih} sudah dipakai barang "${kodeSama.nama}"` };
+
+  return null;
 };
 
 const getBarang = async (req, res) => {
@@ -145,9 +156,16 @@ const getSearchBarang = async (req, res) => {
     const search = req.query.search || "";
     const offset = limit * page;
     const cocok = { [Op.like]: "%" + search + "%" };
+    // ?stok=tersedia|menipis|habis (batas menipis 10, sama dengan dashboard)
+    const FILTER_STOK = {
+      tersedia: { jumlah: { [Op.gt]: 10 } },
+      menipis: { jumlah: { [Op.gt]: 0, [Op.lte]: 10 } },
+      habis: { jumlah: { [Op.lte]: 0 } },
+    };
     const where = {
       [Op.and]: [
         filterArsip(req.query.arsip === "1" ? "arsip" : "aktif"),
+        FILTER_STOK[req.query.stok] || {},
         { [Op.or]: [{ nama: cocok }, { kodeBarang: cocok }, { jenisBarang: cocok }, { "$supplier.nama$": cocok }] },
       ],
     };
@@ -269,20 +287,14 @@ const tambahBarang = async (req, res) => {
   try {
     const { nama, kodeBarang, jenisBarang, satuan, jumlah, hargaBeli, hargaJual, supplierId } = req.body;
 
-    // Cek apakah nama sudah ada di database
-    const existingBarang = await barangModel.findOne({ where: { nama } });
-    if (existingBarang) {
-      return res.status(400).json({ msg: "Barang sudah terdaftar" });
-    }
-
-    const kodeSama = await kodeBarangDipakai(kodeBarang);
-    if (kodeSama) {
-      return res.status(400).json({ msg: `Kode barang ${kodeBarang} sudah dipakai barang "${kodeSama.nama}"` });
+    const pelanggaran = await cekNamaKode({ nama, kodeBarang, supplierId });
+    if (pelanggaran) {
+      return res.status(pelanggaran.status).json({ msg: pelanggaran.msg });
     }
 
     const barang = await barangModel.create({
-      nama,
-      kodeBarang,
+      nama: nama.trim(),
+      kodeBarang: kodeBarang.trim(),
       jenisBarang,
       satuan,
       jumlah,
@@ -309,21 +321,15 @@ const editBarang = async (req, res) => {
 
     // Harga jual boleh di bawah harga beli (promo / jual rugi), jadi tidak divalidasi terhadap harga beli
 
-    // Cek apakah nama sudah ada di database
-    // const existingBarang = await barangModel.findOne({ where: { nama } });
-    // if (existingBarang) {
-    //   return res.status(400).json({ msg: "Barang sudah terdaftar" });
-    // }
-
-    const kodeSama = await kodeBarangDipakai(kodeBarang, req.params.id);
-    if (kodeSama) {
-      return res.status(400).json({ msg: `Kode barang ${kodeBarang} sudah dipakai barang "${kodeSama.nama}"` });
+    const pelanggaran = await cekNamaKode({ nama, kodeBarang, supplierId }, req.params.id);
+    if (pelanggaran) {
+      return res.status(pelanggaran.status).json({ msg: pelanggaran.msg });
     }
 
     await barangModel.update(
       {
-        nama,
-        kodeBarang,
+        nama: nama.trim(),
+        kodeBarang: kodeBarang.trim(),
         jenisBarang,
         satuan,
         hargaBeli,
@@ -356,8 +362,6 @@ const hitungDataTerkaitBarang = async (barangId, transaction) => {
     logPenjualan: await logPenjualanModel.count(opt),
     logPembelian: await logPembelianModel.count(opt),
     penyesuaianStok: await penyesuaianStokModel.count(opt),
-    // Bon tidak dihapus, hanya kehilangan tautan ke transaksi
-    penjualanBon: transPenjualanIds.length ? await PenjualanBonModel.count({ where: { transPenjualanId: transPenjualanIds }, transaction }) : 0,
   };
 };
 
