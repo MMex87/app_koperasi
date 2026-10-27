@@ -45,6 +45,8 @@ const CartList = (props) => {
       setDataFilterFaktur(uniqueFaktur);
 
       const onProcess = data.find((v) => v.statusPembelian === "onProcess");
+      // Supplier dikunci selama keranjang berisi barang (satu faktur = satu supplier)
+      props.handleKeranjangTerisi(!!onProcess);
 
       if (!onProcess) {
         setDisplaySearch(true);
@@ -309,6 +311,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   handleSupplier: (v) => dispatch({ type: ActionType.SET_SUPPLIER_PEMBELIAN, index: v }),
   handleFakturPembelian: (v) => dispatch({ type: ActionType.SET_FAKTUR_PEMBELIAN, index: v }),
+  handleKeranjangTerisi: (v) => dispatch({ type: ActionType.SET_KERANJANG_TERISI_PEMBELIAN, index: v }),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CartList);

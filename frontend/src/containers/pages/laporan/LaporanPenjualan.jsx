@@ -152,7 +152,6 @@ const LaporanPenjualan = () => {
               <option value="">Semua</option>
               <option value="Tunai">Tunai</option>
               <option value="QRIS">QRIS</option>
-              <option value="Bon">Bon</option>
             </select>
           </FilterField>
         </>

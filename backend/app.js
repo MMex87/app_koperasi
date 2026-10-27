@@ -7,11 +7,10 @@ const fs = require('fs')
 const config = require('./src/config/config.js')
 const router = require('./src/routes')
 const corsOption = require('./src/config/cors.js')
+const { ipIzin } = require('./src/middleware/ipIzin.js')
 const anggotaModel = require('./src/model/AnggotaModel.js')
 const supplierModel = require('./src/model/SupplierModel.js')
 const barangModel = require('./src/model/BarangModel.js')
-const PenjualanBonModel = require('./src/model/PenjualanBonModel.js')
-const PembayaranCicilanModel = require('./src/model/PembayaranCicilanModel.js')
 const transPenjualanModel = require('./src/model/TransPenjualanModel.js')
 const transPembelianModel = require('./src/model/TransPembelianModel.js')
 const returnPembelianModel = require('./src/model/ReturnPembelianModel.js')
@@ -33,18 +32,12 @@ dotenv.config()
 
 
 // anggotaModel.sync({ force: true })
-// PenjualanBonModel.sync()
-// PembayaranCicilanModel.sync()
 // barangModel.sync()
 // barangModel.drop()
 // transPembelianModel.sync({ alter: true })
 // transPenjualanModel.sync({ alter: true })
 // returnPembelianModel.sync()
 // returnPenjualanModel.drop()
-// PenjualanBonModel.sync()
-// PembayaranCicilanModel.sync()
-// PenjualanBonModel.drop()
-// PembayaranCicilanModel.drop()
 
 // Tabel baru: sync() tanpa opsi hanya membuat tabel jika belum ada, tidak mengubah tabel lain
 pembatalanModel.sync().catch((error) => console.error('Gagal membuat tabel pembatalan_transaksi:', error))
@@ -56,6 +49,9 @@ if (!process.env.ADMIN_PIN) {
     console.warn('ADMIN_PIN belum diatur di .env: aksi admin (penyesuaian stok, hapus barang, batal faktur) akan ditolak')
 }
 
+
+// Pembatasan IP: dipasang paling awal agar UI, file statis, dan API sama-sama terlindungi
+app.use(ipIzin)
 
 // Body Parser
 app.use(bodyParser.json())

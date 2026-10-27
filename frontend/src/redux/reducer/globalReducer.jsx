@@ -11,6 +11,8 @@ const globalState = {
   harga: "",
   faktur: "",
   supplierId: "",
+  versiKeranjang: 0, // dinaikkan setiap keranjang berubah agar CartList memuat ulang
+  keranjangPenjualanTerisi: false, // true jika ada transaksi onProcess: anggota dikunci
 
   // state pembelian
   supplier: "",
@@ -23,9 +25,7 @@ const globalState = {
   harga_jual: "",
   faktur_beli: "",
   barangId: "",
-
-  // state cicilan
-  cicilanId: "",
+  keranjangPembelianTerisi: false, // true jika ada pembelian onProcess: supplier dikunci
 };
 
 const rootReducer = (state = globalState, action) => {
@@ -75,6 +75,16 @@ const rootReducer = (state = globalState, action) => {
       return {
         ...state,
         supplierId: action.index,
+      };
+    case ActionType.REFRESH_KERANJANG_PENJUALAN:
+      return {
+        ...state,
+        versiKeranjang: state.versiKeranjang + 1,
+      };
+    case ActionType.SET_KERANJANG_TERISI_PENJUALAN:
+      return {
+        ...state,
+        keranjangPenjualanTerisi: action.index,
       };
 
     // Switch pembelian
@@ -128,14 +138,11 @@ const rootReducer = (state = globalState, action) => {
         ...state,
         barangId: action.index,
       };
-
-    // Switch Cicilan
-    case ActionType.SET_ID_CICILAN:
+    case ActionType.SET_KERANJANG_TERISI_PEMBELIAN:
       return {
         ...state,
-        cicilanId: action.index,
+        keranjangPembelianTerisi: action.index,
       };
-
     default:
       return state;
   }

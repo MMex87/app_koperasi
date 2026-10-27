@@ -30,7 +30,6 @@ jest.mock("../../../src/model/ReturnPenjualanModel.js", () => mockModel());
 jest.mock("../../../src/model/ReturnPembelianModel.js", () => mockModel());
 jest.mock("../../../src/model/LogPenjualanModel.js", () => mockModel());
 jest.mock("../../../src/model/LogPembelianModel.js", () => mockModel());
-jest.mock("../../../src/model/PenjualanBonModel.js", () => mockModel());
 jest.mock("../../../src/model/PenyesuaianStokModel.js", () => ({ ...mockModel(), KOLASI_TABEL: "utf8mb4_general_ci" }));
 jest.mock("../../../src/model/JejakAdminModel.js", () => ({ create: jest.fn() }));
 

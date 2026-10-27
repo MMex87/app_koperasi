@@ -17,6 +17,8 @@ const TransaksiPembalian = (props) => {
   const [transaksi, setTransaksi] = useState([]);
   const [visiJenisInput, setVisiJenisInput] = useState(false);
   const [displaySupplier, setDisplaySupplier] = useState(false);
+  // Supplier dianggap dipilih hanya jika dipilih dari daftar (ketikan manual tidak cukup)
+  const [supplierDipilih, setSupplierDipilih] = useState(false);
   const [suppliers, setSuppliers] = useState([]);
   const [barang, setBarang] = useState([]);
 
@@ -51,19 +53,26 @@ const TransaksiPembalian = (props) => {
 
   const handleAutoAnggota = (val) => {
     setDisplaySupplier(false);
+    setSupplierDipilih(true);
     props.handleSupplier(val);
   };
 
+  const handleInputSupplier = (val) => {
+    setSupplierDipilih(false);
+    props.handleSupplier(val);
+  };
+
+  // Dipanggil dari form (manual) atau modal scan; true jika berhasil masuk daftar
   const handlecart = async (e) => {
-    e.preventDefault();
+    e?.preventDefault();
 
     try {
       const fakturLokal = props.faktur;
       const { jumlah, harga, harga_jual: hargaJual } = props;
 
       const supplierData = suppliers.find(({ nama }) => nama === props.supplier);
-      if (!supplierData) {
-        Swal.fire("Gagal!", "Supplier tidak valid", "warning");
+      if (!supplierData || !(supplierDipilih || props.keranjangTerisi)) {
+        Swal.fire("Pilih supplier dulu", "Pilih nama supplier dari daftar sebelum menambah barang", "warning");
         return;
       }
 
@@ -113,6 +122,13 @@ const TransaksiPembalian = (props) => {
 
       if (barangSupplierBeda) {
         Swal.fire("Gagal!", "Satu barang hanya boleh memiliki satu supplier", "error");
+        return;
+      }
+
+      // Kode harus unik: kode yang sudah dipakai barang lain tidak boleh dipakai nama baru (bukan restock)
+      const barangKodeSama = barang.find((b) => String(b.kodeBarang).trim() === props.kodeBarang.trim() && b.nama.toLowerCase() !== props.namaBarang.toLowerCase());
+      if (barangKodeSama) {
+        Swal.fire("Gagal!", `Kode ${props.kodeBarang} sudah dipakai barang "${barangKodeSama.nama}"`, "warning");
         return;
       }
 
@@ -169,8 +185,11 @@ const TransaksiPembalian = (props) => {
 
       // ================= TRANSAKSI SUDAH ADA =================
       else {
+        // Harga yang diisi sekarang menggantikan harga di baris keranjang (berlaku saat checkout)
         await axios.put(`/transPembelian/${trans.id}`, {
           jumlah: parseInt(trans.jumlah) + jumlahInt,
+          harga: hargaInt,
+          hargaJual: hargaJualInt,
         });
       }
 
@@ -182,9 +201,11 @@ const TransaksiPembalian = (props) => {
       props.handleHargaJualBarang("");
       props.handleSatuanBarang("");
       props.handleSupplier("");
+      return true;
     } catch (err) {
       console.error(err);
       Swal.fire("Error!", err.response?.data?.msg || "Terjadi kesalahan sistem", "error");
+      return false;
     }
   };
 
@@ -233,6 +254,9 @@ const TransaksiPembalian = (props) => {
 
   /* ================= JSX ================= */
   const supplierFiltered = suppliers.filter(({ nama }) => nama.toLowerCase().includes((props.supplier || "").toLowerCase()));
+  // Barang hanya bisa diisi setelah supplier dipilih dari daftar (bukan sekadar diketik).
+  // Supplier yang sudah terkunci dari keranjang yang berjalan juga dianggap terpilih.
+  const supplierTerpilih = suppliers.some(({ nama }) => nama === props.supplier) && (supplierDipilih || props.keranjangTerisi);
 
   return (
     <main id="main" className="main pembelian-page">
@@ -258,8 +282,10 @@ const TransaksiPembalian = (props) => {
                   <span className="input-group-text bg-white">
                     <i className="bi bi-shop" />
                   </span>
-                  <input type="text" className="form-control" placeholder="Ketik nama supplier..." autoComplete="off" value={props.supplier} onChange={(e) => props.handleSupplier(e.target.value)} onClick={() => setDisplaySupplier(!displaySupplier)} />
+                  <input type="text" className="form-control" placeholder="Ketik nama supplier..." autoComplete="off" value={props.supplier} disabled={props.keranjangTerisi} onChange={(e) => handleInputSupplier(e.target.value)} onClick={() => setDisplaySupplier(!displaySupplier)} />
                 </div>
+                {props.keranjangTerisi && <small className="text-muted">Terkunci: satu faktur hanya untuk satu supplier. Kosongkan keranjang untuk mengganti.</small>}
+                {!supplierTerpilih && <small className="text-danger">Pilih supplier dari daftar dulu sebelum mengisi barang.</small>}
 
                 {displaySupplier && (
                   <ul className="list-group autocomplete-menu shadow">
@@ -294,7 +320,7 @@ const TransaksiPembalian = (props) => {
                 <hr className="my-1" />
               </div>
 
-              {visiJenisInput ? <AddCartScan /> : <AddCartManual />}
+              {visiJenisInput ? <AddCartScan onTambah={handlecart} supplierTerpilih={supplierTerpilih} /> : <AddCartManual supplierTerpilih={supplierTerpilih} />}
 
               <div className="col-12 text-end">
                 <button type="submit" className="btn btn-primary px-4">
@@ -348,6 +374,7 @@ const mapStateToProps = (state) => ({
   harga_jual: state.harga_jual,
   faktur: state.faktur_beli,
   barangId: state.barangId,
+  keranjangTerisi: state.keranjangPembelianTerisi,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -1,35 +1,63 @@
-import { useEffect, useState } from "react";
-import { connect } from "react-redux";
-import ActionType from "../../../../redux/reducer/globalActionType";
+import { useEffect, useRef, useState } from "react";
 import getBarangJoin from "../../../../utils/barang/getBarangJoin";
 
-const addCartScan = (props) => {
+// Buang spasi & karakter kontrol yang ikut dikirim sebagian scanner (GS pemisah GS1, CR, LF)
+export const bersihkanKode = (v) => String(v ?? "").replace(/[\x00-\x1f\x7f]/g, "").trim();
+
+// Input scan barcode kasir. Scanner mengetik kode lalu mengirim Enter:
+// saat Enter barang langsung masuk keranjang (1 pcs) dan kolom dikosongkan untuk scan berikutnya.
+const AddCartScan = ({ onScan }) => {
   const [barang, setBarang] = useState([]);
+  const [kode, setKode] = useState("");
+  const [hasil, setHasil] = useState(null); // { status: "ok" | "gagal" | "proses", pesan }
+  const inputRef = useRef(null);
+
+  const muatBarang = () =>
+    getBarangJoin().then((data) => {
+      setBarang(data || []);
+      return data || [];
+    });
 
   useEffect(() => {
-    getBarangJoin().then((data) => {
-      setBarang(data);
-    });
+    muatBarang();
   }, []);
 
-  const handleScan = (e) => {
-    const kode = e.target.value;
-    const barangs = barang.find(({ kodeBarang }) => kodeBarang == kode);
-    props.handleKodeBarang(kode);
-    if (barangs != undefined) {
-      props.handleJumlah(1);
-      props.handleNamaBarang(barangs.nama);
-      props.handlejenisBarang(barangs.jenisBarang);
-      props.handleHargaBarang(barangs.hargaJual);
-      props.handleSupplierIdPenjualan(barangs.supplierId);
-    } else {
-      // Kode tidak dikenal: kosongkan data barang sebelumnya agar tidak tertambah salah
-      props.handleNamaBarang("");
-      props.handlejenisBarang("");
-      props.handleHargaBarang("");
-      props.handleSupplierIdPenjualan("");
-    }
+  // Barcode GS1 seperti "(90)MD2670...(91)2803" bisa tersimpan dengan/tanpa tanda kurung
+  const tanpaKurung = (v) => v.replace(/[()]/g, "");
+  const cariBarang = (daftar, k) => {
+    let cocok = daftar.filter(({ kodeBarang }) => bersihkanKode(kodeBarang) === k);
+    if (!cocok.length) cocok = daftar.filter(({ kodeBarang }) => tanpaKurung(bersihkanKode(kodeBarang)) === tanpaKurung(k));
+    // Ada barcode yang dipakai lebih dari satu barang: utamakan yang masih ada stoknya
+    return cocok.find((b) => parseInt(b.jumlah) > 0) || cocok[0];
   };
+
+  const handleKeyDown = async (e) => {
+    if (e.key !== "Enter") return;
+    // Jangan submit form; kosongkan kolom segera agar scan berikutnya tidak menempel ke kode ini
+    e.preventDefault();
+    const k = bersihkanKode(kode);
+    setKode("");
+    if (!k) return;
+
+    let item = cariBarang(barang, k);
+    // Barang mungkin baru ditambahkan setelah halaman dibuka
+    if (!item) item = cariBarang(await muatBarang(), k);
+
+    if (!item) {
+      // Hanya info; kolom sudah kosong, fokus langsung kembali agar scan berikutnya bisa langsung diproses
+      setHasil({ status: "gagal", pesan: `Kode ${k} tidak ada di data barang` });
+      inputRef.current?.focus();
+      return;
+    }
+
+    setHasil({ status: "proses", pesan: `Menambahkan ${item.nama}...` });
+    const berhasil = await onScan(item);
+    setHasil(berhasil ? { status: "ok", pesan: item.nama, harga: item.hargaJual } : { status: "gagal", pesan: `${item.nama} gagal ditambahkan` });
+    inputRef.current?.focus();
+  };
+
+  const kelasHasil = { ok: "alert-success", gagal: "alert-warning", proses: "alert-secondary" };
+  const ikonHasil = { ok: "bi-check-circle", gagal: "bi-exclamation-circle", proses: "bi-hourglass-split" };
 
   return (
     <>
@@ -41,57 +69,41 @@ const addCartScan = (props) => {
           <span className="input-group-text bg-white">
             <i className="bi bi-upc-scan" />
           </span>
-          <input type="number" className="form-control" id="kodeBarangScan" placeholder="Scan barcode barang..." value={props.kodeBarang} autoFocus={true} onChange={handleScan} />
+          <input
+            ref={inputRef}
+            type="text"
+            inputMode="numeric"
+            autoComplete="off"
+            className="form-control"
+            id="kodeBarangScan"
+            placeholder="Scan barcode barang..."
+            value={kode}
+            autoFocus={true}
+            onChange={(e) => setKode(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
         </div>
+        <small className="text-muted">Barang langsung masuk keranjang (1 pcs) setiap kali di-scan. Ketik manual lalu tekan Enter juga bisa.</small>
       </div>
-      <div className="col-md-6 d-flex align-items-end">
-        {props.namaBarang ? (
-          <div className="alert alert-success py-2 px-3 mb-0 w-100 d-flex justify-content-between align-items-center">
+      <div className="col-md-6 d-flex align-items-start pt-md-4 mt-md-2">
+        {hasil && (
+          <div className={`alert ${kelasHasil[hasil.status]} py-2 px-3 mb-0 w-100 d-flex justify-content-between align-items-center`}>
             <span>
-              <i className="bi bi-check-circle me-2" />
-              <b>{props.namaBarang}</b>
+              <i className={`bi ${ikonHasil[hasil.status]} me-2`} />
+              {hasil.status === "ok" ? (
+                <>
+                  <b>{hasil.pesan}</b> masuk keranjang
+                </>
+              ) : (
+                hasil.pesan
+              )}
             </span>
-            <span>Rp {Number(props.harga || 0).toLocaleString("id-ID")}</span>
+            {hasil.status === "ok" && <span>Rp {Number(hasil.harga || 0).toLocaleString("id-ID")}</span>}
           </div>
-        ) : (
-          props.kodeBarang && (
-            <div className="alert alert-warning py-2 px-3 mb-0 w-100">
-              <i className="bi bi-exclamation-circle me-2" />
-              Kode barang tidak dikenali
-            </div>
-          )
         )}
       </div>
     </>
   );
 };
 
-const mapStateToProps = (state) => {
-  return {
-    anggota: state.anggota,
-    typePembayaran: state.typePembayaran,
-    kodeBarang: state.kodeBarang,
-    namaBarang: state.namaBarang,
-    jumlah: state.jumlah,
-    jenis: state.jenis,
-    harga: state.harga,
-    faktur: state.faktur,
-    supplierId: state.supplierId,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    handleAnggota: (anggota) => dispatch({ type: ActionType.SET_ANGGOTA_PENJUALAN, index: anggota }),
-    handleTypeBayar: (typeBayar) => dispatch({ type: ActionType.SET_TYPE_BAYAR_PENJUALAN, index: typeBayar }),
-    handleKodeBarang: (kodeBarang) => dispatch({ type: ActionType.SET_KODE_BARANG_PENJUALAN, index: kodeBarang }),
-    handleNamaBarang: (namaBarang) => dispatch({ type: ActionType.SET_NAMA_BARANG_PENJUALAN, index: namaBarang }),
-    handleJumlah: (jumlah) => dispatch({ type: ActionType.SET_JUMLAH_PENJUALAN, index: jumlah }),
-    handlejenisBarang: (jenisBarang) => dispatch({ type: ActionType.SET_JENIS_PENJUALAN, index: jenisBarang }),
-    handleHargaBarang: (hargaBarang) => dispatch({ type: ActionType.SET_HARGA_PENJUALAN, index: hargaBarang }),
-    handleFakturPenjualan: (faktur) => dispatch({ type: ActionType.SET_FAKTUR_PENJUALAN, index: faktur }),
-    handleSupplierIdPenjualan: (supplier) => dispatch({ type: ActionType.SET_ID_SUPPLIER_PENJUALAN, index: supplier }),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(addCartScan);
+export default AddCartScan;

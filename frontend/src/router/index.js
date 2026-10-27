@@ -19,7 +19,6 @@ import ReportAnggota from "../containers/pages/laporan/tAnggota";
 import ReportSupplier from "../containers/pages/laporan/tSupplier";
 import ReportBarang from "../containers/pages/laporan/tBarang";
 import ReportLabaRugi from "../containers/pages/laporan/tLabaRugi";
-// import Cicilan from "../containers/pages/cicilan";
 import Template from "../containers/templates/Template";
 
 const router = createBrowserRouter(
@@ -46,7 +45,6 @@ const router = createBrowserRouter(
       <Route path={"/transPembelian"} element={<TransPembelian />} />
       <Route path={"/retrunPembelian"} element={<RetrunPembelian />} />
       <Route path={"/retrunPembelian/:id"} element={<RPembelian />} />
-      {/* <Route path={"/cicilan"} element={<Cicilan />} /> */}
       {/* router Laporan (harian & bulanan dalam satu halaman) */}
       <Route path={"/reportPenjualan"} element={<ReportPenjualan />} />
       <Route path={"/reportPembelian"} element={<ReportPembelian />} />

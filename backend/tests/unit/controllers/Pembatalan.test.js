@@ -45,12 +45,6 @@ describe("Kunci edit & pembatalan faktur", () => {
       expect(transPenjualanModel.update).not.toHaveBeenCalled();
     });
 
-    it("✅ mengizinkan pelunasan bon (Bon -> Lunas)", async () => {
-      transPenjualanModel.findByPk.mockResolvedValue({ statusPenjualan: "Bon" });
-      await editPenjualan({ params: { id: 1 }, body: { statusPenjualan: "Lunas" } }, res);
-      expect(res.status).toHaveBeenCalledWith(200);
-    });
-
     it("❌ menolak mengubah status keranjang tanpa checkout", async () => {
       transPenjualanModel.findByPk.mockResolvedValue({ statusPenjualan: "onProcess" });
       await editPenjualan({ params: { id: 1 }, body: { statusPenjualan: "Selesai" } }, res);
