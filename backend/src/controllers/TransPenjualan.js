@@ -84,7 +84,7 @@ const getTransPenjualanByFaktur = async (req, res) => {
         { model: anggotaModel, as: "anggota" },
         { model: barangModel, as: "barang" },
       ],
-      attributes: ["id", "jumlah", "faktur", "harga", "typePembayaran", "anggotaId", "barangId", ["createdAt", "waktuJual"]],
+      attributes: ["id", "jumlah", "faktur", "harga", "typePembayaran", "statusPenjualan", "anggotaId", "barangId", ["createdAt", "waktuJual"]],
       order: [["id", "DESC"]],
     });
     res.status(200).json(penjualan);
@@ -799,7 +799,8 @@ const getTotalHarga = async (req, res) => {
     // Pakai harga (total baris) yang tersimpan, sama dengan yang divalidasi saat checkout
     let total = 0;
     for (let val of transaksi) {
-      if (val.faktur == faktur) {
+      // Baris "Batal" (hasil edit faktur) tidak ikut dihitung
+      if (val.faktur == faktur && val.statusPenjualan !== "Batal") {
         total = total + (parseInt(val.harga) || 0);
       }
     }
@@ -1062,8 +1063,174 @@ const batalPenjualan = async (req, res) => {
   }
 };
 
+// Edit faktur penjualan hari ini (ubah jumlah, hapus, tambah item) dalam satu DB transaction.
+// Body: { faktur, alasan, items: [{ id?, barangId, jumlah }] }. id = baris lama; tanpa id = item baru.
+// Baris lama yang tidak ada di items diubah ke "Batal" (tidak dihapus permanen), stok disesuaikan.
+const editFakturPenjualan = async (req, res) => {
+  const { faktur, items } = req.body;
+  const alasan = (req.body.alasan || "").trim();
+
+  if (!faktur) {
+    return res.status(400).json({ msg: "faktur wajib diisi" });
+  }
+  if (alasan.length < 5) {
+    return res.status(400).json({ msg: "Alasan edit wajib diisi (minimal 5 karakter)" });
+  }
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ msg: "Item faktur tidak boleh kosong (gunakan Batal Faktur untuk membatalkan)" });
+  }
+  if (items.some((i) => !isBilanganBulat(i.jumlah) || Number(i.jumlah) <= 0)) {
+    return res.status(400).json({ msg: "Jumlah harus lebih dari 0" });
+  }
+  const barangIds = items.map((i) => Number(i.barangId));
+  if (barangIds.some((id) => !id) || new Set(barangIds).size !== barangIds.length) {
+    return res.status(400).json({ msg: "Setiap barang harus diisi dan tidak boleh ganda dalam satu faktur" });
+  }
+
+  try {
+    let totalBaru = 0;
+    await db.transaction(async (t) => {
+      const lama = await transPenjualanModel.findAll({ where: { faktur }, transaction: t, lock: t.LOCK.UPDATE });
+
+      if (lama.length === 0) {
+        throw httpError(404, "Faktur tidak ditemukan");
+      }
+      if (lama.some((i) => i.statusPenjualan === "onProcess")) {
+        throw httpError(400, "Faktur masih di keranjang, gunakan fitur keranjang");
+      }
+      if (lama.every((i) => i.statusPenjualan === "Batal")) {
+        throw httpError(409, "Faktur ini sudah dibatalkan");
+      }
+      if (lama.some((i) => i.statusPenjualan === "Retur")) {
+        throw httpError(409, "Faktur yang pernah diretur tidak bisa diedit. Gunakan retur atau pembatalan faktur.");
+      }
+      if (!lama.every((i) => moment(i.createdAt).isSame(moment(), "day"))) {
+        throw httpError(409, "Hanya faktur hari ini yang bisa diedit. Gunakan retur untuk transaksi sebelumnya.");
+      }
+
+      const aktif = lama.filter((i) => i.statusPenjualan !== "Batal");
+      const barisPerId = new Map(aktif.map((r) => [r.id, r]));
+      const barisPerBarang = new Map(aktif.map((r) => [Number(r.barangId), r]));
+
+      // Item dengan id harus milik faktur ini dan barangnya sama
+      for (const it of items) {
+        if (it.id === undefined) continue;
+        const row = barisPerId.get(Number(it.id));
+        if (!row || Number(row.barangId) !== Number(it.barangId)) {
+          throw httpError(400, `Item id ${it.id} bukan bagian dari faktur ini`);
+        }
+      }
+      // Item tanpa id tidak boleh menduplikasi baris yang dipertahankan (baris yang dihapus boleh ditambah lagi)
+      const idDipertahankan = new Set(items.filter((i) => i.id !== undefined).map((i) => Number(i.id)));
+      for (const it of items) {
+        if (it.id !== undefined) continue;
+        const row = barisPerBarang.get(Number(it.barangId));
+        if (row && idDipertahankan.has(row.id)) {
+          throw httpError(400, "Barang sudah ada di faktur, ubah jumlahnya dari baris yang ada");
+        }
+      }
+
+      // Hitung selisih stok per barang (jumlah sebelum vs sesudah edit)
+      const jumlahLama = new Map();
+      for (const r of aktif) {
+        const id = Number(r.barangId);
+        jumlahLama.set(id, (jumlahLama.get(id) || 0) + (parseInt(r.jumlah) || 0));
+      }
+      const jumlahBaru = new Map(items.map((i) => [Number(i.barangId), Number(i.jumlah)]));
+      const semuaBarang = [...new Set([...jumlahLama.keys(), ...jumlahBaru.keys()])].sort((a, b) => a - b);
+
+      const barangMap = new Map();
+      const perubahan = [];
+      for (const barangId of semuaBarang) {
+        const q0 = jumlahLama.get(barangId) || 0;
+        const q1 = jumlahBaru.get(barangId) || 0;
+        if (q0 === q1) continue;
+
+        const barang = await barangModel.findByPk(barangId, { transaction: t, lock: t.LOCK.UPDATE });
+        if (!barang) {
+          throw httpError(404, `Barang id ${barangId} tidak ditemukan`);
+        }
+        barangMap.set(barangId, barang);
+
+        const selisih = q1 - q0; // positif = penjualan bertambah, stok berkurang
+        const stokAwal = parseInt(barang.jumlah) || 0;
+        if (selisih > 0 && stokAwal < selisih) {
+          throw httpError(409, `Stok "${barang.nama}" tidak cukup: sisa ${stokAwal}, tambahan ${selisih}`);
+        }
+        const stokAkhir = stokAwal - selisih;
+        await barang.update({ jumlah: stokAkhir }, { transaction: t });
+        if (selisih < 0) {
+          await aktifkanJikaDiarsip(barang.id, t);
+        }
+        await logPenjualanModel.create(
+          {
+            qty: Math.abs(selisih),
+            qty_awal: stokAwal,
+            qty_baru: stokAkhir,
+            keterangan: selisih > 0 ? "Koreksi Penjualan (-)" : "Koreksi Penjualan (+)",
+            barangId: barang.id,
+            faktur,
+          },
+          { transaction: t },
+        );
+        perubahan.push({ barangId, nama: barang.nama, jumlahLama: q0, jumlahBaru: q1 });
+      }
+
+      // Harga total baris ikut sebanding dengan jumlah (harga satuan tetap)
+      for (const r of aktif) {
+        const it = items.find((i) => Number(i.id) === r.id);
+        if (!it) {
+          await r.update({ statusPenjualan: "Batal" }, { transaction: t });
+          continue;
+        }
+        const jumlahSebelum = parseInt(r.jumlah) || 0;
+        const hargaSebelum = parseInt(r.harga) || 0;
+        const jumlahSesudah = Number(it.jumlah);
+        const hargaSesudah = jumlahSesudah === jumlahSebelum || !jumlahSebelum ? hargaSebelum : Math.round((hargaSebelum * jumlahSesudah) / jumlahSebelum);
+        if (jumlahSesudah !== jumlahSebelum) {
+          await r.update({ jumlah: jumlahSesudah, harga: hargaSesudah }, { transaction: t });
+        }
+        totalBaru += hargaSesudah;
+      }
+
+      // Item baru: harga satuan saat ini (barang.hargaJual) dikali jumlah, dengan anggota & pembayaran faktur
+      for (const it of items.filter((i) => i.id === undefined)) {
+        let barang = barangMap.get(Number(it.barangId));
+        if (!barang) {
+          barang = await barangModel.findByPk(Number(it.barangId), { transaction: t });
+          if (!barang) throw httpError(404, `Barang id ${it.barangId} tidak ditemukan`);
+        }
+        const jumlahBaruItem = Number(it.jumlah);
+        const harga = jumlahBaruItem * (parseInt(barang.hargaJual) || 0);
+        await transPenjualanModel.create(
+          {
+            jumlah: jumlahBaruItem,
+            faktur,
+            harga,
+            typePembayaran: aktif[0].typePembayaran,
+            anggotaId: aktif[0].anggotaId,
+            barangId: barang.id,
+            statusPenjualan: "Selesai",
+          },
+          { transaction: t },
+        );
+        totalBaru += harga;
+      }
+
+      const totalLama = aktif.reduce((sum, r) => sum + (parseInt(r.harga) || 0), 0);
+      await catatJejak(req, { aksi: "edit_penjualan", referensi: faktur, alasan, detail: { perubahan, totalLama, totalBaru } }, t);
+    });
+
+    res.status(200).json({ msg: "Faktur berhasil diedit, stok sudah disesuaikan", totalBaru });
+  } catch (error) {
+    console.error(error);
+    res.status(error.status || 400).json({ msg: error.status ? error.message : "Gagal Mengedit Faktur: " + error });
+  }
+};
+
 module.exports = {
   batalPenjualan,
+  editFakturPenjualan,
   getPenjualan,
   getPenjualanById,
   getJoinPenAnBarang,

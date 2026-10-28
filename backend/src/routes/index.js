@@ -92,6 +92,7 @@ router.get("/transPenjualanJoinRetur", transPenjualan.getJoinPenAnBarangRetur); 
 router.post("/transPenjualan", transPenjualan.tambahPenjualan);
 router.post("/checkoutPenjualan", transPenjualan.checkoutPenjualan);
 router.post("/batalPenjualan", wajibAdmin, transPenjualan.batalPenjualan);
+router.post("/editFakturPenjualan", wajibAdmin, transPenjualan.editFakturPenjualan);
 router.put("/transPenjualan/:id", transPenjualan.editPenjualan);
 router.delete("/transPenjualan/:id", transPenjualan.hapusPenjualan);
 

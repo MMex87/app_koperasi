@@ -77,6 +77,11 @@ const CartList = (props) => {
     props.handleFakturPembelian(val);
   };
 
+  // Enter di kolom edit keranjang = simpan (sama dengan tombol centang)
+  const handleEnterEdit = (e) => {
+    if (e.key === "Enter") save();
+  };
+
   const batal = () => {
     setDisplayEdit(false);
     setIdEdit(null);
@@ -209,13 +214,13 @@ const CartList = (props) => {
                           {sedangEdit ? (
                             <>
                               <td>
-                                <input type="number" min="1" className="form-control form-control-sm text-center" value={jumlah} autoFocus onChange={(e) => setJumlah(+e.target.value)} />
+                                <input type="number" min="1" className="form-control form-control-sm text-center" value={jumlah} autoFocus onChange={(e) => setJumlah(+e.target.value)} onKeyDown={handleEnterEdit} />
                               </td>
                               <td>
-                                <input type="number" min="1" className="form-control form-control-sm text-end" value={editHargaBeli} onChange={(e) => setEditHargaBeli(+e.target.value)} />
+                                <input type="number" min="1" className="form-control form-control-sm text-end" value={editHargaBeli} onChange={(e) => setEditHargaBeli(+e.target.value)} onKeyDown={handleEnterEdit} />
                               </td>
                               <td>
-                                <input type="number" min="1" className={`form-control form-control-sm text-end ${jualRugi ? "border-warning" : ""}`} title={jualRugi ? "Di bawah harga beli (rugi)" : undefined} value={editHargaJual} onChange={(e) => setEditHargaJual(+e.target.value)} />
+                                <input type="number" min="1" className={`form-control form-control-sm text-end ${jualRugi ? "border-warning" : ""}`} title={jualRugi ? "Di bawah harga beli (rugi)" : undefined} value={editHargaJual} onChange={(e) => setEditHargaJual(+e.target.value)} onKeyDown={handleEnterEdit} />
                               </td>
                               <td className="text-end fw-bold text-nowrap">{convertRupiah.convert(jumlah * editHargaBeli)}</td>
                             </>
