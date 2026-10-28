@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import convertRupiah from "rupiah-format";
 import ReportShell, { BULAN, daftarTahun, hariIni, FilterField } from "./ReportShell";
 import { exportPdf, exportExcel, cetakStrukPenjualan, formatNilai, batalkanFaktur, bisaDibatalkan } from "./exportLaporan";
+import EditFakturModal from "./EditFakturModal";
 
 // harga transaksi penjualan = total baris (sudah jumlah x harga satuan)
 const COLUMNS = [
@@ -29,6 +30,7 @@ const LaporanPenjualan = () => {
   const [tahun, setTahun] = useState(new Date().getFullYear());
   const [supplier, setSupplier] = useState("");
   const [reload, setReload] = useState(0);
+  const [editFaktur, setEditFaktur] = useState(null);
   const [pembayaran, setPembayaran] = useState("");
 
   useEffect(() => {
@@ -96,6 +98,7 @@ const LaporanPenjualan = () => {
   };
 
   return (
+    <>
     <ReportShell
       title="Laporan Penjualan"
       subtitle={`Periode ${periode}`}
@@ -167,6 +170,11 @@ const LaporanPenjualan = () => {
           <button className="btn btn-sm btn-outline-secondary" title="Cetak ulang struk" onClick={() => cetak(r.faktur)}>
             <i className="bi bi-printer" />
           </button>
+          {bisaDibatalkan(r.createdAt) && r.statusPenjualan === "Selesai" && (
+            <button className="btn btn-sm btn-outline-primary" title="Edit faktur (hanya hari ini)" onClick={() => setEditFaktur(r.faktur)}>
+              <i className="bi bi-pencil-square" />
+            </button>
+          )}
           {bisaDibatalkan(r.createdAt) && (
             <button className="btn btn-sm btn-outline-danger" title="Batalkan faktur (hanya hari ini)" onClick={async () => (await batalkanFaktur("penjualan", r.faktur)) && setReload((n) => n + 1)}>
               <i className="bi bi-x-octagon" />
@@ -177,6 +185,16 @@ const LaporanPenjualan = () => {
       onPdf={() => exportPdf(meta())}
       onExcel={() => exportExcel(meta())}
     />
+    {editFaktur && (
+      <EditFakturModal
+        faktur={editFaktur}
+        onSelesai={(berhasil) => {
+          setEditFaktur(null);
+          if (berhasil) setReload((n) => n + 1);
+        }}
+      />
+    )}
+    </>
   );
 };
 

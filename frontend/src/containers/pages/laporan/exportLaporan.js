@@ -126,7 +126,9 @@ export const exportExcel = async ({ judul, info = [], ringkasan = [], columns, r
 
 // Cetak ulang struk/nota dari laporan memakai tampilan struk yang sama dengan kasir
 export const cetakStrukPenjualan = async (faktur) => {
-  const { data: transaksi } = await axios.get(`/getTransPenjualanByFaktur/${faktur}`);
+  const { data: semua } = await axios.get(`/getTransPenjualanByFaktur/${faktur}`);
+  // Baris "Batal" (hasil edit faktur) tidak ikut dicetak
+  const transaksi = semua.filter((v) => v.statusPenjualan !== "Batal");
   const header = transaksi[0] || {};
   const total = transaksi.reduce((s, v) => s + (parseInt(v.harga) || 0), 0);
 

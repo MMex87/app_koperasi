@@ -291,7 +291,7 @@ const CartList = (props) => {
                             <td className="text-center">
                               {sedangEdit ? (
                                 <>
-                                  <input type="number" min="1" className={`form-control form-control-sm text-center ${melebihiStok ? "is-invalid" : ""}`} value={jumlah} autoFocus onChange={(e) => setJumlah(parseInt(e.target.value) || 0)} />
+                                  <input type="number" min="1" className={`form-control form-control-sm text-center ${melebihiStok ? "is-invalid" : ""}`} value={jumlah} autoFocus onChange={(e) => setJumlah(parseInt(e.target.value) || 0)} onKeyDown={(e) => e.key === "Enter" && !melebihiStok && jumlah > 0 && saveEdit(val.barang.hargaJual)} />
                                   <small className={melebihiStok ? "text-danger" : "text-muted"}>Stok: {stokBarang}</small>
                                 </>
                               ) : (

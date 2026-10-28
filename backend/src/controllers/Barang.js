@@ -18,19 +18,27 @@ const { filterArsip, aktifkanJikaDiarsip, SQL_ID_ARSIP } = require("../model/Bar
 // Nama & kode barang wajib diisi dan unik di seluruh barang (kode unik agar scan barcode tidak salah barang).
 // Satu barang hanya punya satu supplier, jadi supplier juga wajib diisi.
 // Mengembalikan { status, msg } jika ada pelanggaran, null jika valid.
-const cekNamaKode = async ({ nama, kodeBarang, supplierId }, kecualiId) => {
+// parsial = true untuk ubah barang: field yang tidak dikirim (undefined) tidak diperiksa,
+// misalnya restock pembelian yang hanya mengubah jenis & satuan.
+const cekNamaKode = async ({ nama, kodeBarang, supplierId }, kecualiId, parsial = false) => {
+  const cekNama = !parsial || nama !== undefined;
+  const cekKode = !parsial || kodeBarang !== undefined;
+  const cekSupplier = !parsial || supplierId !== undefined;
   const namaBersih = String(nama ?? "").trim();
   const kodeBersih = String(kodeBarang ?? "").trim();
-  if (!namaBersih) return { status: 400, msg: "Nama barang wajib diisi" };
-  if (!kodeBersih) return { status: 400, msg: "Kode barang wajib diisi" };
-  if (!supplierId) return { status: 400, msg: "Supplier wajib diisi" };
+  if (cekNama && !namaBersih) return { status: 400, msg: "Nama barang wajib diisi" };
+  if (cekKode && !kodeBersih) return { status: 400, msg: "Kode barang wajib diisi" };
+  if (cekSupplier && !supplierId) return { status: 400, msg: "Supplier wajib diisi" };
 
   const kecuali = kecualiId ? { id: { [Op.ne]: kecualiId } } : {};
-  const namaSama = await barangModel.findOne({ where: { ...kecuali, nama: namaBersih } });
-  if (namaSama) return { status: 400, msg: "Barang sudah terdaftar" };
-
-  const kodeSama = await barangModel.findOne({ where: { ...kecuali, kodeBarang: kodeBersih } });
-  if (kodeSama) return { status: 400, msg: `Kode barang ${kodeBersih} sudah dipakai barang "${kodeSama.nama}"` };
+  if (cekNama) {
+    const namaSama = await barangModel.findOne({ where: { ...kecuali, nama: namaBersih } });
+    if (namaSama) return { status: 400, msg: "Barang sudah terdaftar" };
+  }
+  if (cekKode) {
+    const kodeSama = await barangModel.findOne({ where: { ...kecuali, kodeBarang: kodeBersih } });
+    if (kodeSama) return { status: 400, msg: `Kode barang ${kodeBersih} sudah dipakai barang "${kodeSama.nama}"` };
+  }
 
   return null;
 };
@@ -321,15 +329,15 @@ const editBarang = async (req, res) => {
 
     // Harga jual boleh di bawah harga beli (promo / jual rugi), jadi tidak divalidasi terhadap harga beli
 
-    const pelanggaran = await cekNamaKode({ nama, kodeBarang, supplierId }, req.params.id);
+    const pelanggaran = await cekNamaKode({ nama, kodeBarang, supplierId }, req.params.id, true);
     if (pelanggaran) {
       return res.status(pelanggaran.status).json({ msg: pelanggaran.msg });
     }
 
     await barangModel.update(
       {
-        nama: nama.trim(),
-        kodeBarang: kodeBarang.trim(),
+        nama: typeof nama === "string" ? nama.trim() : nama,
+        kodeBarang: typeof kodeBarang === "string" ? kodeBarang.trim() : kodeBarang,
         jenisBarang,
         satuan,
         hargaBeli,
@@ -372,6 +380,8 @@ const JENIS_RIWAYAT_STOK = {
   pembelian: { keterangan: "Pembelian (+)", arah: 1 },
   returPembelian: { keterangan: "Retur Pembelian (-)", arah: -1 },
   batalPenjualan: { keterangan: "Pembatalan Penjualan (+)", arah: 1 },
+  koreksiPenjualanTambah: { keterangan: "Koreksi Penjualan (-)", arah: -1 },
+  koreksiPenjualanKurang: { keterangan: "Koreksi Penjualan (+)", arah: 1 },
   batalPembelian: { keterangan: "Pembatalan Pembelian (-)", arah: -1 },
   penyesuaianTambah: { keterangan: "Penyesuaian Stok (+)", arah: 1 },
   penyesuaianKurang: { keterangan: "Penyesuaian Stok (-)", arah: -1 },
