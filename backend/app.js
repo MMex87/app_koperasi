@@ -19,6 +19,8 @@ const pembatalanModel = require('./src/model/PembatalanModel.js')
 const penyesuaianStokModel = require('./src/model/PenyesuaianStokModel.js')
 const jejakAdminModel = require('./src/model/JejakAdminModel.js')
 const barangArsipModel = require('./src/model/BarangArsipModel.js')
+const stokOpnameModel = require('./src/model/StokOpnameModel.js')
+const stokOpnameDetailModel = require('./src/model/StokOpnameDetailModel.js')
 
 
 const app = express()
@@ -44,6 +46,8 @@ pembatalanModel.sync().catch((error) => console.error('Gagal membuat tabel pemba
 penyesuaianStokModel.sync().catch((error) => console.error('Gagal membuat tabel penyesuaian_stok:', error))
 jejakAdminModel.sync().catch((error) => console.error('Gagal membuat tabel jejak_admin:', error))
 barangArsipModel.sync().catch((error) => console.error('Gagal membuat tabel barang_arsip:', error))
+stokOpnameModel.sync().catch((error) => console.error('Gagal membuat tabel stok_opname:', error))
+stokOpnameDetailModel.sync().catch((error) => console.error('Gagal membuat tabel stok_opname_detail:', error))
 
 if (!process.env.ADMIN_PIN) {
     console.warn('ADMIN_PIN belum diatur di .env: aksi admin (penyesuaian stok, hapus barang, batal faktur) akan ditolak')
@@ -54,7 +58,7 @@ if (!process.env.ADMIN_PIN) {
 app.use(ipIzin)
 
 // Body Parser
-app.use(bodyParser.json())
+app.use(bodyParser.json({ limit: '2mb' })) // import hasil stok opname bisa ribuan baris
 app.use(bodyParser.urlencoded({ extended: true }))
 
 // Frontend (hasil build React) disajikan dari backend: UI dan API cukup satu port

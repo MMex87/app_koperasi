@@ -6,6 +6,7 @@ const MENU = [
   { to: "/", label: "Dashboard", icon: "bi-grid-1x2", end: true },
   { heading: "Master" },
   { to: "/barang", label: "Barang", icon: "bi-box-seam" },
+  { to: "/stok-opname", label: "Stok Opname", icon: "bi-clipboard-check" },
   { to: "/anggota", label: "Anggota", icon: "bi-people" },
   { to: "/supplier", label: "Supplier", icon: "bi-shop" },
   { heading: "Transaksi" },

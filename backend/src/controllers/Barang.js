@@ -398,6 +398,30 @@ const SQL_RIWAYAT_STOK = `
   SELECT id, qty, qty_awal, qty_baru, keterangan COLLATE ${KOLASI_TABEL} AS keterangan, NULL AS faktur, alasan COLLATE ${KOLASI_TABEL} AS alasan, createdAt
   FROM penyesuaian_stok WHERE barangId = :barangId`;
 
+// Setel stok barang (yang sudah di-lock di transaction t) ke stokBaru dan catat selisihnya di penyesuaian_stok.
+// Dipakai penyesuaian per barang dan finalisasi stok opname. Mengembalikan { stokAwal, stokBaru, selisih };
+// selisih 0 tidak mengubah apa pun (pemanggil yang memutuskan apakah itu error).
+const terapkanPenyesuaian = async (barang, stokBaru, alasan, t) => {
+  const stokAwal = parseInt(barang.jumlah) || 0;
+  const selisih = stokBaru - stokAwal;
+  if (selisih === 0) return { stokAwal, stokBaru, selisih };
+
+  await barang.update({ jumlah: stokBaru }, { transaction: t });
+  if (stokBaru > 0) await aktifkanJikaDiarsip(barang.id, t);
+  await penyesuaianStokModel.create(
+    {
+      qty: Math.abs(selisih),
+      qty_awal: stokAwal,
+      qty_baru: stokBaru,
+      keterangan: selisih > 0 ? JENIS_RIWAYAT_STOK.penyesuaianTambah.keterangan : JENIS_RIWAYAT_STOK.penyesuaianKurang.keterangan,
+      alasan,
+      barangId: barang.id,
+    },
+    { transaction: t },
+  );
+  return { stokAwal, stokBaru, selisih };
+};
+
 // Penyesuaian stok manual (stock opname / koreksi): stok diset ke jumlah fisik baru dan selisihnya dicatat
 // beserta alasan dalam satu DB transaction, sehingga perubahan stok selalu muncul di riwayat.
 const penyesuaianStok = async (req, res) => {
@@ -418,25 +442,11 @@ const penyesuaianStok = async (req, res) => {
         throw Object.assign(new Error("Barang tidak ditemukan"), { status: 404 });
       }
 
-      const stokAwal = parseInt(barang.jumlah) || 0;
-      const selisih = stokBaru - stokAwal;
-      if (selisih === 0) {
+      if (stokBaru === (parseInt(barang.jumlah) || 0)) {
         throw Object.assign(new Error("Stok baru sama dengan stok saat ini, tidak ada perubahan"), { status: 400 });
       }
 
-      await barang.update({ jumlah: stokBaru }, { transaction: t });
-      if (stokBaru > 0) await aktifkanJikaDiarsip(barang.id, t);
-      await penyesuaianStokModel.create(
-        {
-          qty: Math.abs(selisih),
-          qty_awal: stokAwal,
-          qty_baru: stokBaru,
-          keterangan: selisih > 0 ? JENIS_RIWAYAT_STOK.penyesuaianTambah.keterangan : JENIS_RIWAYAT_STOK.penyesuaianKurang.keterangan,
-          alasan,
-          barangId: barang.id,
-        },
-        { transaction: t },
-      );
+      const { stokAwal, selisih } = await terapkanPenyesuaian(barang, stokBaru, alasan, t);
       await catatJejak(req, { aksi: "penyesuaian_stok", referensi: barang.id, alasan, detail: { nama: barang.nama, stokAwal, stokBaru, selisih } }, t);
       return { stokAwal, stokBaru, selisih };
     });
@@ -686,6 +696,7 @@ module.exports = {
   getHapusInfoBarang,
   getDetailBarang,
   penyesuaianStok,
+  terapkanPenyesuaian,
   arsipBarang,
   aktifkanBarang,
   kesehatanData,

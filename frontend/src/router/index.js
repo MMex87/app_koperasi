@@ -19,6 +19,8 @@ import ReportAnggota from "../containers/pages/laporan/tAnggota";
 import ReportSupplier from "../containers/pages/laporan/tSupplier";
 import ReportBarang from "../containers/pages/laporan/tBarang";
 import ReportLabaRugi from "../containers/pages/laporan/tLabaRugi";
+import StokOpname from "../containers/pages/stokOpname";
+import HitungStokOpname from "../containers/pages/stokOpname/hitung";
 import Template from "../containers/templates/Template";
 
 const router = createBrowserRouter(
@@ -33,6 +35,8 @@ const router = createBrowserRouter(
       <Route path={"/barang"} element={<Barang />} />
       <Route path={"/barang/:id"} element={<DetailBarang />} />
       <Route path={"/barang-admin"} element={<BarangAdmin />} />
+      <Route path={"/stok-opname"} element={<StokOpname />} />
+      <Route path={"/stok-opname/:id"} element={<HitungStokOpname />} />
       <Route path={"/supplier"}>
         <Route index element={<Supplier />} />
         <Route path={"/supplier/:jenis"} element={<TambahSupplier />} />
