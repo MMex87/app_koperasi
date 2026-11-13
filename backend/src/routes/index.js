@@ -10,6 +10,7 @@ const logPembelian = require("../controllers/LogPembelian.js");
 const logPenjualan = require("../controllers/LogPenjualan.js");
 const dashboard = require("../controllers/Dashboard.js");
 const laporan = require("../controllers/Laporan.js");
+const stokOpname = require("../controllers/StokOpname.js");
 const { wajibAdmin, verifikasiAdmin } = require("../middleware/adminPin.js");
 
 const router = express.Router();
@@ -41,6 +42,19 @@ router.get("/barang-kesehatan", barang.kesehatanData);
 router.delete("/barang/:id", wajibAdmin, barang.hapusBarang);
 router.get("/lapBarang", barang.lapBarang);
 router.get("/lapBarangDownload", barang.getLapBarang);
+
+// stok opname (bulanan, terbuka untuk semua user tanpa PIN admin)
+router.get("/stokOpname", stokOpname.list);
+router.get("/stokOpname/bulanIni", stokOpname.bulanIni);
+router.get("/stokOpname/template", stokOpname.template);
+router.post("/stokOpname/mulai", stokOpname.mulai);
+router.get("/stokOpname/:id", stokOpname.detail);
+router.delete("/stokOpname/:id", stokOpname.hapus);
+router.post("/stokOpname/:id/ulang", stokOpname.buatUlang);
+router.post("/stokOpname/:id/item", stokOpname.simpanItem);
+router.delete("/stokOpname/:id/item/:itemId", stokOpname.hapusItem);
+router.post("/stokOpname/:id/import", stokOpname.importItem);
+router.post("/stokOpname/:id/final", stokOpname.finalkan);
 
 // supplier
 router.get("/supplier", supplier.getSupplier);

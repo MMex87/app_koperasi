@@ -1,30 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ambilSesiAdmin, keluarAdmin, EVENT_SESI_ADMIN } from "../../../utils/adminSession";
+import { ambilTema, setTema, EVENT_TEMA } from "../../../utils/theme";
 
 const formatTanggal = (d) => d.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-const formatJam = (d) => d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+const formatJam = (d) => d.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 
 const Header = () => {
   const [sekarang, setSekarang] = useState(new Date());
   const [sesiAdmin, setSesiAdmin] = useState(ambilSesiAdmin);
+  const [tema, setTemaState] = useState(ambilTema);
 
   useEffect(() => {
-    // Jam diperbarui tiap 15 detik; sekalian cek sesi admin yang kedaluwarsa
+    // Jam diperbarui tiap detik; sekalian cek sesi admin yang kedaluwarsa
     const timer = setInterval(() => {
       setSekarang(new Date());
       setSesiAdmin(ambilSesiAdmin());
-    }, 15000);
+    }, 1000);
     const perbaruiSesi = () => setSesiAdmin(ambilSesiAdmin());
+    const perbaruiTema = (e) => setTemaState(e.detail);
     window.addEventListener(EVENT_SESI_ADMIN, perbaruiSesi);
+    window.addEventListener(EVENT_TEMA, perbaruiTema);
     return () => {
       clearInterval(timer);
       window.removeEventListener(EVENT_SESI_ADMIN, perbaruiSesi);
+      window.removeEventListener(EVENT_TEMA, perbaruiTema);
     };
   }, []);
 
   // Sidebar tersembunyi di bawah 1200px; kelas toggle-sidebar pada body memunculkannya (CSS template)
   const toggleSidebar = () => document.body.classList.toggle("toggle-sidebar");
+  const toggleTema = () => setTema(tema === "dark" ? "light" : "dark");
 
   return (
     <header id="header" className="header fixed-top d-flex align-items-center app-header">
@@ -49,6 +55,15 @@ const Header = () => {
             <i className="bi bi-box-arrow-right" />
           </button>
         )}
+        <button
+          type="button"
+          className="btn btn-sm tema-btn d-flex align-items-center justify-content-center"
+          onClick={toggleTema}
+          title={tema === "dark" ? "Ganti ke mode terang" : "Ganti ke mode gelap"}
+          aria-label={tema === "dark" ? "Ganti ke mode terang" : "Ganti ke mode gelap"}
+        >
+          <i className={`bi ${tema === "dark" ? "bi-sun-fill" : "bi-moon-stars-fill"}`} />
+        </button>
         <div className="header-waktu text-end d-none d-md-block">
           <div className="jam">{formatJam(sekarang)}</div>
           <div className="tanggal">{formatTanggal(sekarang)}</div>
@@ -65,13 +80,20 @@ const Header = () => {
         .app-header .header-brand img { height: 38px; width: auto; }
         .app-header .brand-nama { font-family: "Nunito", sans-serif; font-weight: 800; font-size: 1.35rem; color: #012970; letter-spacing: .2px; }
         .app-header .brand-sub { font-size: .7rem; color: #6c7a96; white-space: nowrap; }
-        .app-header .header-waktu .jam { font-weight: 700; font-size: 1.05rem; color: #012970; line-height: 1.1; }
+        .app-header .header-waktu .jam { font-weight: 700; font-size: 1.05rem; color: #012970; line-height: 1.1; font-variant-numeric: tabular-nums; }
         .app-header .header-waktu .tanggal { font-size: .72rem; color: #6c7a96; }
         .app-header .admin-pill {
           background: rgba(220, 53, 69, .1); color: #b02a37; border: 1px solid rgba(220, 53, 69, .25);
           border-radius: 999px; padding: .3rem .8rem; font-weight: 600;
         }
         .app-header .admin-pill:hover { background: rgba(220, 53, 69, .18); color: #b02a37; }
+        .app-header .tema-btn {
+          width: 36px; height: 36px; border-radius: 50%; padding: 0; font-size: 1.05rem;
+          color: #012970; background: rgba(1, 41, 112, .06); border: 1px solid rgba(1, 41, 112, .12);
+        }
+        .app-header .tema-btn:hover { background: rgba(1, 41, 112, .12); color: #012970; }
+        html[data-theme="dark"] .app-header .tema-btn { color: #ffd66b; background: rgba(255, 255, 255, .06); border-color: rgba(255, 255, 255, .14); }
+        html[data-theme="dark"] .app-header .tema-btn:hover { background: rgba(255, 255, 255, .12); color: #ffd66b; }
       `}</style>
     </header>
   );
